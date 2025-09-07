@@ -9,5 +9,5 @@
   - [Object & Interface](./object-interface.md)
   - [Union & Intersection](./union-intersection.md)
   - [Generics](./generics.md)
-  <!-- - [Class & OOP Dasar](./typescript-konsep6.md)
-  - [Module & Import/Export](./typescript-konsep7.md) -->
+  - [Class & OOP Dasar](./class-oop-dasar.md)
+  - [Module & Import/Export](./module-import-export.md)
