@@ -7,7 +7,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    permissions: # <-- tambahkan supaya token bisa push
+    permissions:
       contents: write
 
     steps:
@@ -19,9 +19,16 @@ jobs:
       - name: Build book
         run: mdbook build
 
+      - name: List build output # <--- debug tambahan
+        run: |
+          echo "Isi folder book/"
+          ls -lah book
+          echo "Cek apakah ada index.html"
+          find book -maxdepth 2 -type f
+
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_branch: gh-pages # <-- pastikan target branch
+          publish_branch: gh-pages
           publish_dir: ./book
