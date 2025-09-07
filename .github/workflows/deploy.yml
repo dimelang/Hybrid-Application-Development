@@ -7,14 +7,21 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions: # <-- tambahkan supaya token bisa push
+      contents: write
+
     steps:
       - uses: actions/checkout@v3
+
       - name: Install mdBook
-        run: cargo install mdbook
+        run: cargo install mdbook --vers "^0.4.37" --force
+
       - name: Build book
         run: mdbook build
+
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages # <-- pastikan target branch
           publish_dir: ./book
