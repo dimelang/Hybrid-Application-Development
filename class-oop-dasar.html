@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Generics - Hybrid Application Development</title>
+        <title>Class &amp; OOP Dasar - Hybrid Application Development</title>
 
 
         <!-- Custom HTML head -->
@@ -175,113 +175,156 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="konsep-typescript-5-generics"><a class="header" href="#konsep-typescript-5-generics">Konsep TypeScript 5: Generics</a></h1>
-<p>Sebelumnya kita sudah membahas Union &amp; Intersection yang memberi fleksibilitas pada tipe. Terkadang terdapat sebuah kondisi yang membuat kita untuk membuat fungsi atau class yang bisa bekerja dengan banyak tipe tanpa kehilangan informasi tipe aslinya. Walaupun TypeScript memiliki operator <code>any</code>, namun hal ini akan membuat kebingungan karena kehilangan identitas. Di sinilah Generics sangat berguna. Generics memungkinkan kita menulis kode yang dapat digunakan kembali untuk berbagai tipe, tapi tetap memberikan jaminan tipe yang kuat.</p>
-<h2 id="generics-pada-function"><a class="header" href="#generics-pada-function">Generics pada Function</a></h2>
-<p>Dengan generics, kita bisa membuat fungsi yang menerima parameter dengan tipe yang bisa berubah-ubah.</p>
-<p>Tanpa generics:</p>
-<pre><code class="language-ts">function identity(arg: any): any {
-  return arg;
-}
+                        <h1 id="class--oop-dasar"><a class="header" href="#class--oop-dasar">Class &amp; OOP Dasar</a></h1>
+<p>JavaScript sudah mengenalkan konsep class sejak ES6. Di TypeScript, class mendapatkan kekuatan tambahan berupa static typing, access modifier, dan interface/class inheritance. Dengan class, kita bisa membuat blueprint untuk objek, sehingga kode lebih terstruktur dan mudah dikelola.</p>
+<h3 id="membuat-class-dasar"><a class="header" href="#membuat-class-dasar">Membuat Class Dasar</a></h3>
+<p>Class adalah cetak biru (blueprint) untuk membuat objek.</p>
+<pre><code class="language-ts">class Person {
+  name: string;
+  age: number;
 
-let a = identity(5);      // a: any
-let b = identity("Hello"); // b: any
-</code></pre>
-<p>Masalah: hasilnya selalu any, sehingga kita kehilangan informasi tipe.</p>
-<p>Dengan generics:</p>
-<pre><code class="language-ts">function identity&lt;T&gt;(arg: T): T {
-  return arg;
-}
-
-let num = identity&lt;number&gt;(10);   // num: number
-let str = identity("Halo");       // str: string (infer otomatis)
-</code></pre>
-<p>Dengan generics, kita mendefinisikan tipe sebagai parameter <code>&lt;T&gt;</code>. Hasilnya, TypeScript tahu bahwa input dan output punya tipe yang sama.</p>
-<h2 id="penamaan-parameter-generics"><a class="header" href="#penamaan-parameter-generics">Penamaan Parameter Generics</a></h2>
-<p>Kalau diperhatikan, kenapa kita sering melihat <T>, <K>, <V> di kode TypeScript?
-Sebenarnya itu hanyalah nama variabel tipe, sama seperti kita memberi nama variabel biasa.
-Namun, ada konvensi umum agar lebih mudah dibaca.</p>
-<div class="table-wrapper"><table><thead><tr><th>Nama</th><th>Makna Umum</th><th>Contoh Penggunaan</th></tr></thead><tbody>
-<tr><td><code>T</code></td><td>Type (umum)</td><td><code>identity&lt;T&gt;(arg: T): T</code></td></tr>
-<tr><td><code>U</code>,<code>S</code></td><td>Type tambahan / second</td><td><code>pair&lt;T, U&gt;(a: T, b: U)</code></td></tr>
-<tr><td><code>K</code></td><td>Key dari sebuah object</td><td><code>getProperty&lt;T, K extends keyof T&gt;(obj: T, key: K)</code></td></tr>
-<tr><td><code>V</code></td><td>Value dari sebuah object</td><td><code>Record&lt;K, V&gt; (objek dengan key K dan value V)</code></td></tr>
-</tbody></table>
-</div>
-<p>Kita bisa pakai nama lain (<code>&lt;MyType&gt;</code>, <code>&lt;Foo&gt;</code>), tapi <code>&lt;T&gt;</code>, <code>&lt;K&gt;</code>, <code>&lt;V&gt;</code> sudah jadi kebiasaan.</p>
-<p>Contoh:</p>
-<pre><code class="language-ts">function pair&lt;K, V&gt;(key: K, value: V): [K, V] {
-  return [key, value];
-}
-
-let result = pair("id", 101); 
-// result: [string, number]
-</code></pre>
-<p><strong>Generics pada function expression/arrow function:</strong></p>
-<pre><code class="language-ts">const getFirstElement = &lt;T&gt;(arr: T[]): T =&gt; {
-  return arr[0];
-};
-
-let numbers = [1, 2, 3];
-let first = getFirstElement(numbers); // first: number
-
-let names = ["Ani", "Budi", "Cici"];
-let firstName = getFirstElement(names); // firstName: string
-</code></pre>
-<p><strong>Generics dengan multi parameter:</strong></p>
-<pre><code class="language-ts">function merge&lt;T, U&gt;(obj1: T, obj2: U): T &amp; U {
-  return { ...obj1, ...obj2 };
-}
-
-let person = merge({ name: "Max" }, { age: 25 });
-console.log(person); // { name: "Max", age: 25 }
-</code></pre>
-<p>**Constraint pada Generics</p>
-<p>Kadang kita ingin membatasi tipe generics agar hanya tipe tertentu yang bisa digunakan.
-Gunakan <code>extends</code>.</p>
-<pre><code class="language-ts">function getLength&lt;T extends { length: number }&gt;(arg: T): number {
-  return arg.length;
-}
-
-console.log(getLength("Hello"));    // ✅ string punya length
-console.log(getLength([1, 2, 3]));  // ✅ array punya length
-// console.log(getLength(123));     // ❌ number tidak punya length
-</code></pre>
-<h2 id="interface-dengan-generics"><a class="header" href="#interface-dengan-generics">Interface dengan Generics</a></h2>
-<p>Generics juga bisa digunakan dalam interface.</p>
-<pre><code class="language-ts">interface Repository&lt;T&gt; {
-  data: T[];
-  add(item: T): void;
-  getAll(): T[];
-}
-
-class MemoryRepository&lt;T&gt; implements Repository&lt;T&gt; {
-  data: T[] = [];
-
-  add(item: T): void {
-    this.data.push(item);
+  constructor(name: string, age: number) {
+    this.name = name;
+    this.age = age;
   }
 
-  getAll(): T[] {
-    return this.data;
+  greet() {
+    console.log(`Halo, nama saya ${this.name} dan saya berusia ${this.age} tahun.`);
   }
 }
 
-let userRepo = new MemoryRepository&lt;string&gt;();
-userRepo.add("Jordan");
-userRepo.add("Ani");
-console.log(userRepo.getAll()); // ["Jordan", "Ani"]
+let user = new Person("Ryo", 35);
+user.greet();
+// Output: Halo, nama saya Ryo dan saya berusia 35 tahun.
+</code></pre>
+<p>Contoh di atas, kita membuat class Person dengan properti name dan age. Constructor digunakan untuk menginisialisasi properti, dan method greet menampilkan data. Dengan ini, kita bisa membuat banyak objek Person tanpa menulis ulang struktur yang sama.</p>
+<h3 id="access-modifier"><a class="header" href="#access-modifier">Access Modifier</a></h3>
+<p>TypeScript menambahkan access modifier untuk mengatur visibilitas properti dan method.</p>
+<pre><code class="language-ts">class Car {
+  public brand: string;       // Bisa diakses dari mana saja
+  private engineNumber: string; // Hanya bisa diakses dari dalam class
+  protected year: number;     // Bisa diakses oleh class ini &amp; turunannya
+
+  constructor(brand: string, engineNumber: string, year: number) {
+    this.brand = brand;
+    this.engineNumber = engineNumber;
+    this.year = year;
+  }
+
+  getInfo() {
+    return `${this.brand} (${this.year})`;
+  }
+}
+
+let car = new Car("Toyota", "EN12345", 2020);
+console.log(car.brand);          // ✅ Toyota
+// console.log(car.engineNumber); // ❌ Error: private
+</code></pre>
+<ul>
+<li><code>public</code>: default, bisa diakses dari mana saja.</li>
+<li><code>private</code>: hanya bisa diakses di dalam class itu sendiri.</li>
+<li><code>protected</code>: bisa diakses dari class dan subclass (turunan).</li>
+</ul>
+<h3 id="getter--setter"><a class="header" href="#getter--setter">Getter &amp; Setter</a></h3>
+<p>Kita bisa membuat method khusus untuk mengambil dan mengubah nilai dengan kontrol lebih.</p>
+<pre><code class="language-ts">class Account {
+  private _balance: number = 0;
+
+  get balance(): number {
+    return this._balance;
+  }
+
+  set balance(amount: number) {
+    if (amount &lt; 0) throw new Error("Balance tidak boleh negatif");
+    this._balance = amount;
+  }
+}
+
+let acc = new Account();
+acc.balance = 1000;        // Setter
+console.log(acc.balance);  // Getter -&gt; 1000
+</code></pre>
+<p>Getter &amp; Setter memberi kontrol penuh atas cara data diakses dan dimodifikasi.
+Misalnya, kita bisa menolak nilai negatif untuk <code>balance</code>.</p>
+<h3 id="inheritance-pewarisan"><a class="header" href="#inheritance-pewarisan">Inheritance (Pewarisan)</a></h3>
+<p>Class bisa mewarisi dari class lain dengan <code>extends</code>.</p>
+<pre><code class="language-ts">class Animal {
+  name: string;
+
+  constructor(name: string) {
+    this.name = name;
+  }
+
+  move() {
+    console.log(`${this.name} bergerak.`);
+  }
+}
+
+class Dog extends Animal {
+  bark() {
+    console.log(`${this.name} menggonggong.`);
+  }
+}
+
+let dog = new Dog("Buddy");
+dog.move();  // Buddy bergerak.
+dog.bark();  // Buddy menggonggong.
+</code></pre>
+<p>Dengan inheritance, kita bisa membuat class baru yang mewarisi properti dan method dari class lain.
+Ini memungkinkan reuse kode dan membuat struktur hierarki yang lebih natural.</p>
+<h3 id="method-overriding"><a class="header" href="#method-overriding">Method Overriding</a></h3>
+<p>Subclass bisa menimpa (override) method dari superclass.</p>
+<pre><code class="language-ts">class Bird extends Animal {
+  move() {
+    console.log(`${this.name} terbang.`);
+  }
+}
+
+let bird = new Bird("Garuda");
+bird.move(); // Garuda terbang.
+</code></pre>
+<h3 id="abstract-class"><a class="header" href="#abstract-class">Abstract Class</a></h3>
+<p>Abstract class tidak bisa dibuat instance langsung. Biasanya digunakan sebagai blueprint untuk class lain. Abstract class seperti kontrak: class turunan wajib mengimplementasikan method yang abstrak.</p>
+<pre><code class="language-ts">abstract class Shape {
+  abstract area(): number;
+}
+
+class Rectangle extends Shape {
+  constructor(public width: number, public height: number) {
+    super();
+  }
+
+  area(): number {
+    return this.width * this.height;
+  }
+}
+
+let rect = new Rectangle(10, 5);
+console.log(rect.area()); // 50
+</code></pre>
+<h3 id="static-member"><a class="header" href="#static-member">Static Member</a></h3>
+<p>Kita bisa membuat properti dan method yang dimiliki oleh class itu sendiri, bukan oleh objeknya.</p>
+<pre><code class="language-ts">class MathUtil {
+  static PI: number = 3.14159;
+
+  static circleArea(radius: number): number {
+    return this.PI * radius * radius;
+  }
+}
+
+console.log(MathUtil.PI);               // 3.14159
+console.log(MathUtil.circleArea(10));   // 314.159
 </code></pre>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="union-intersection.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="generics.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next prefetch" href="class-oop-dasar.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="module-import-export.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -291,11 +334,11 @@ console.log(userRepo.getAll()); // ["Jordan", "Ani"]
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="union-intersection.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="generics.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next prefetch" href="class-oop-dasar.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="module-import-export.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>
