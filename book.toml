@@ -1,0 +1,5 @@
+[book]
+authors = ["Dimas"]
+language = "en"
+src = "src"
+title = "Hybrid Application Development"
