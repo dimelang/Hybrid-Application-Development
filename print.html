@@ -1485,151 +1485,654 @@ const styles = StyleSheet.create({
 <h3 id="view-sebagai-container-pusat"><a class="header" href="#view-sebagai-container-pusat">View sebagai container pusat</a></h3>
 <pre><code class="language-ts">import { View, Text } from 'react-native';
 
-export default function App() {
-  return (
-    &lt;View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}&gt;
-      &lt;Text&gt;Ini berada di dalam View&lt;/Text&gt;
-    &lt;/View&gt;
-  );
-}
+
+&lt;View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}&gt;
+  &lt;Text&gt;Ini berada di dalam View&lt;/Text&gt;
+&lt;/View&gt;
+
 </code></pre>
 <h3 id="view-dengan-background"><a class="header" href="#view-dengan-background">View dengan Background</a></h3>
 <pre><code class="language-ts">import { View } from 'react-native';
 
-export default function App() {
-  return (
-    &lt;View style={{ flex: 1, backgroundColor: '#87cefa' }} /&gt;
-  );
-}
+&lt;View style={{ flex: 1, backgroundColor: '#87cefa' }} /&gt;
 </code></pre>
 <h3 id="view-untuk-layout-vertikal"><a class="header" href="#view-untuk-layout-vertikal">View untuk Layout Vertikal</a></h3>
 <pre><code class="language-ts">import { View, Text } from 'react-native';
 
-export default function App() {
-  return (
-    &lt;View style={{ flex: 1, padding: 20 }}&gt;
-      &lt;Text style={{ marginBottom: 10 }}&gt;Atas&lt;/Text&gt;
-      &lt;Text&gt;Tengah&lt;/Text&gt;
-      &lt;Text&gt;Bawah&lt;/Text&gt;
-    &lt;/View&gt;
-  );
-}
+&lt;View style={{ flex: 1, padding: 20 }}&gt;
+  &lt;Text style={{ marginBottom: 10 }}&gt;Atas&lt;/Text&gt;
+  &lt;Text&gt;Tengah&lt;/Text&gt;
+  &lt;Text&gt;Bawah&lt;/Text&gt;
+&lt;/View&gt;
 </code></pre>
 <h3 id="view-untuk-layout-horizontal-row"><a class="header" href="#view-untuk-layout-horizontal-row">View untuk Layout Horizontal (Row)</a></h3>
 <pre><code class="language-ts">import { View, Text } from 'react-native';
 
-export default function App() {
-  return (
-    &lt;View
-      style={{
-        flexDirection: 'row',
-        justifyContent: 'space-around',
-        marginTop: 50,
-      }}
-    &gt;
-      &lt;View style={{ width: 50, height: 50, backgroundColor: 'red' }} /&gt;
-      &lt;View style={{ width: 50, height: 50, backgroundColor: 'green' }} /&gt;
-      &lt;View style={{ width: 50, height: 50, backgroundColor: 'blue' }} /&gt;
-    &lt;/View&gt;
-  );
-}
+&lt;View
+  style={{
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginTop: 50,
+  }}
+&gt;
+  &lt;View style={{ width: 50, height: 50, backgroundColor: 'red' }} /&gt;
+  &lt;View style={{ width: 50, height: 50, backgroundColor: 'green' }} /&gt;
+  &lt;View style={{ width: 50, height: 50, backgroundColor: 'blue' }} /&gt;
+&lt;/View&gt;
 </code></pre>
 <h3 id="view-dengan-nested-view"><a class="header" href="#view-dengan-nested-view">View dengan Nested View</a></h3>
 <pre><code class="language-ts">import { View, Text } from 'react-native';
 
-export default function App() {
-  return (
-    &lt;View style={{ flex: 1, padding: 20 }}&gt;
-      &lt;Text style={{ marginBottom: 10 }}&gt;Header&lt;/Text&gt;
+&lt;View style={{ flex: 1, padding: 20 }}&gt;
+  &lt;Text style={{ marginBottom: 10 }}&gt;Header&lt;/Text&gt;
 
-      &lt;View style={{ flex: 1, backgroundColor: '#f0f0f0', padding: 10 }}&gt;
-        &lt;Text&gt;Konten utama di dalam nested View&lt;/Text&gt;
-      &lt;/View&gt;
+  &lt;View style={{ flex: 1, backgroundColor: '#f0f0f0', padding: 10 }}&gt;
+    &lt;Text&gt;Konten utama di dalam nested View&lt;/Text&gt;
+  &lt;/View&gt;
 
-      &lt;Text style={{ marginTop: 10 }}&gt;Footer&lt;/Text&gt;
-    &lt;/View&gt;
-  );
-}
+  &lt;Text style={{ marginTop: 10 }}&gt;Footer&lt;/Text&gt;
+&lt;/View&gt;
 </code></pre>
 <h3 id="view-sebagai-card"><a class="header" href="#view-sebagai-card">View Sebagai Card</a></h3>
 <pre><code class="language-ts">import { View, Text } from 'react-native';
 
-export default function App() {
-  return (
-    &lt;View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}&gt;
-      &lt;View
-        style={{
-          width: 200,
-          padding: 20,
-          borderRadius: 10,
-          backgroundColor: '#fff',
-          elevation: 3, // Android shadow
-          shadowColor: '#000', // iOS shadow
-          shadowOffset: { width: 0, height: 2 },
-          shadowOpacity: 0.25,
-          shadowRadius: 3.84,
-        }}
-      &gt;
-        &lt;Text style={{ fontSize: 18, fontWeight: 'bold' }}&gt;Card Title&lt;/Text&gt;
-        &lt;Text&gt;Ini isi card dengan styling View&lt;/Text&gt;
-      &lt;/View&gt;
-    &lt;/View&gt;
-  );
-}
+&lt;View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}&gt;
+  &lt;View
+    style={{
+      width: 200,
+      padding: 20,
+      borderRadius: 10,
+      backgroundColor: '#fff',
+      elevation: 3, // Android shadow
+      shadowColor: '#000', // iOS shadow
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.25,
+      shadowRadius: 3.84,
+    }}
+  &gt;
+    &lt;Text style={{ fontSize: 18, fontWeight: 'bold' }}&gt;Card Title&lt;/Text&gt;
+    &lt;Text&gt;Ini isi card dengan styling View&lt;/Text&gt;
+  &lt;/View&gt;
+&lt;/View&gt;
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="text"><a class="header" href="#text">Text</a></h1>
 <p><code>Text</code> digunakan untuk menampilkan tulisan di layar. Hampir semua teks di aplikasi React Native harus dibungkus dengan komponen ini.</p>
 <h3 id="text-sederhana"><a class="header" href="#text-sederhana">Text Sederhana</a></h3>
 <pre><code class="language-ts">import { Text, View } from 'react-native';
 
-export default function App() {
-  return (
-    &lt;View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}&gt;
-      &lt;Text&gt;Hello React Native!&lt;/Text&gt;
-    &lt;/View&gt;
-  );
-}
+&lt;View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}&gt;
+  &lt;Text&gt;Hello React Native!&lt;/Text&gt;
+&lt;/View&gt;
 </code></pre>
 <h3 id="text-dengan-styling"><a class="header" href="#text-dengan-styling">Text dengan Styling</a></h3>
 <pre><code class="language-ts">import { Text, View } from 'react-native';
 
-export default function App() {
-  return (
-    &lt;View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}&gt;
-      &lt;Text style={{ fontSize: 24, fontWeight: 'bold', color: 'blue' }}&gt;
-        Teks dengan styling
-      &lt;/Text&gt;
-    &lt;/View&gt;
-  );
-}
+&lt;Text style={{ fontSize: 24, fontWeight: 'bold', color: 'blue' }}&gt;
+  Teks dengan styling
+&lt;/Text&gt;
 </code></pre>
 <h3 id="multiline-text"><a class="header" href="#multiline-text">Multiline Text</a></h3>
 <pre><code class="language-ts">import { Text, View } from 'react-native';
 
-export default function App() {
-  return (
-    &lt;View style={{ padding: 20 }}&gt;
-      &lt;Text&gt;
-        Baris pertama{"\n"}
-        Baris kedua{"\n"}
-        Baris ketiga
-      &lt;/Text&gt;
-    &lt;/View&gt;
-  );
-}
+&lt;Text&gt;
+  Baris pertama{"\n"}
+  Baris kedua{"\n"}
+  Baris ketiga
+&lt;/Text&gt;
 </code></pre>
 <h3 id="nested-text"><a class="header" href="#nested-text">Nested Text</a></h3>
 <pre><code class="language-ts">import { Text, View } from 'react-native';
 
+&lt;Text&gt;
+  Ini &lt;Text style={{ fontWeight: 'bold' }}&gt;teks tebal&lt;/Text&gt; di dalam kalimat.
+&lt;/Text&gt;
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="image"><a class="header" href="#image">Image</a></h1>
+<p>Komponen <strong><code>Image</code></strong> digunakan untuk menampilkan gambar di aplikasi React Native.<br />
+Gambar dapat berasal dari <strong>lokal</strong> (disimpan di dalam project) maupun dari <strong>URL</strong>.</p>
+<hr />
+<h2 id="1-menampilkan-image-dari-lokal"><a class="header" href="#1-menampilkan-image-dari-lokal">1. Menampilkan Image dari Lokal</a></h2>
+<p>Simpan file gambar, misalnya <code>logo.png</code>, di dalam folder <code>assets/</code>.</p>
+<pre><code class="language-ts">import { Image, View } from 'react-native';
+
+&lt;View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}&gt;
+    &lt;Image
+    source={require('./assets/logo.png')}
+    style={{ width: 100, height: 100 }}
+    /&gt;
+&lt;/View&gt;
+</code></pre>
+<h3 id="menampilkan-image-dari-url"><a class="header" href="#menampilkan-image-dari-url">Menampilkan Image dari URL</a></h3>
+<pre><code class="language-ts">import { Image, View } from 'react-native';
+
+&lt;Image
+    source={{ uri: 'https://reactnative.dev/img/tiny_logo.png' }}
+    style={{ width: 100, height: 100 }}
+/&gt;
+</code></pre>
+<h3 id="mengatur-ukuran-dan-styling"><a class="header" href="#mengatur-ukuran-dan-styling">Mengatur Ukuran dan Styling</a></h3>
+<pre><code class="language-ts">&lt;Image
+  source={require('./assets/logo.png')}
+  style={{
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    borderWidth: 2,
+    borderColor: 'blue',
+  }}
+/&gt;
+</code></pre>
+<h3 id="resizemode"><a class="header" href="#resizemode">ResizeMode</a></h3>
+<p><code>Image</code> memiliki properti resizeMode untuk mengatur cara gambar ditampilkan:</p>
+<ul>
+<li><code>cover</code> (default) → gambar memenuhi container dengan cropping jika perlu.</li>
+<li><code>contain</code> → gambar menyesuaikan agar seluruh gambar terlihat.</li>
+<li><code>stretch</code> → gambar diregangkan agar sesuai dengan ukuran container.</li>
+<li><code>repeat</code> → gambar diulang-ulang.</li>
+<li><code>center</code> → gambar ditampilkan sesuai ukuran asli di tengah.</li>
+</ul>
+<pre><code class="language-ts">&lt;Image
+  source={{ uri: 'https://reactnative.dev/img/tiny_logo.png' }}
+  style={{ width: 200, height: 100 }}
+  resizeMode="contain"
+/&gt;
+</code></pre>
+<h3 id="background-image-dengan-imagebackground"><a class="header" href="#background-image-dengan-imagebackground">Background Image dengan <code>ImageBackground</code></a></h3>
+<pre><code class="language-ts">import { ImageBackground, Text, StyleSheet } from 'react-native';
+
 export default function App() {
   return (
-    &lt;View style={{ padding: 20 }}&gt;
-      &lt;Text&gt;
-        Ini &lt;Text style={{ fontWeight: 'bold' }}&gt;teks tebal&lt;/Text&gt; di dalam kalimat.
-      &lt;/Text&gt;
+    &lt;ImageBackground
+      source={{ uri: 'https://reactnative.dev/img/tiny_logo.png' }}
+      style={styles.background}
+    &gt;
+      &lt;Text style={styles.text}&gt;Teks di atas gambar&lt;/Text&gt;
+    &lt;/ImageBackground&gt;
+  );
+}
+
+const styles = StyleSheet.create({
+  background: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  text: {
+    color: 'white',
+    fontSize: 24,
+    fontWeight: 'bold',
+  },
+});
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="textinput"><a class="header" href="#textinput">TextInput</a></h1>
+<p>Komponen <strong><code>TextInput</code></strong> digunakan untuk menerima input teks dari pengguna, mirip dengan <code>&lt;input type="text"&gt;</code> di HTML.<br />
+<code>TextInput</code> adalah bagian penting dalam membangun form, pencarian, login, dan interaksi berbasis teks lainnya.</p>
+<hr />
+<h3 id="textinput-dasar"><a class="header" href="#textinput-dasar">TextInput Dasar</a></h3>
+<pre><code class="language-ts">import { TextInput, View, StyleSheet } from 'react-native';
+
+export default function App() {
+  return (
+    &lt;View style={styles.container}&gt;
+      &lt;TextInput
+        style={styles.input}
+        placeholder="Ketik sesuatu..."
+      /&gt;
     &lt;/View&gt;
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    padding: 10,
+    width: 200,
+    borderRadius: 5,
+  },
+});
+</code></pre>
+<h3 id="mengatur-keyboard"><a class="header" href="#mengatur-keyboard">Mengatur Keyboard</a></h3>
+<p><code>TextInput</code> bisa menyesuaikan jenis keyboard dengan properti <code>keyboardType</code>.</p>
+<p>Beberapa nilai yang sering digunakan:</p>
+<ul>
+<li><code>default</code> → keyboard standar.</li>
+<li><code>numeric</code> → angka.</li>
+<li><code>email-address</code> → untuk email.</li>
+<li><code>phone-pad</code> → untuk nomor telepon.</li>
+</ul>
+<pre><code class="language-ts">&lt;TextInput
+  style={styles.input}
+  placeholder="Masukkan email"
+  keyboardType="email-address"
+/&gt;
+</code></pre>
+<h3 id="textinput-dengan-password-secure-text-entry"><a class="header" href="#textinput-dengan-password-secure-text-entry">TextInput dengan Password (Secure Text Entry)</a></h3>
+<pre><code class="language-ts">&lt;TextInput
+  style={styles.input}
+  placeholder="Masukkan password"
+  secureTextEntry={true}
+/&gt;
+</code></pre>
+<h3 id="multiline-input"><a class="header" href="#multiline-input">Multiline Input</a></h3>
+<pre><code class="language-ts">&lt;TextInput
+  style={[styles.input, { height: 100 }]}
+  placeholder="Tulis komentar..."
+  multiline
+  numberOfLines={4}
+/&gt;
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="button"><a class="header" href="#button">Button</a></h1>
+<p>Komponen <strong><code>Button</code></strong> digunakan untuk menangani aksi sederhana dari pengguna, misalnya mengirim form atau menavigasi ke halaman lain.<br />
+<code>Button</code> bawaan React Native cukup mudah digunakan, tapi terbatas dalam hal kustomisasi tampilan.</p>
+<hr />
+<h3 id="button-dasar"><a class="header" href="#button-dasar">Button Dasar</a></h3>
+<pre><code class="language-ts">import { Button, View } from 'react-native';
+
+export default function App() {
+  return (
+    &lt;View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}&gt;
+      &lt;Button
+        title="Klik Saya"
+        onPress={() =&gt; alert('Tombol ditekan!')}
+      /&gt;
+    &lt;/View&gt;
+  );
+}
+</code></pre>
+<ul>
+<li><code>title</code> → teks yang ditampilkan pada tombol.</li>
+<li><code>onPress</code> → fungsi yang dijalankan ketika tombol ditekan.</li>
+</ul>
+<h3 id="mengubah-warna-button"><a class="header" href="#mengubah-warna-button">Mengubah Warna Button</a></h3>
+<pre><code class="language-ts">&lt;Button
+  title="Tombol Hijau"
+  onPress={() =&gt; console.log('Hijau')}
+  color="green"
+/&gt;
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="scrollview"><a class="header" href="#scrollview">ScrollView</a></h1>
+<p>Komponen <strong><code>ScrollView</code></strong> digunakan untuk membuat area yang dapat digulir (scroll), baik secara <strong>vertikal</strong> maupun <strong>horizontal</strong>.<br />
+Berbeda dengan <code>FlatList</code> (yang lebih efisien untuk data besar), <code>ScrollView</code> cocok digunakan ketika jumlah elemen <strong>relatif sedikit</strong>.</p>
+<hr />
+<h3 id="scrollview-vertikal-dasar"><a class="header" href="#scrollview-vertikal-dasar">ScrollView Vertikal Dasar</a></h3>
+<pre><code class="language-ts">import { ScrollView, Text, StyleSheet } from 'react-native';
+
+export default function App() {
+  return (
+    &lt;ScrollView style={styles.container}&gt;
+      {Array.from({ length: 20 }, (_, i) =&gt; (
+        &lt;Text key={i} style={styles.item}&gt;
+          Item {i + 1}
+        &lt;/Text&gt;
+      ))}
+    &lt;/ScrollView&gt;
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    marginTop: 40,
+    padding: 10,
+  },
+  item: {
+    fontSize: 18,
+    marginVertical: 10,
+  },
+});
+</code></pre>
+<h3 id="scrollview-horizontal"><a class="header" href="#scrollview-horizontal">ScrollView Horizontal</a></h3>
+<pre><code class="language-ts">&lt;ScrollView horizontal style={{ marginTop: 40 }}&gt;
+  {Array.from({ length: 10 }, (_, i) =&gt; (
+    &lt;Text key={i} style={{ fontSize: 18, marginHorizontal: 20 }}&gt;
+      Item {i + 1}
+    &lt;/Text&gt;
+  ))}
+&lt;/ScrollView&gt;
+</code></pre>
+<h3 id="menambahkan-konten-yang-kompleks"><a class="header" href="#menambahkan-konten-yang-kompleks">Menambahkan Konten yang Kompleks</a></h3>
+<pre><code class="language-ts">import { ScrollView, View, Text, Image, StyleSheet } from 'react-native';
+
+export default function App() {
+  return (
+    &lt;ScrollView contentContainerStyle={styles.container}&gt;
+      &lt;Text style={styles.title}&gt;Galeri Gambar&lt;/Text&gt;
+      {Array.from({ length: 5 }, (_, i) =&gt; (
+        &lt;Image
+          key={i}
+          source={{ uri: 'https://reactnative.dev/img/tiny_logo.png' }}
+          style={styles.image}
+        /&gt;
+      ))}
+    &lt;/ScrollView&gt;
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    alignItems: 'center',
+    padding: 20,
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 20,
+  },
+  image: {
+    width: 100,
+    height: 100,
+    marginVertical: 10,
+  },
+});
+</code></pre>
+<h3 id="properti-penting-scrollview"><a class="header" href="#properti-penting-scrollview">Properti Penting ScrollView</a></h3>
+<ul>
+<li><code>horizontal</code> → menggulir secara horizontal.</li>
+<li><code>contentContainerStyle</code> → styling untuk isi konten.</li>
+<li><code>showsVerticalScrollIndicator</code> &amp; <code>showsHorizontalScrollIndicator</code> → menampilkan/menyembunyikan scrollbar.</li>
+<li><code>refreshControl</code> → menambahkan fitur pull-to-refresh.</li>
+</ul>
+<pre><code class="language-ts">&lt;ScrollView showsVerticalScrollIndicator={false}&gt;
+  {/* konten */}
+&lt;/ScrollView&gt;
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="flatlist"><a class="header" href="#flatlist">FlatList</a></h1>
+<p>Komponen <strong><code>FlatList</code></strong> digunakan untuk menampilkan daftar data dalam jumlah banyak secara <strong>efisien</strong>.<br />
+Berbeda dengan <code>ScrollView</code> (yang merender semua item sekaligus), <code>FlatList</code> hanya merender item yang terlihat di layar, sehingga lebih hemat memori dan performa.</p>
+<hr />
+<h3 id="flatlist-dasar"><a class="header" href="#flatlist-dasar">FlatList Dasar</a></h3>
+<pre><code class="language-ts">import { FlatList, Text, StyleSheet, View } from 'react-native';
+
+const DATA = Array.from({ length: 20 }, (_, i) =&gt; ({
+  id: i.toString(),
+  title: `Item ${i + 1}`,
+}));
+
+export default function App() {
+  return (
+    &lt;FlatList
+      data={DATA}
+      keyExtractor={(item) =&gt; item.id}
+      renderItem={({ item }) =&gt; (
+        &lt;View style={styles.item}&gt;
+          &lt;Text style={styles.text}&gt;{item.title}&lt;/Text&gt;
+        &lt;/View&gt;
+      )}
+    /&gt;
+  );
+}
+
+const styles = StyleSheet.create({
+  item: {
+    padding: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+  },
+  text: {
+    fontSize: 18,
+  },
+});
+</code></pre>
+<h3 id="flatlist-horizontal"><a class="header" href="#flatlist-horizontal">FlatList Horizontal</a></h3>
+<pre><code class="language-ts">&lt;FlatList
+  data={DATA}
+  horizontal
+  keyExtractor={(item) =&gt; item.id}
+  renderItem={({ item }) =&gt; (
+    &lt;View style={{ margin: 10, padding: 20, backgroundColor: '#eee' }}&gt;
+      &lt;Text&gt;{item.title}&lt;/Text&gt;
+    &lt;/View&gt;
+  )}
+/&gt;
+</code></pre>
+<h3 id="menambahkan-header--footer"><a class="header" href="#menambahkan-header--footer">Menambahkan Header &amp; Footer</a></h3>
+<pre><code class="language-ts">&lt;FlatList
+  data={DATA}
+  keyExtractor={(item) =&gt; item.id}
+  renderItem={({ item }) =&gt; (
+    &lt;View style={styles.item}&gt;
+      &lt;Text style={styles.text}&gt;{item.title}&lt;/Text&gt;
+    &lt;/View&gt;
+  )}
+  ListHeaderComponent={&lt;Text style={styles.header}&gt;Daftar Item&lt;/Text&gt;}
+  ListFooterComponent={&lt;Text style={styles.footer}&gt;Akhir List&lt;/Text&gt;}
+/&gt;
+</code></pre>
+<h3 id="menambahkan-separator"><a class="header" href="#menambahkan-separator">Menambahkan Separator</a></h3>
+<pre><code class="language-ts">&lt;FlatList
+  data={DATA}
+  keyExtractor={(item) =&gt; item.id}
+  renderItem={({ item }) =&gt; (
+    &lt;View style={styles.item}&gt;
+      &lt;Text style={styles.text}&gt;{item.title}&lt;/Text&gt;
+    &lt;/View&gt;
+  )}
+  ItemSeparatorComponent={() =&gt; &lt;View style={{ height: 1, backgroundColor: '#ccc' }} /&gt;}
+/&gt;
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="style--layout"><a class="header" href="#style--layout">Style &amp; Layout</a></h1>
+<p>Di React Native, styling dilakukan menggunakan <strong>JavaScript</strong>.<br />
+Kita menggunakan <strong><code>StyleSheet</code></strong> atau <strong>inline style</strong> untuk mengatur tampilan komponen.</p>
+<hr />
+<h2 id="inline-style"><a class="header" href="#inline-style">Inline Style</a></h2>
+<p>Cara paling sederhana adalah menuliskan style langsung di properti <code>style</code>:</p>
+<pre><code class="language-ts">import { Text, View } from 'react-native';
+
+export default function App() {
+  return (
+    &lt;View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}&gt;
+      &lt;Text style={{ color: 'blue', fontSize: 24 }}&gt;Halo, dunia!&lt;/Text&gt;
+    &lt;/View&gt;
+  );
+}
+</code></pre>
+<p>Cara ini efektif jika komponen tidak memerlukan banyak style.</p>
+<h3 id="menggunakan-stylesheet"><a class="header" href="#menggunakan-stylesheet">Menggunakan StyleSheet</a></h3>
+<p>Gunakan StyleSheet.create() untuk menggunakan style yang lebih rapi dan terstruktur.</p>
+<pre><code class="language-ts">import { Text, View, StyleSheet } from 'react-native';
+
+export default function App() {
+  return (
+    &lt;View style={styles.container}&gt;
+      &lt;Text style={styles.text}&gt;Halo, dunia!&lt;/Text&gt;
+    &lt;/View&gt;
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#f2f2f2',
+  },
+  text: {
+    color: 'blue',
+    fontSize: 24,
+    fontWeight: 'bold',
+  },
+});
+</code></pre>
+<h3 id="flexbox-untuk-layout"><a class="header" href="#flexbox-untuk-layout">Flexbox untuk Layout</a></h3>
+<p>React Native menggunakan Flexbox untuk mengatur tata letak.
+Secara default, <code>flexDirection</code> di React Native adalah column (berbeda dengan web yang default-nya <code>row</code>).</p>
+<p><strong>Flex direction</strong></p>
+<pre><code class="language-ts">&lt;View style={{ flexDirection: 'row', justifyContent: 'space-around' }}&gt;
+  &lt;View style={{ width: 50, height: 50, backgroundColor: 'red' }} /&gt;
+  &lt;View style={{ width: 50, height: 50, backgroundColor: 'green' }} /&gt;
+  &lt;View style={{ width: 50, height: 50, backgroundColor: 'blue' }} /&gt;
+&lt;/View&gt;
+</code></pre>
+<p><strong>Flex Grow</strong></p>
+<pre><code class="language-ts">&lt;View style={{ flex: 1, flexDirection: 'row' }}&gt;
+  &lt;View style={{ flex: 1, backgroundColor: 'red' }} /&gt;
+  &lt;View style={{ flex: 2, backgroundColor: 'green' }} /&gt;
+  &lt;View style={{ flex: 3, backgroundColor: 'blue' }} /&gt;
+&lt;/View&gt;
+</code></pre>
+<h3 id="posiitioning"><a class="header" href="#posiitioning">Posiitioning</a></h3>
+<p>React Native mendukung properti position: <code>absolute</code> | <code>relative</code>.</p>
+<pre><code class="language-ts">&lt;View style={{ flex: 1 }}&gt;
+  &lt;View style={{ width: 100, height: 100, backgroundColor: 'skyblue' }} /&gt;
+  &lt;View style={{
+    width: 50,
+    height: 50,
+    backgroundColor: 'tomato',
+    position: 'absolute',
+    top: 30,
+    left: 30
+  }} /&gt;
+&lt;/View&gt;
+</code></pre>
+<h3 id="styling-text"><a class="header" href="#styling-text">Styling Text</a></h3>
+<pre><code class="language-ts">&lt;Text style={{
+  fontSize: 20,
+  fontWeight: 'bold',
+  fontStyle: 'italic',
+  textAlign: 'center',
+  textDecorationLine: 'underline',
+}}&gt;
+  Ini contoh teks
+&lt;/Text&gt;
+</code></pre>
+<h3 id="styling-dengan-array"><a class="header" href="#styling-dengan-array">Styling dengan Array</a></h3>
+<pre><code class="language-ts">&lt;Text style={[styles.text, { color: 'red' }]}&gt;
+  Warna teks ini di-override jadi merah
+&lt;/Text&gt;
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="style--layout-lanjutan"><a class="header" href="#style--layout-lanjutan">Style &amp; Layout Lanjutan</a></h1>
+<p>React Native menggunakan <strong>Flexbox</strong> untuk mengatur tata letak.<br />
+Bedanya dengan web:</p>
+<ul>
+<li>Default <code>flexDirection</code> di web = <strong>row</strong></li>
+<li>Default <code>flexDirection</code> di React Native = <strong>column</strong></li>
+</ul>
+<p>Artinya, secara default komponen disusun <strong>dari atas ke bawah</strong>.</p>
+<hr />
+<h2 id="flexbox-untuk-layout-1"><a class="header" href="#flexbox-untuk-layout-1">Flexbox untuk Layout</a></h2>
+<p>React Native menggunakan Flexbox untuk mengatur tata letak.
+Secara default, <code>flexDirection</code> di React Native adalah column (berbeda dengan web yang default-nya <code>row</code>).</p>
+<p><strong>Flex direction</strong></p>
+<pre><code class="language-ts">&lt;View style={{ flexDirection: 'row', justifyContent: 'space-around' }}&gt;
+  &lt;View style={{ width: 50, height: 50, backgroundColor: 'red' }} /&gt;
+  &lt;View style={{ width: 50, height: 50, backgroundColor: 'green' }} /&gt;
+  &lt;View style={{ width: 50, height: 50, backgroundColor: 'blue' }} /&gt;
+&lt;/View&gt;
+</code></pre>
+<p><strong>Flex Grow</strong></p>
+<pre><code class="language-ts">&lt;View style={{ flex: 1, flexDirection: 'row' }}&gt;
+  &lt;View style={{ flex: 1, backgroundColor: 'red' }} /&gt;
+  &lt;View style={{ flex: 2, backgroundColor: 'green' }} /&gt;
+  &lt;View style={{ flex: 3, backgroundColor: 'blue' }} /&gt;
+&lt;/View&gt;
+</code></pre>
+<h3 id="justifycontent"><a class="header" href="#justifycontent">justifyContent</a></h3>
+<p>Mengatur posisi sepanjang main axis (sumbu utama = flexDirection).</p>
+<ul>
+<li><code>flex-start</code></li>
+<li><code>center</code></li>
+<li><code>flex-end</code></li>
+<li><code>space-between</code></li>
+<li><code>space-around</code></li>
+<li><code>space-evenly</code></li>
+</ul>
+<pre><code class="language-ts">&lt;View style={{ flexDirection: 'row', justifyContent: 'space-between' }}&gt;
+  &lt;View style={{ width: 50, height: 50, backgroundColor: 'red' }} /&gt;
+  &lt;View style={{ width: 50, height: 50, backgroundColor: 'green' }} /&gt;
+  &lt;View style={{ width: 50, height: 50, backgroundColor: 'blue' }} /&gt;
+&lt;/View&gt;
+</code></pre>
+<h3 id="alignitems"><a class="header" href="#alignitems">alignItems</a></h3>
+<p>Mengatur posisi sepanjang cross axis (sumbu berlawanan dengan main axis).</p>
+<ul>
+<li><code>flex-start</code></li>
+<li><code>center</code></li>
+<li><code>flex-end</code></li>
+<li><code>stretch</code></li>
+</ul>
+<pre><code class="language-ts">&lt;View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}&gt;
+  &lt;View style={{ width: 50, height: 50, backgroundColor: 'red' }} /&gt;
+  &lt;View style={{ width: 50, height: 100, backgroundColor: 'green' }} /&gt;
+&lt;/View&gt;
+</code></pre>
+<h3 id="alignself"><a class="header" href="#alignself">alignSelf</a></h3>
+<p>Digunakan pada child component untuk override <code>alignItems</code>.</p>
+<pre><code class="language-ts">&lt;View style={{ flexDirection: 'row', alignItems: 'flex-start' }}&gt;
+  &lt;View style={{ width: 50, height: 50, backgroundColor: 'red' }} /&gt;
+  &lt;View style={{ width: 50, height: 50, backgroundColor: 'green', alignSelf: 'flex-end' }} /&gt;
+&lt;/View&gt;
+</code></pre>
+<h3 id="flex"><a class="header" href="#flex">flex</a></h3>
+<p>Properti <code>flex</code> menentukan seberapa banyak ruang yang diambil relatif terhadap sibling-nya.</p>
+<pre><code class="language-ts">&lt;View style={{ flexDirection: 'row', flex: 1 }}&gt;
+  &lt;View style={{ flex: 1, backgroundColor: 'red' }} /&gt;
+  &lt;View style={{ flex: 2, backgroundColor: 'green' }} /&gt;
+  &lt;View style={{ flex: 3, backgroundColor: 'blue' }} /&gt;
+&lt;/View&gt;
+</code></pre>
+<ul>
+<li><code>flex: 1</code> → isi ruang secara proporsional.</li>
+<li><code>flex: 0</code> → ukurannya tetap sesuai width/height.</li>
+</ul>
+<h3 id="flexwrap"><a class="header" href="#flexwrap">flexWrap</a></h3>
+<p>Membungkus elemen jika ruang tidak cukup.</p>
+<pre><code class="language-ts">&lt;View style={{ flexDirection: 'row', flexWrap: 'wrap' }}&gt;
+  {Array.from({ length: 10 }).map((_, i) =&gt; (
+    &lt;View
+      key={i}
+      style={{ width: 80, height: 80, backgroundColor: i % 2 ? 'tomato' : 'skyblue', margin: 4 }}
+    /&gt;
+  ))}
+&lt;/View&gt;
+</code></pre>
+<p><strong>Contoh Kombinasi</strong></p>
+<pre><code class="language-ts">&lt;View style={{ flex: 1 }}&gt;
+  &lt;View style={{ flex: 1, backgroundColor: 'tomato' }} /&gt;     {/* Header */}
+  &lt;View style={{ flex: 4, backgroundColor: 'skyblue' }} /&gt;   {/* Content */}
+  &lt;View style={{ flex: 1, backgroundColor: 'limegreen' }} /&gt; {/* Footer */}
+&lt;/View&gt;
+</code></pre>
+<h2 id="positioning"><a class="header" href="#positioning">Positioning</a></h2>
+<p>Selain Flexbox, React Native juga mendukung <strong>positioning</strong> untuk mengatur letak komponen.<br />
+Prinsipnya mirip dengan CSS di web.</p>
+<h3 id="relative-default"><a class="header" href="#relative-default">relative (default)</a></h3>
+<ul>
+<li>Semua komponen secara default memiliki <code>position: "relative"</code>.</li>
+<li>Artinya posisinya ditentukan oleh layout Flexbox.</li>
+<li>Jika kita menambahkan <code>top</code>, <code>left</code>, <code>right</code>, atau <code>bottom</code>, maka komponen akan bergeser relatif terhadap posisi normalnya.</li>
+</ul>
+<pre><code class="language-tsx">&lt;View style={{ flex: 1 }}&gt;
+  &lt;View style={{ width: 100, height: 100, backgroundColor: 'tomato' }} /&gt;
+  &lt;View style={{ width: 100, height: 100, backgroundColor: 'skyblue', top: 20, left: 20 }} /&gt;
+&lt;/View&gt;
+</code></pre>
+<h3 id="absolute"><a class="header" href="#absolute">absolute</a></h3>
+<ul>
+<li>Komponen akan dilepaskan dari alur Flexbox.</li>
+<li>Posisi ditentukan relatif terhadap parent yang memiliki <code>position: "relative"</code> (atau container utamanya).</li>
+</ul>
+<pre><code class="language-ts">&lt;View style={{ flex: 1 }}&gt;
+  &lt;View style={{ width: 200, height: 200, backgroundColor: 'lightgray' }}&gt;
+    &lt;View style={{ position: 'absolute', top: 20, left: 20, width: 50, height: 50, backgroundColor: 'tomato' }} /&gt;
+    &lt;View style={{ position: 'absolute', bottom: 20, right: 20, width: 50, height: 50, backgroundColor: 'skyblue' }} /&gt;
+  &lt;/View&gt;
+&lt;/View&gt;
+</code></pre>
+<h3 id="z-index"><a class="header" href="#z-index">Z-Index</a></h3>
+<ul>
+<li>Sama seperti CSS, digunakan untuk mengatur lapisan tumpukan.</li>
+<li>Semakin besar <code>zIndex</code>, semakin berada di atas.</li>
+</ul>
+<pre><code class="language-ts">&lt;View style={{ flex: 1 }}&gt;
+  &lt;View style={{ width: 100, height: 100, backgroundColor: 'tomato', zIndex: 1, position: 'absolute', top: 50, left: 50 }} /&gt;
+  &lt;View style={{ width: 100, height: 100, backgroundColor: 'skyblue', position: 'absolute', top: 70, left: 70 }} /&gt;
+&lt;/View&gt;
+
 </code></pre>
 
                     </main>

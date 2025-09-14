@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>View - Hybrid Application Development</title>
+        <title>ScrollView - Hybrid Application Development</title>
 
 
         <!-- Custom HTML head -->
@@ -175,91 +175,101 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="view"><a class="header" href="#view">View</a></h1>
-<p>Komponen ini umumnya digunakan sebagai container untuk menampung komponen lain (mirip dengan <code>&lt;div&gt;</code> di HTML). View memiliki sifat fleksibel dan bisa digunakan untuk berbagai kebutuhan seperti layout, styling, hingga wrapper komponen.</p>
-<h3 id="view-sebagai-container-pusat"><a class="header" href="#view-sebagai-container-pusat">View sebagai container pusat</a></h3>
-<pre><code class="language-ts">import { View, Text } from 'react-native';
+                        <h1 id="scrollview"><a class="header" href="#scrollview">ScrollView</a></h1>
+<p>Komponen <strong><code>ScrollView</code></strong> digunakan untuk membuat area yang dapat digulir (scroll), baik secara <strong>vertikal</strong> maupun <strong>horizontal</strong>.<br />
+Berbeda dengan <code>FlatList</code> (yang lebih efisien untuk data besar), <code>ScrollView</code> cocok digunakan ketika jumlah elemen <strong>relatif sedikit</strong>.</p>
+<hr />
+<h3 id="scrollview-vertikal-dasar"><a class="header" href="#scrollview-vertikal-dasar">ScrollView Vertikal Dasar</a></h3>
+<pre><code class="language-ts">import { ScrollView, Text, StyleSheet } from 'react-native';
 
+export default function App() {
+  return (
+    &lt;ScrollView style={styles.container}&gt;
+      {Array.from({ length: 20 }, (_, i) =&gt; (
+        &lt;Text key={i} style={styles.item}&gt;
+          Item {i + 1}
+        &lt;/Text&gt;
+      ))}
+    &lt;/ScrollView&gt;
+  );
+}
 
-&lt;View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}&gt;
-  &lt;Text&gt;Ini berada di dalam View&lt;/Text&gt;
-&lt;/View&gt;
-
+const styles = StyleSheet.create({
+  container: {
+    marginTop: 40,
+    padding: 10,
+  },
+  item: {
+    fontSize: 18,
+    marginVertical: 10,
+  },
+});
 </code></pre>
-<h3 id="view-dengan-background"><a class="header" href="#view-dengan-background">View dengan Background</a></h3>
-<pre><code class="language-ts">import { View } from 'react-native';
-
-&lt;View style={{ flex: 1, backgroundColor: '#87cefa' }} /&gt;
+<h3 id="scrollview-horizontal"><a class="header" href="#scrollview-horizontal">ScrollView Horizontal</a></h3>
+<pre><code class="language-ts">&lt;ScrollView horizontal style={{ marginTop: 40 }}&gt;
+  {Array.from({ length: 10 }, (_, i) =&gt; (
+    &lt;Text key={i} style={{ fontSize: 18, marginHorizontal: 20 }}&gt;
+      Item {i + 1}
+    &lt;/Text&gt;
+  ))}
+&lt;/ScrollView&gt;
 </code></pre>
-<h3 id="view-untuk-layout-vertikal"><a class="header" href="#view-untuk-layout-vertikal">View untuk Layout Vertikal</a></h3>
-<pre><code class="language-ts">import { View, Text } from 'react-native';
+<h3 id="menambahkan-konten-yang-kompleks"><a class="header" href="#menambahkan-konten-yang-kompleks">Menambahkan Konten yang Kompleks</a></h3>
+<pre><code class="language-ts">import { ScrollView, View, Text, Image, StyleSheet } from 'react-native';
 
-&lt;View style={{ flex: 1, padding: 20 }}&gt;
-  &lt;Text style={{ marginBottom: 10 }}&gt;Atas&lt;/Text&gt;
-  &lt;Text&gt;Tengah&lt;/Text&gt;
-  &lt;Text&gt;Bawah&lt;/Text&gt;
-&lt;/View&gt;
+export default function App() {
+  return (
+    &lt;ScrollView contentContainerStyle={styles.container}&gt;
+      &lt;Text style={styles.title}&gt;Galeri Gambar&lt;/Text&gt;
+      {Array.from({ length: 5 }, (_, i) =&gt; (
+        &lt;Image
+          key={i}
+          source={{ uri: 'https://reactnative.dev/img/tiny_logo.png' }}
+          style={styles.image}
+        /&gt;
+      ))}
+    &lt;/ScrollView&gt;
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    alignItems: 'center',
+    padding: 20,
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 20,
+  },
+  image: {
+    width: 100,
+    height: 100,
+    marginVertical: 10,
+  },
+});
 </code></pre>
-<h3 id="view-untuk-layout-horizontal-row"><a class="header" href="#view-untuk-layout-horizontal-row">View untuk Layout Horizontal (Row)</a></h3>
-<pre><code class="language-ts">import { View, Text } from 'react-native';
-
-&lt;View
-  style={{
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginTop: 50,
-  }}
-&gt;
-  &lt;View style={{ width: 50, height: 50, backgroundColor: 'red' }} /&gt;
-  &lt;View style={{ width: 50, height: 50, backgroundColor: 'green' }} /&gt;
-  &lt;View style={{ width: 50, height: 50, backgroundColor: 'blue' }} /&gt;
-&lt;/View&gt;
-</code></pre>
-<h3 id="view-dengan-nested-view"><a class="header" href="#view-dengan-nested-view">View dengan Nested View</a></h3>
-<pre><code class="language-ts">import { View, Text } from 'react-native';
-
-&lt;View style={{ flex: 1, padding: 20 }}&gt;
-  &lt;Text style={{ marginBottom: 10 }}&gt;Header&lt;/Text&gt;
-
-  &lt;View style={{ flex: 1, backgroundColor: '#f0f0f0', padding: 10 }}&gt;
-    &lt;Text&gt;Konten utama di dalam nested View&lt;/Text&gt;
-  &lt;/View&gt;
-
-  &lt;Text style={{ marginTop: 10 }}&gt;Footer&lt;/Text&gt;
-&lt;/View&gt;
-</code></pre>
-<h3 id="view-sebagai-card"><a class="header" href="#view-sebagai-card">View Sebagai Card</a></h3>
-<pre><code class="language-ts">import { View, Text } from 'react-native';
-
-&lt;View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}&gt;
-  &lt;View
-    style={{
-      width: 200,
-      padding: 20,
-      borderRadius: 10,
-      backgroundColor: '#fff',
-      elevation: 3, // Android shadow
-      shadowColor: '#000', // iOS shadow
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.25,
-      shadowRadius: 3.84,
-    }}
-  &gt;
-    &lt;Text style={{ fontSize: 18, fontWeight: 'bold' }}&gt;Card Title&lt;/Text&gt;
-    &lt;Text&gt;Ini isi card dengan styling View&lt;/Text&gt;
-  &lt;/View&gt;
-&lt;/View&gt;
+<h3 id="properti-penting-scrollview"><a class="header" href="#properti-penting-scrollview">Properti Penting ScrollView</a></h3>
+<ul>
+<li><code>horizontal</code> → menggulir secara horizontal.</li>
+<li><code>contentContainerStyle</code> → styling untuk isi konten.</li>
+<li><code>showsVerticalScrollIndicator</code> &amp; <code>showsHorizontalScrollIndicator</code> → menampilkan/menyembunyikan scrollbar.</li>
+<li><code>refreshControl</code> → menambahkan fitur pull-to-refresh.</li>
+</ul>
+<pre><code class="language-ts">&lt;ScrollView showsVerticalScrollIndicator={false}&gt;
+  {/* konten */}
+&lt;/ScrollView&gt;
 </code></pre>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="komponen-react-native.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="component-button.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next prefetch" href="component-text.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="component-flatlist.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -269,11 +279,11 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="komponen-react-native.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="component-button.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next prefetch" href="component-text.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="component-flatlist.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>

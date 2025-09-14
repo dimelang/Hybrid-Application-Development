@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>View - Hybrid Application Development</title>
+        <title>Image - Hybrid Application Development</title>
 
 
         <!-- Custom HTML head -->
@@ -175,91 +175,93 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="view"><a class="header" href="#view">View</a></h1>
-<p>Komponen ini umumnya digunakan sebagai container untuk menampung komponen lain (mirip dengan <code>&lt;div&gt;</code> di HTML). View memiliki sifat fleksibel dan bisa digunakan untuk berbagai kebutuhan seperti layout, styling, hingga wrapper komponen.</p>
-<h3 id="view-sebagai-container-pusat"><a class="header" href="#view-sebagai-container-pusat">View sebagai container pusat</a></h3>
-<pre><code class="language-ts">import { View, Text } from 'react-native';
-
+                        <h1 id="image"><a class="header" href="#image">Image</a></h1>
+<p>Komponen <strong><code>Image</code></strong> digunakan untuk menampilkan gambar di aplikasi React Native.<br />
+Gambar dapat berasal dari <strong>lokal</strong> (disimpan di dalam project) maupun dari <strong>URL</strong>.</p>
+<hr />
+<h2 id="1-menampilkan-image-dari-lokal"><a class="header" href="#1-menampilkan-image-dari-lokal">1. Menampilkan Image dari Lokal</a></h2>
+<p>Simpan file gambar, misalnya <code>logo.png</code>, di dalam folder <code>assets/</code>.</p>
+<pre><code class="language-ts">import { Image, View } from 'react-native';
 
 &lt;View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}&gt;
-  &lt;Text&gt;Ini berada di dalam View&lt;/Text&gt;
-&lt;/View&gt;
-
-</code></pre>
-<h3 id="view-dengan-background"><a class="header" href="#view-dengan-background">View dengan Background</a></h3>
-<pre><code class="language-ts">import { View } from 'react-native';
-
-&lt;View style={{ flex: 1, backgroundColor: '#87cefa' }} /&gt;
-</code></pre>
-<h3 id="view-untuk-layout-vertikal"><a class="header" href="#view-untuk-layout-vertikal">View untuk Layout Vertikal</a></h3>
-<pre><code class="language-ts">import { View, Text } from 'react-native';
-
-&lt;View style={{ flex: 1, padding: 20 }}&gt;
-  &lt;Text style={{ marginBottom: 10 }}&gt;Atas&lt;/Text&gt;
-  &lt;Text&gt;Tengah&lt;/Text&gt;
-  &lt;Text&gt;Bawah&lt;/Text&gt;
+    &lt;Image
+    source={require('./assets/logo.png')}
+    style={{ width: 100, height: 100 }}
+    /&gt;
 &lt;/View&gt;
 </code></pre>
-<h3 id="view-untuk-layout-horizontal-row"><a class="header" href="#view-untuk-layout-horizontal-row">View untuk Layout Horizontal (Row)</a></h3>
-<pre><code class="language-ts">import { View, Text } from 'react-native';
+<h3 id="menampilkan-image-dari-url"><a class="header" href="#menampilkan-image-dari-url">Menampilkan Image dari URL</a></h3>
+<pre><code class="language-ts">import { Image, View } from 'react-native';
 
-&lt;View
+&lt;Image
+    source={{ uri: 'https://reactnative.dev/img/tiny_logo.png' }}
+    style={{ width: 100, height: 100 }}
+/&gt;
+</code></pre>
+<h3 id="mengatur-ukuran-dan-styling"><a class="header" href="#mengatur-ukuran-dan-styling">Mengatur Ukuran dan Styling</a></h3>
+<pre><code class="language-ts">&lt;Image
+  source={require('./assets/logo.png')}
   style={{
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginTop: 50,
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    borderWidth: 2,
+    borderColor: 'blue',
   }}
-&gt;
-  &lt;View style={{ width: 50, height: 50, backgroundColor: 'red' }} /&gt;
-  &lt;View style={{ width: 50, height: 50, backgroundColor: 'green' }} /&gt;
-  &lt;View style={{ width: 50, height: 50, backgroundColor: 'blue' }} /&gt;
-&lt;/View&gt;
+/&gt;
 </code></pre>
-<h3 id="view-dengan-nested-view"><a class="header" href="#view-dengan-nested-view">View dengan Nested View</a></h3>
-<pre><code class="language-ts">import { View, Text } from 'react-native';
-
-&lt;View style={{ flex: 1, padding: 20 }}&gt;
-  &lt;Text style={{ marginBottom: 10 }}&gt;Header&lt;/Text&gt;
-
-  &lt;View style={{ flex: 1, backgroundColor: '#f0f0f0', padding: 10 }}&gt;
-    &lt;Text&gt;Konten utama di dalam nested View&lt;/Text&gt;
-  &lt;/View&gt;
-
-  &lt;Text style={{ marginTop: 10 }}&gt;Footer&lt;/Text&gt;
-&lt;/View&gt;
+<h3 id="resizemode"><a class="header" href="#resizemode">ResizeMode</a></h3>
+<p><code>Image</code> memiliki properti resizeMode untuk mengatur cara gambar ditampilkan:</p>
+<ul>
+<li><code>cover</code> (default) → gambar memenuhi container dengan cropping jika perlu.</li>
+<li><code>contain</code> → gambar menyesuaikan agar seluruh gambar terlihat.</li>
+<li><code>stretch</code> → gambar diregangkan agar sesuai dengan ukuran container.</li>
+<li><code>repeat</code> → gambar diulang-ulang.</li>
+<li><code>center</code> → gambar ditampilkan sesuai ukuran asli di tengah.</li>
+</ul>
+<pre><code class="language-ts">&lt;Image
+  source={{ uri: 'https://reactnative.dev/img/tiny_logo.png' }}
+  style={{ width: 200, height: 100 }}
+  resizeMode="contain"
+/&gt;
 </code></pre>
-<h3 id="view-sebagai-card"><a class="header" href="#view-sebagai-card">View Sebagai Card</a></h3>
-<pre><code class="language-ts">import { View, Text } from 'react-native';
+<h3 id="background-image-dengan-imagebackground"><a class="header" href="#background-image-dengan-imagebackground">Background Image dengan <code>ImageBackground</code></a></h3>
+<pre><code class="language-ts">import { ImageBackground, Text, StyleSheet } from 'react-native';
 
-&lt;View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}&gt;
-  &lt;View
-    style={{
-      width: 200,
-      padding: 20,
-      borderRadius: 10,
-      backgroundColor: '#fff',
-      elevation: 3, // Android shadow
-      shadowColor: '#000', // iOS shadow
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.25,
-      shadowRadius: 3.84,
-    }}
-  &gt;
-    &lt;Text style={{ fontSize: 18, fontWeight: 'bold' }}&gt;Card Title&lt;/Text&gt;
-    &lt;Text&gt;Ini isi card dengan styling View&lt;/Text&gt;
-  &lt;/View&gt;
-&lt;/View&gt;
+export default function App() {
+  return (
+    &lt;ImageBackground
+      source={{ uri: 'https://reactnative.dev/img/tiny_logo.png' }}
+      style={styles.background}
+    &gt;
+      &lt;Text style={styles.text}&gt;Teks di atas gambar&lt;/Text&gt;
+    &lt;/ImageBackground&gt;
+  );
+}
+
+const styles = StyleSheet.create({
+  background: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  text: {
+    color: 'white',
+    fontSize: 24,
+    fontWeight: 'bold',
+  },
+});
 </code></pre>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="komponen-react-native.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="component-text.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next prefetch" href="component-text.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="component-textinput.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -269,11 +271,11 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="komponen-react-native.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="component-text.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next prefetch" href="component-text.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="component-textinput.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>

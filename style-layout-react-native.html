@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>View - Hybrid Application Development</title>
+        <title>Style &amp; Layout - Hybrid Application Development</title>
 
 
         <!-- Custom HTML head -->
@@ -175,91 +175,106 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="view"><a class="header" href="#view">View</a></h1>
-<p>Komponen ini umumnya digunakan sebagai container untuk menampung komponen lain (mirip dengan <code>&lt;div&gt;</code> di HTML). View memiliki sifat fleksibel dan bisa digunakan untuk berbagai kebutuhan seperti layout, styling, hingga wrapper komponen.</p>
-<h3 id="view-sebagai-container-pusat"><a class="header" href="#view-sebagai-container-pusat">View sebagai container pusat</a></h3>
-<pre><code class="language-ts">import { View, Text } from 'react-native';
+                        <h1 id="style--layout"><a class="header" href="#style--layout">Style &amp; Layout</a></h1>
+<p>Di React Native, styling dilakukan menggunakan <strong>JavaScript</strong>.<br />
+Kita menggunakan <strong><code>StyleSheet</code></strong> atau <strong>inline style</strong> untuk mengatur tampilan komponen.</p>
+<hr />
+<h2 id="inline-style"><a class="header" href="#inline-style">Inline Style</a></h2>
+<p>Cara paling sederhana adalah menuliskan style langsung di properti <code>style</code>:</p>
+<pre><code class="language-ts">import { Text, View } from 'react-native';
 
-
-&lt;View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}&gt;
-  &lt;Text&gt;Ini berada di dalam View&lt;/Text&gt;
-&lt;/View&gt;
-
+export default function App() {
+  return (
+    &lt;View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}&gt;
+      &lt;Text style={{ color: 'blue', fontSize: 24 }}&gt;Halo, dunia!&lt;/Text&gt;
+    &lt;/View&gt;
+  );
+}
 </code></pre>
-<h3 id="view-dengan-background"><a class="header" href="#view-dengan-background">View dengan Background</a></h3>
-<pre><code class="language-ts">import { View } from 'react-native';
+<p>Cara ini efektif jika komponen tidak memerlukan banyak style.</p>
+<h3 id="menggunakan-stylesheet"><a class="header" href="#menggunakan-stylesheet">Menggunakan StyleSheet</a></h3>
+<p>Gunakan StyleSheet.create() untuk menggunakan style yang lebih rapi dan terstruktur.</p>
+<pre><code class="language-ts">import { Text, View, StyleSheet } from 'react-native';
 
-&lt;View style={{ flex: 1, backgroundColor: '#87cefa' }} /&gt;
+export default function App() {
+  return (
+    &lt;View style={styles.container}&gt;
+      &lt;Text style={styles.text}&gt;Halo, dunia!&lt;/Text&gt;
+    &lt;/View&gt;
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#f2f2f2',
+  },
+  text: {
+    color: 'blue',
+    fontSize: 24,
+    fontWeight: 'bold',
+  },
+});
 </code></pre>
-<h3 id="view-untuk-layout-vertikal"><a class="header" href="#view-untuk-layout-vertikal">View untuk Layout Vertikal</a></h3>
-<pre><code class="language-ts">import { View, Text } from 'react-native';
-
-&lt;View style={{ flex: 1, padding: 20 }}&gt;
-  &lt;Text style={{ marginBottom: 10 }}&gt;Atas&lt;/Text&gt;
-  &lt;Text&gt;Tengah&lt;/Text&gt;
-  &lt;Text&gt;Bawah&lt;/Text&gt;
-&lt;/View&gt;
-</code></pre>
-<h3 id="view-untuk-layout-horizontal-row"><a class="header" href="#view-untuk-layout-horizontal-row">View untuk Layout Horizontal (Row)</a></h3>
-<pre><code class="language-ts">import { View, Text } from 'react-native';
-
-&lt;View
-  style={{
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginTop: 50,
-  }}
-&gt;
+<h3 id="flexbox-untuk-layout"><a class="header" href="#flexbox-untuk-layout">Flexbox untuk Layout</a></h3>
+<p>React Native menggunakan Flexbox untuk mengatur tata letak.
+Secara default, <code>flexDirection</code> di React Native adalah column (berbeda dengan web yang default-nya <code>row</code>).</p>
+<p><strong>Flex direction</strong></p>
+<pre><code class="language-ts">&lt;View style={{ flexDirection: 'row', justifyContent: 'space-around' }}&gt;
   &lt;View style={{ width: 50, height: 50, backgroundColor: 'red' }} /&gt;
   &lt;View style={{ width: 50, height: 50, backgroundColor: 'green' }} /&gt;
   &lt;View style={{ width: 50, height: 50, backgroundColor: 'blue' }} /&gt;
 &lt;/View&gt;
 </code></pre>
-<h3 id="view-dengan-nested-view"><a class="header" href="#view-dengan-nested-view">View dengan Nested View</a></h3>
-<pre><code class="language-ts">import { View, Text } from 'react-native';
-
-&lt;View style={{ flex: 1, padding: 20 }}&gt;
-  &lt;Text style={{ marginBottom: 10 }}&gt;Header&lt;/Text&gt;
-
-  &lt;View style={{ flex: 1, backgroundColor: '#f0f0f0', padding: 10 }}&gt;
-    &lt;Text&gt;Konten utama di dalam nested View&lt;/Text&gt;
-  &lt;/View&gt;
-
-  &lt;Text style={{ marginTop: 10 }}&gt;Footer&lt;/Text&gt;
+<p><strong>Flex Grow</strong></p>
+<pre><code class="language-ts">&lt;View style={{ flex: 1, flexDirection: 'row' }}&gt;
+  &lt;View style={{ flex: 1, backgroundColor: 'red' }} /&gt;
+  &lt;View style={{ flex: 2, backgroundColor: 'green' }} /&gt;
+  &lt;View style={{ flex: 3, backgroundColor: 'blue' }} /&gt;
 &lt;/View&gt;
 </code></pre>
-<h3 id="view-sebagai-card"><a class="header" href="#view-sebagai-card">View Sebagai Card</a></h3>
-<pre><code class="language-ts">import { View, Text } from 'react-native';
-
-&lt;View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}&gt;
-  &lt;View
-    style={{
-      width: 200,
-      padding: 20,
-      borderRadius: 10,
-      backgroundColor: '#fff',
-      elevation: 3, // Android shadow
-      shadowColor: '#000', // iOS shadow
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.25,
-      shadowRadius: 3.84,
-    }}
-  &gt;
-    &lt;Text style={{ fontSize: 18, fontWeight: 'bold' }}&gt;Card Title&lt;/Text&gt;
-    &lt;Text&gt;Ini isi card dengan styling View&lt;/Text&gt;
-  &lt;/View&gt;
+<h3 id="posiitioning"><a class="header" href="#posiitioning">Posiitioning</a></h3>
+<p>React Native mendukung properti position: <code>absolute</code> | <code>relative</code>.</p>
+<pre><code class="language-ts">&lt;View style={{ flex: 1 }}&gt;
+  &lt;View style={{ width: 100, height: 100, backgroundColor: 'skyblue' }} /&gt;
+  &lt;View style={{
+    width: 50,
+    height: 50,
+    backgroundColor: 'tomato',
+    position: 'absolute',
+    top: 30,
+    left: 30
+  }} /&gt;
 &lt;/View&gt;
+</code></pre>
+<h3 id="styling-text"><a class="header" href="#styling-text">Styling Text</a></h3>
+<pre><code class="language-ts">&lt;Text style={{
+  fontSize: 20,
+  fontWeight: 'bold',
+  fontStyle: 'italic',
+  textAlign: 'center',
+  textDecorationLine: 'underline',
+}}&gt;
+  Ini contoh teks
+&lt;/Text&gt;
+</code></pre>
+<h3 id="styling-dengan-array"><a class="header" href="#styling-dengan-array">Styling dengan Array</a></h3>
+<pre><code class="language-ts">&lt;Text style={[styles.text, { color: 'red' }]}&gt;
+  Warna teks ini di-override jadi merah
+&lt;/Text&gt;
 </code></pre>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="komponen-react-native.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="component-flatlist.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next prefetch" href="component-text.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="style-layout-react-native-lanjutan.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -269,11 +284,11 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="komponen-react-native.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="component-flatlist.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next prefetch" href="component-text.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="style-layout-react-native-lanjutan.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>
