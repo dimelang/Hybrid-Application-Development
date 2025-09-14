@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Module &amp; Import/Export - Hybrid Application Development</title>
+        <title>React Native CLI - Hybrid Application Development</title>
 
 
         <!-- Custom HTML head -->
@@ -175,79 +175,44 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="module--importexport"><a class="header" href="#module--importexport">Module &amp; Import/Export</a></h1>
-<p>Di JavaScript (sejak ES6) dan TypeScript, modul digunakan untuk membagi kode ke dalam file-file terpisah sehingga kode lebih mudah dibaca &amp; dikelola dan bisa dipakai ulang di file lain.</p>
-<h3 id="export"><a class="header" href="#export">Export</a></h3>
-<p>Sebuah file TypeScript dianggap sebagai modul ketika memiliki <code>export</code> atau <code>import</code>.</p>
-<p>Contoh:</p>
-<p><code>mathUtils.ts</code></p>
-<pre><code class="language-ts">// export variabel
-export const PI = 3.14159;
-
-// export fungsi
-export function add(a: number, b: number): number {
-  return a + b;
-}
-
-// export class
-export class Calculator {
-  multiply(x: number, y: number): number {
-    return x * y;
-  }
-}
+                        <h1 id="react-native-cli"><a class="header" href="#react-native-cli">React Native CLI</a></h1>
+<p>Setelah environment selesai di-setup, mari kita coba membuat aplikasi pertama kita menggunakan React Native CLI.</p>
+<ol>
+<li>
+<p>Membuat Project Baru</p>
+<pre><code class="language-bash">npx @react-native-community/cli@latest init MyFirstApp
 </code></pre>
-<h3 id="import"><a class="header" href="#import">Import</a></h3>
-<p>Kita bisa mengimpor apa yang diekspor dari file lain.</p>
-<p><code>app.ts</code></p>
-<pre><code class="language-ts">import { PI, add, Calculator } from "./mathUtils";
-
-console.log(PI); // 3.14159
-console.log(add(10, 5)); // 15
-
-const calc = new Calculator();
-console.log(calc.multiply(4, 3)); // 12
+<p>Jika sebelumnya sudah pernah menginstal react-native-cli secara global, jalankan command terminal berikut unutk mencegah kesalahan</p>
+<pre><code class="language-bash">npm uninstall -g react-native-cli @react-native-community/cli
 </code></pre>
-<p>Dengan kurung kurawal <code>{}</code> kita bisa mengambil item-item spesifik dari modul. TypeScript memastikan hanya yang diekspor yang bisa diimpor.</p>
-<h3 id="export-default"><a class="header" href="#export-default">Export Default</a></h3>
-<p>Kadang sebuah modul hanya punya satu hal utama. Untuk kasus ini kita bisa pakai default export.
-Contoh:</p>
-<p>logger.ts</p>
-<pre><code class="language-ts">export default function log(message: string): void {
-  console.log("[LOG]:", message);
-}
+</li>
+<li>
+<p>Start Metro
+<a href="https://metrobundler.dev/">Metro</a> merupakan tool build berbasis JavaScript. Jalankan terminal command berikut untuk menjalankan Metro</p>
+<pre><code class="language-bash">npm start
 </code></pre>
-<p><code>app.ts</code></p>
-<pre><code class="language-ts">import log from "./logger";
-
-log("Halo dari default export!");
+</li>
+<li>
+<p>Jalankan Aplikasi
+Buka terminal baru lalu jalankan terminal command berikut untuk menjalankan aplikasi React Native</p>
+<pre><code class="language-bash">npm run android
 </code></pre>
-<h3 id="alias-import--export"><a class="header" href="#alias-import--export">Alias Import &amp; Export</a></h3>
-<p>Kita bisa mengganti nama saat export atau import menggunakan <code>as</code>. Alias sering dipakai untuk menghindari konflik nama atau membuat kode lebih singkat.</p>
-<p><code>shapes.ts</code></p>
-<pre><code class="language-ts">export function areaRectangle(w: number, h: number): number {
-  return w * h;
-}
-
-export function areaCircle(r: number): number {
-  return Math.PI * r * r;
-}
+<p>atau</p>
+<pre><code class="language-bash">npm run ios // hanya pada macOS
 </code></pre>
-<p><code>app.ts</code></p>
-<pre><code class="language-ts">import { areaRectangle as rect, areaCircle as circle } from "./shapes";
-
-console.log(rect(10, 5)); // 50
-console.log(circle(7));   // 153.938...
-</code></pre>
+<p>Aplikasi akan berjalan di emulator</p>
+</li>
+</ol>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="class-oop-dasar.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="expo-go.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next prefetch" href="setup-environment.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="hello-world-app-expo.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -257,11 +222,11 @@ console.log(circle(7));   // 153.938...
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="class-oop-dasar.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="expo-go.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next prefetch" href="setup-environment.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="hello-world-app-expo.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>

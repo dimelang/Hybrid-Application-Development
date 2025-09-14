@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Module &amp; Import/Export - Hybrid Application Development</title>
+        <title>Komponen - Hybrid Application Development</title>
 
 
         <!-- Custom HTML head -->
@@ -175,79 +175,171 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="module--importexport"><a class="header" href="#module--importexport">Module &amp; Import/Export</a></h1>
-<p>Di JavaScript (sejak ES6) dan TypeScript, modul digunakan untuk membagi kode ke dalam file-file terpisah sehingga kode lebih mudah dibaca &amp; dikelola dan bisa dipakai ulang di file lain.</p>
-<h3 id="export"><a class="header" href="#export">Export</a></h3>
-<p>Sebuah file TypeScript dianggap sebagai modul ketika memiliki <code>export</code> atau <code>import</code>.</p>
-<p>Contoh:</p>
-<p><code>mathUtils.ts</code></p>
-<pre><code class="language-ts">// export variabel
-export const PI = 3.14159;
+                        <h1 id="komponen-react-native"><a class="header" href="#komponen-react-native">Komponen React Native</a></h1>
+<p>Dalam <strong>React Native</strong>, <code>App.tsx</code> merupakan file utama yang pertama kali dijalankan ketika aplikasi dibuka. Kalau di web, mirip seperti <code>index.html</code> + <code>index.js</code>.</p>
+<h3 id="struktur-dasar-apptsx-react-native-cli"><a class="header" href="#struktur-dasar-apptsx-react-native-cli">Struktur dasar <code>App.tsx</code> (React Native CLI)</a></h3>
+<pre><code class="language-ts">import { NewAppScreen } from '@react-native/new-app-screen';
+import { StatusBar, StyleSheet, useColorScheme, View } from 'react-native';
+import {
+  SafeAreaProvider,
+  useSafeAreaInsets,
+} from 'react-native-safe-area-context';
 
-// export fungsi
-export function add(a: number, b: number): number {
-  return a + b;
+function App() {
+  const isDarkMode = useColorScheme() === 'dark';
+
+  return (
+    &lt;SafeAreaProvider&gt;
+      &lt;StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} /&gt;
+      &lt;AppContent /&gt;
+    &lt;/SafeAreaProvider&gt;
+  );
 }
 
-// export class
-export class Calculator {
-  multiply(x: number, y: number): number {
-    return x * y;
-  }
-}
-</code></pre>
-<h3 id="import"><a class="header" href="#import">Import</a></h3>
-<p>Kita bisa mengimpor apa yang diekspor dari file lain.</p>
-<p><code>app.ts</code></p>
-<pre><code class="language-ts">import { PI, add, Calculator } from "./mathUtils";
+function AppContent() {
+  const safeAreaInsets = useSafeAreaInsets();
 
-console.log(PI); // 3.14159
-console.log(add(10, 5)); // 15
-
-const calc = new Calculator();
-console.log(calc.multiply(4, 3)); // 12
-</code></pre>
-<p>Dengan kurung kurawal <code>{}</code> kita bisa mengambil item-item spesifik dari modul. TypeScript memastikan hanya yang diekspor yang bisa diimpor.</p>
-<h3 id="export-default"><a class="header" href="#export-default">Export Default</a></h3>
-<p>Kadang sebuah modul hanya punya satu hal utama. Untuk kasus ini kita bisa pakai default export.
-Contoh:</p>
-<p>logger.ts</p>
-<pre><code class="language-ts">export default function log(message: string): void {
-  console.log("[LOG]:", message);
-}
-</code></pre>
-<p><code>app.ts</code></p>
-<pre><code class="language-ts">import log from "./logger";
-
-log("Halo dari default export!");
-</code></pre>
-<h3 id="alias-import--export"><a class="header" href="#alias-import--export">Alias Import &amp; Export</a></h3>
-<p>Kita bisa mengganti nama saat export atau import menggunakan <code>as</code>. Alias sering dipakai untuk menghindari konflik nama atau membuat kode lebih singkat.</p>
-<p><code>shapes.ts</code></p>
-<pre><code class="language-ts">export function areaRectangle(w: number, h: number): number {
-  return w * h;
+  return (
+    &lt;View style={styles.container}&gt;
+      &lt;NewAppScreen
+        templateFileName="App.tsx"
+        safeAreaInsets={safeAreaInsets}
+      /&gt;
+    &lt;/View&gt;
+  );
 }
 
-export function areaCircle(r: number): number {
-  return Math.PI * r * r;
-}
-</code></pre>
-<p><code>app.ts</code></p>
-<pre><code class="language-ts">import { areaRectangle as rect, areaCircle as circle } from "./shapes";
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+});
 
-console.log(rect(10, 5)); // 50
-console.log(circle(7));   // 153.938...
+export default App;
 </code></pre>
+<p>Template default React Native CLI memang terlihat cukup kompleks bagi yang pertama kali belajar. Silahkan ubah kode di atas menjadi:</p>
+<pre><code class="language-ts">import { NewAppScreen } from '@react-native/new-app-screen';
+import { StatusBar, StyleSheet, useColorScheme, View } from 'react-native';
+import {
+  SafeAreaProvider,
+  useSafeAreaInsets,
+} from 'react-native-safe-area-context';
+
+function App() {
+  const isDarkMode = useColorScheme() === 'dark';
+
+  return (
+    &lt;SafeAreaProvider&gt;
+      &lt;StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} /&gt;
+      &lt;AppContent /&gt;
+    &lt;/SafeAreaProvider&gt;
+  );
+}
+
+function AppContent() {
+  const safeAreaInsets = useSafeAreaInsets();
+
+  return (
+    &lt;View style={[styles.container,{ paddingTop: safeAreaInsets.top, paddingBottom: safeAreaInsets.bottom }]}&gt;
+      &lt;View style={styles.center}&gt;
+        &lt;Text style={styles.title}&gt;Hello React Native 🚀&lt;/Text&gt;
+        &lt;Text style={styles.subtitle}&gt;Aplikasi pertama saya dengan CLI&lt;/Text&gt;
+      &lt;/View&gt;
+    &lt;/View&gt;
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#f0f0f0',
+  },
+  center: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  subtitle: {
+    fontSize: 18,
+    color: '#666',
+    marginTop: 8,
+  },
+});
+
+export default App;
+</code></pre>
+<h3 id="struktur-dasar-apptsx-expo"><a class="header" href="#struktur-dasar-apptsx-expo">Struktur dasar <code>App.tsx</code> (Expo)</a></h3>
+<pre><code class="language-ts">import { StatusBar } from 'expo-status-bar';
+import { StyleSheet, Text, View } from 'react-native';
+
+export default function App() {
+  return (
+    &lt;View style={styles.container}&gt;
+      &lt;Text&gt;Open up App.tsx to start working on your app!&lt;/Text&gt;
+      &lt;StatusBar style="auto" /&gt;
+    &lt;/View&gt;
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});
+</code></pre>
+<p>Coba ubah bagian <code>&lt;Text&gt;</code> menjadi berikut:</p>
+<pre><code class="language-ts">import { StatusBar } from 'expo-status-bar';
+import { StyleSheet, Text, View } from 'react-native';
+
+export default function App() {
+  return (
+    &lt;View style={styles.container}&gt;
+      &lt;Text style={styles.title}&gt;Hello React Native dengan Expo 🚀&lt;/Text&gt;
+      &lt;Text style={styles.subtitle}&gt;Aplikasi pertama saya&lt;/Text&gt;
+      &lt;StatusBar style="auto" /&gt;
+    &lt;/View&gt;
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#f0f0f0',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  subtitle: {
+    fontSize: 18,
+    color: '#555',
+    marginTop: 8,
+  },
+});
+</code></pre>
+<p>Amati perbedaan sebelum dan sesudah dimodifikasi.</p>
+<p>React Native menyediakan sekumpulan komponen bawaan (built-in components) yang digunakan untuk membangun UI aplikasi. Komponen ini mirip dengan elemen HTML di web, tetapi disesuaikan dengan dunia mobile.</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="class-oop-dasar.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="struktur-proyek-react-native.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next prefetch" href="setup-environment.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="component-view.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -257,11 +349,11 @@ console.log(circle(7));   // 153.938...
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="class-oop-dasar.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="struktur-proyek-react-native.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next prefetch" href="setup-environment.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="component-view.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>
