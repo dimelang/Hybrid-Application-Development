@@ -5,58 +5,36 @@
 ```ts
 import { Text, View } from 'react-native';
 
-export default function App() {
-  return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>Hello React Native!</Text>
-    </View>
-  );
-}
+<View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+  <Text>Hello React Native!</Text>
+</View>
 ```
 
 ### Text dengan Styling
 ```ts
 import { Text, View } from 'react-native';
 
-export default function App() {
-  return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text style={{ fontSize: 24, fontWeight: 'bold', color: 'blue' }}>
-        Teks dengan styling
-      </Text>
-    </View>
-  );
-}
+<Text style={{ fontSize: 24, fontWeight: 'bold', color: 'blue' }}>
+  Teks dengan styling
+</Text>
 ```
 
 ### Multiline Text
 ```ts
 import { Text, View } from 'react-native';
 
-export default function App() {
-  return (
-    <View style={{ padding: 20 }}>
-      <Text>
-        Baris pertama{"\n"}
-        Baris kedua{"\n"}
-        Baris ketiga
-      </Text>
-    </View>
-  );
-}
+<Text>
+  Baris pertama{"\n"}
+  Baris kedua{"\n"}
+  Baris ketiga
+</Text>
 ```
 
 ### Nested Text
 ```ts
 import { Text, View } from 'react-native';
 
-export default function App() {
-  return (
-    <View style={{ padding: 20 }}>
-      <Text>
-        Ini <Text style={{ fontWeight: 'bold' }}>teks tebal</Text> di dalam kalimat.
-      </Text>
-    </View>
-  );
-}
+<Text>
+  Ini <Text style={{ fontWeight: 'bold' }}>teks tebal</Text> di dalam kalimat.
+</Text>
 ```
