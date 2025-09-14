@@ -49,44 +49,6 @@ const styles = StyleSheet.create({
 });
 ```
 
-### Flexbox untuk Layout
-React Native menggunakan Flexbox untuk mengatur tata letak.
-Secara default, `flexDirection` di React Native adalah column (berbeda dengan web yang default-nya `row`).
-
-**Flex direction**
-```ts
-<View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
-  <View style={{ width: 50, height: 50, backgroundColor: 'red' }} />
-  <View style={{ width: 50, height: 50, backgroundColor: 'green' }} />
-  <View style={{ width: 50, height: 50, backgroundColor: 'blue' }} />
-</View>
-```
-
-**Flex Grow**
-```ts
-<View style={{ flex: 1, flexDirection: 'row' }}>
-  <View style={{ flex: 1, backgroundColor: 'red' }} />
-  <View style={{ flex: 2, backgroundColor: 'green' }} />
-  <View style={{ flex: 3, backgroundColor: 'blue' }} />
-</View>
-```
-
-### Posiitioning
-React Native mendukung properti position: `absolute` | `relative`.
-```ts
-<View style={{ flex: 1 }}>
-  <View style={{ width: 100, height: 100, backgroundColor: 'skyblue' }} />
-  <View style={{
-    width: 50,
-    height: 50,
-    backgroundColor: 'tomato',
-    position: 'absolute',
-    top: 30,
-    left: 30
-  }} />
-</View>
-```
-
 ### Styling Text
 ```ts
 <Text style={{
