@@ -31,3 +31,12 @@
     - [FlatList](component-flatlist.md)
   - [Style & Layout](style-layout-react-native.md)
     - [Style & Layout Lanjutan](style-layout-react-native-lanjutan.md)
+  - [Props](props.md)
+  - [Hooks](hooks.md)
+    - [State](state.md)
+    - [Side Effects](side-effects.md)
+    - [Context](context.md)
+    - [Reference](reference.md)
+    - [Reducer](reducer.md)
+    <!-- - [Custom Hooks](custom-hooks.md) -->
+  - [Event Handling](event-handling.md)
