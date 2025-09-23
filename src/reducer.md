@@ -24,36 +24,106 @@ function reducer(state, action) {
 Reducer menerima state lama dan sebuah action, lalu mengembalikan state baru.
 
 ## Contoh 1: Counter
+### App.tsx
 ```jsx
-import React, { useReducer } from "react";
-import { View, Text, Button } from "react-native";
 
-const initialState = { count: 0 };
-
-
-function reducer(state, action) {
-  switch (action.type) {
-    case "increment":
-      return { count: state.count + 1 };
-    case "decrement":
-      return { count: state.count - 1 };
-    default:
-      return state;
-  }
-}
+import { StatusBar } from 'expo-status-bar';
+import { useReducer } from 'react';
+import { StyleSheet, View } from 'react-native';
+import Counter from './components/Counter';
 
 export default function App() {
-  const [state, dispatch] = useReducer(reducer, initialState});
-
   return (
-    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <Text style={{ fontSize: 24 }}>Count: {state.count}</Text>
-      <Button title="Tambah" onPress={() => dispatch({ type: "increment" })} />
-      <Button title="Kurangi" onPress={() => dispatch({ type: "decrement" })} />
+    <View style={styles.container}>
+      <Counter title="Counter" />
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 20
+  }
+});
 ```
-Dengan `dispatch`, kita mengirim action (misalnya `{ type: "increment" }`), lalu reducer mengatur perubahan `state`.
+
+### components/Counter.tsx
+```jsx
+
+import { useReducer } from "react";
+import { Button, StyleSheet, Text, View } from "react-native";
+
+type State = {
+    count: number
+}
+
+const initialState: State = { count: 0 };
+
+type Action = { jenis: "increment" } | { jenis: "decrement" };
+
+const reducer = (state: State, action: Action): State => {
+    switch (action.jenis) {
+        case "increment":
+            return { count: state.count + 1 };
+        case "decrement":
+            return { count: state.count - 1 };
+        default:
+            return state;
+    }
+}
+
+type CounterProps = { title: string }
+export default function Counter({ title }: CounterProps) {
+    const [state, dispatch] = useReducer(reducer, initialState);
+
+    return (
+        <View style={styles.card}>
+            <Text style={styles.title}>{title}</Text>
+            <Text style={[styles.content, state.count < 0 && { color: 'red' }]}>{state.count}</Text>
+            <View style={styles.button_container}>
+                <Button title="Kurangi" onPress={() => dispatch({ jenis: "decrement" })} />
+                <Button title="Tambah" onPress={() => dispatch({ jenis: 'increment' })} />
+            </View>
+        </View>
+    );
+}
+
+const styles = StyleSheet.create({
+    card: {
+        width: 240,
+        padding: 10,
+        borderRadius: 8,
+        backgroundColor: '#fff',
+        elevation: 3,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+    },
+    title: {
+        fontSize: 18,
+        fontWeight: 'bold',
+    },
+    content: {
+        alignSelf: 'center',
+        fontSize: 28,
+        fontWeight: "600",
+    },
+    button_container: {
+        padding: 8,
+        borderTopWidth: 1,
+        borderTopColor: '#4b4b4bff',
+        flexDirection: 'row',
+        gap: 10,
+        justifyContent: 'center',
+        alignItems: 'center'
+    }
+});
+```
+Dengan `dispatch`, kita mengirim action (misalnya `{ jenis: "increment" }`), lalu reducer mengatur perubahan `state`.
 
 

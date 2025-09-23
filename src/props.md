@@ -36,7 +36,9 @@ Pada kode di atas, komponen `App` berperan sebagai parent, sedangkan `Card` adal
 // components/Card.tsx
 import { View, Text, StyleSheet } from "react-native";
 
-export default function Card({ name, job }) {
+type CardProps = {name:string, job:string}
+
+export default function Card({ name, job }:CardProps) {
   return (
     <View style={styles.card}>
       <Text style={styles.name}>{name}</Text>

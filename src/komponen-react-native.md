@@ -1,4 +1,8 @@
 # Komponen React Native
+Ketika kita membuat sebuah aplikasi, sebenarnya kita sedang menyusun potongan-potongan kecil yang bersama-sama membentuk satu kesatuan tampilan. Potongan kecil ini dalam React Native disebut komponen. Bisa dibilang, komponen adalah "building blocks" dari aplikasi mobile.
+
+Hal menarik lainnya, React Native tidak hanya menyediakan komponen bawaan, tapi kita juga dapat membuat komponen buatan sendiri (custom component). Ini membuat kode kita lebih terstruktur, lebih mudah digunakan ulang, dan tentu saja lebih rapi.
+
 Dalam **React Native**, `App.tsx` merupakan file utama yang pertama kali dijalankan ketika aplikasi dibuka. Kalau di web, mirip seperti `index.html` + `index.js`.
 
 ### Struktur dasar `App.tsx` (React Native CLI)
@@ -163,5 +167,7 @@ const styles = StyleSheet.create({
 Amati perbedaan sebelum dan sesudah dimodifikasi.
 
 React Native menyediakan sekumpulan komponen bawaan (built-in components) yang digunakan untuk membangun UI aplikasi. Komponen ini mirip dengan elemen HTML di web, tetapi disesuaikan dengan dunia mobile.
+
+Selain komponen bawaan dari React Native, kita juga dapat menggunakan third-party yang sudah terkenal seperti [React Native Paper](https://reactnativepaper.com/), [GlueStack](https://gluestack.io/), [React Native Elements](https://reactnativeelements.com/), [UI Kitten](https://akveo.github.io/react-native-ui-kitten/), dan [Tamagui](https://tamagui.dev/)
 
 
