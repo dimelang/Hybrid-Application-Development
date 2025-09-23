@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Style &amp; Layout Lanjutan - Hybrid Application Development</title>
+        <title>Context - Hybrid Application Development</title>
 
 
         <!-- Custom HTML head -->
@@ -175,145 +175,125 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="style--layout-lanjutan"><a class="header" href="#style--layout-lanjutan">Style &amp; Layout Lanjutan</a></h1>
-<p>React Native menggunakan <strong>Flexbox</strong> untuk mengatur tata letak.<br />
-Bedanya dengan web:</p>
+                        <h1 id="context-usecontext"><a class="header" href="#context-usecontext">Context (<code>useContext</code>)</a></h1>
+<p>Ketika ukuran aplikasi masih tergolong kecil, komunikasi antar komponen yang umumnya melalui <code>props</code> cukup mudah dilakukan. Bayangkan apabila data yang dikirimkan ke banyak komponen dan berada di hirarki yang cukup dalam. Menggunakan <code>props</code> untuk mengirimkan data ke setiap level tentunya bukan teknik yang efektif karena nantinya akan mempersulit pengelolaan aplikasi.</p>
+<p>Dengan <code>context</code>, data dapat disimpan secara global sehingga dapat diakses oleh komponen mana pun tanpa harus melempar data menggunakan <code>props</code>.</p>
+<p>Secara sederhana, <code>Context</code> memiliki tiga bagian utama:</p>
 <ul>
-<li>Default <code>flexDirection</code> di web = <strong>row</strong></li>
-<li>Default <code>flexDirection</code> di React Native = <strong>column</strong></li>
+<li><strong>Membuat Context</strong> → menggunakan <code>React.createContext()</code>.</li>
+<li><strong>Provider</strong> → komponen yang membungkus bagian aplikasi, dan isinya adalah data yang akan dibagikan.</li>
+<li><strong>Consumer</strong> → komponen yang membaca data dari <code>Context</code>.</li>
 </ul>
-<p>Artinya, secara default komponen disusun <strong>dari atas ke bawah</strong>.</p>
-<hr />
-<h2 id="flexbox-untuk-layout"><a class="header" href="#flexbox-untuk-layout">Flexbox untuk Layout</a></h2>
-<p>React Native menggunakan Flexbox untuk mengatur tata letak.
-Secara default, <code>flexDirection</code> di React Native adalah column (berbeda dengan web yang default-nya <code>row</code>).</p>
-<p><strong>Flex direction</strong></p>
-<pre><code class="language-ts">&lt;View style={{ flexDirection: 'row', justifyContent: 'space-around' }}&gt;
-  &lt;View style={{ width: 50, height: 50, backgroundColor: 'red' }} /&gt;
-  &lt;View style={{ width: 50, height: 50, backgroundColor: 'green' }} /&gt;
-  &lt;View style={{ width: 50, height: 50, backgroundColor: 'blue' }} /&gt;
-&lt;/View&gt;
+<h2 id="contoh-theme-context-darklight-mode"><a class="header" href="#contoh-theme-context-darklight-mode">Contoh: Theme Context (Dark/Light Mode)</a></h2>
+<p>Struktur folder:</p>
+<pre><code class="language-bash">/components
+   └── ThemedButton.tsx
+/context
+   └── ThemeContext.tsx
+/screens
+   └── HomeScreen.tsx
+App.tsx
 </code></pre>
-<p><strong>Flex Grow</strong></p>
-<pre><code class="language-ts">&lt;View style={{ flex: 1, flexDirection: 'row' }}&gt;
-  &lt;View style={{ flex: 1, backgroundColor: 'red' }} /&gt;
-  &lt;View style={{ flex: 2, backgroundColor: 'green' }} /&gt;
-  &lt;View style={{ flex: 3, backgroundColor: 'blue' }} /&gt;
-&lt;/View&gt;
-</code></pre>
-<h3 id="justifycontent"><a class="header" href="#justifycontent">justifyContent</a></h3>
-<p>Mengatur posisi sepanjang main axis (sumbu utama = flexDirection).</p>
-<ul>
-<li><code>flex-start</code></li>
-<li><code>center</code></li>
-<li><code>flex-end</code></li>
-<li><code>space-between</code></li>
-<li><code>space-around</code></li>
-<li><code>space-evenly</code></li>
-</ul>
-<pre><code class="language-ts">&lt;View style={{ flexDirection: 'row', justifyContent: 'space-between' }}&gt;
-  &lt;View style={{ width: 50, height: 50, backgroundColor: 'red' }} /&gt;
-  &lt;View style={{ width: 50, height: 50, backgroundColor: 'green' }} /&gt;
-  &lt;View style={{ width: 50, height: 50, backgroundColor: 'blue' }} /&gt;
-&lt;/View&gt;
-</code></pre>
-<h3 id="alignitems"><a class="header" href="#alignitems">alignItems</a></h3>
-<p>Mengatur posisi sepanjang cross axis (sumbu berlawanan dengan main axis).</p>
-<ul>
-<li><code>flex-start</code></li>
-<li><code>center</code></li>
-<li><code>flex-end</code></li>
-<li><code>stretch</code></li>
-</ul>
-<pre><code class="language-ts">&lt;View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}&gt;
-  &lt;View style={{ width: 50, height: 50, backgroundColor: 'red' }} /&gt;
-  &lt;View style={{ width: 50, height: 100, backgroundColor: 'green' }} /&gt;
-&lt;/View&gt;
-</code></pre>
-<h3 id="alignself"><a class="header" href="#alignself">alignSelf</a></h3>
-<p>Digunakan pada child component untuk override <code>alignItems</code>.</p>
-<pre><code class="language-ts">&lt;View style={{ flexDirection: 'row', alignItems: 'flex-start' }}&gt;
-  &lt;View style={{ width: 50, height: 50, backgroundColor: 'red' }} /&gt;
-  &lt;View style={{ width: 50, height: 50, backgroundColor: 'green', alignSelf: 'flex-end' }} /&gt;
-&lt;/View&gt;
-</code></pre>
-<h3 id="flex"><a class="header" href="#flex">flex</a></h3>
-<p>Properti <code>flex</code> menentukan seberapa banyak ruang yang diambil relatif terhadap sibling-nya.</p>
-<pre><code class="language-ts">&lt;View style={{ flexDirection: 'row', flex: 1 }}&gt;
-  &lt;View style={{ flex: 1, backgroundColor: 'red' }} /&gt;
-  &lt;View style={{ flex: 2, backgroundColor: 'green' }} /&gt;
-  &lt;View style={{ flex: 3, backgroundColor: 'blue' }} /&gt;
-&lt;/View&gt;
-</code></pre>
-<ul>
-<li><code>flex: 1</code> → isi ruang secara proporsional.</li>
-<li><code>flex: 0</code> → ukurannya tetap sesuai width/height.</li>
-</ul>
-<h3 id="flexwrap"><a class="header" href="#flexwrap">flexWrap</a></h3>
-<p>Membungkus elemen jika ruang tidak cukup.</p>
-<pre><code class="language-ts">&lt;View style={{ flexDirection: 'row', flexWrap: 'wrap' }}&gt;
-  {Array.from({ length: 10 }).map((_, i) =&gt; (
-    &lt;View
-      key={i}
-      style={{ width: 80, height: 80, backgroundColor: i % 2 ? 'tomato' : 'skyblue', margin: 4 }}
-    /&gt;
-  ))}
-&lt;/View&gt;
-</code></pre>
-<p><strong>Contoh Kombinasi</strong></p>
-<pre><code class="language-ts">&lt;View style={{ flex: 1 }}&gt;
-  &lt;View style={{ flex: 1, backgroundColor: 'tomato' }} /&gt;     {/* Header */}
-  &lt;View style={{ flex: 4, backgroundColor: 'skyblue' }} /&gt;   {/* Content */}
-  &lt;View style={{ flex: 1, backgroundColor: 'limegreen' }} /&gt; {/* Footer */}
-&lt;/View&gt;
-</code></pre>
-<h2 id="positioning"><a class="header" href="#positioning">Positioning</a></h2>
-<p>Selain Flexbox, React Native juga mendukung <strong>positioning</strong> untuk mengatur letak komponen.<br />
-Prinsipnya mirip dengan CSS di web.</p>
-<h3 id="relative-default"><a class="header" href="#relative-default">relative (default)</a></h3>
-<ul>
-<li>Semua komponen secara default memiliki <code>position: "relative"</code>.</li>
-<li>Artinya posisinya ditentukan oleh layout Flexbox.</li>
-<li>Jika kita menambahkan <code>top</code>, <code>left</code>, <code>right</code>, atau <code>bottom</code>, maka komponen akan bergeser relatif terhadap posisi normalnya.</li>
-</ul>
-<pre><code class="language-tsx">&lt;View style={{ flex: 1 }}&gt;
-  &lt;View style={{ width: 100, height: 100, backgroundColor: 'tomato' }} /&gt;
-  &lt;View style={{ width: 100, height: 100, backgroundColor: 'skyblue', top: 20, left: 20 }} /&gt;
-&lt;/View&gt;
-</code></pre>
-<h3 id="absolute"><a class="header" href="#absolute">absolute</a></h3>
-<ul>
-<li>Komponen akan dilepaskan dari alur Flexbox.</li>
-<li>Posisi ditentukan relatif terhadap parent yang memiliki <code>position: "relative"</code> (atau container utamanya).</li>
-</ul>
-<pre><code class="language-ts">&lt;View style={{ flex: 1 }}&gt;
-  &lt;View style={{ width: 200, height: 200, backgroundColor: 'lightgray' }}&gt;
-    &lt;View style={{ position: 'absolute', top: 20, left: 20, width: 50, height: 50, backgroundColor: 'tomato' }} /&gt;
-    &lt;View style={{ position: 'absolute', bottom: 20, right: 20, width: 50, height: 50, backgroundColor: 'skyblue' }} /&gt;
-  &lt;/View&gt;
-&lt;/View&gt;
-</code></pre>
-<h3 id="z-index"><a class="header" href="#z-index">Z-Index</a></h3>
-<ul>
-<li>Sama seperti CSS, digunakan untuk mengatur lapisan tumpukan.</li>
-<li>Semakin besar <code>zIndex</code>, semakin berada di atas.</li>
-</ul>
-<pre><code class="language-ts">&lt;View style={{ flex: 1 }}&gt;
-  &lt;View style={{ width: 100, height: 100, backgroundColor: 'tomato', zIndex: 1, position: 'absolute', top: 50, left: 50 }} /&gt;
-  &lt;View style={{ width: 100, height: 100, backgroundColor: 'skyblue', position: 'absolute', top: 70, left: 70 }} /&gt;
-&lt;/View&gt;
+<p><strong>ThemeContext.tsx</strong></p>
+<pre><code class="language-jsx">import React from "react";
+import { createContext, useState } from "react";
 
+export const ThemeContext = React.createContext('light'); // nilai default
+
+export function ThemeProvider({ children }) {
+    const [theme, setTheme] = useState('light');
+    const toggleTheme = () =&gt; setTheme(theme == 'light' ? 'dark' : 'light');
+    return (
+        &lt;ThemeContext.Provider value={{ theme, toggleTheme }}&gt;
+            {children}
+        &lt;/ThemeContext.Provider&gt;
+    );
+}
 </code></pre>
+<p><code>React.createContext('light')</code> bertindak sebagai wadah (context) untuk menyimpan data yang dapat digunakan di seluruh komponen. Di sini context akan menyimpan theme (light/dark) dan fungsi toggleTheme.</p>
+<p><code>ThemeProvider</code> adalah komponen pembungkus dengan <code>state</code> awal bernilai light. <code>ThemeContext.Provider</code> membagikan data (<code>theme</code>, <code>toggleTheme</code>) ke semua komponen di dalamnya (<code>children</code>). Artinya, komponen apa pun yang ada di bawah <code>ThemeProvider</code> dapat mengambil <code>theme</code> dan <code>toggleTheme</code>.</p>
+<p><strong>ThemedButton.tsx</strong></p>
+<pre><code class="language-jsx">import { useContext } from "react";
+import { ThemeContext } from "../context/ThemeContext";
+import { Text, TouchableOpacity } from "react-native";
+
+export default function ThemedButton({ title, onPress }) {
+    const { theme } = useContext(ThemeContext);
+
+    const backgroundColor = theme === 'light' ? '#007BFF' : '#555';
+    const textColor = theme === 'light' ? '#fff' : '#ddd';
+
+    return (
+        &lt;TouchableOpacity
+            style={{
+                backgroundColor,
+                padding: 12,
+                borderRadius: 8,
+                margin: 5,
+            }}
+            onPress={onPress}&gt;
+            &lt;Text style={{ color: textColor, fontWeight: 'bold' }}&gt;{title}&lt;/Text&gt;
+        &lt;/TouchableOpacity&gt;
+    );
+}
+</code></pre>
+<p><strong>HomeScreen.tsx</strong></p>
+<pre><code class="language-jsx">import { useContext } from "react";
+import { ThemeContext } from "../context/ThemeContext";
+import { Text, View } from "react-native";
+import ThemedButton from "../components/ThemedButton";
+
+export default function HomeScreen() {
+    const { theme, toggleTheme } = useContext(ThemeContext);
+    return (
+        &lt;View style={{
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: theme === 'light' ? '#fff' : '#333',
+        }}&gt;
+            &lt;Text style={{ color: theme === 'light' ? '#000' : '#fff' }}&gt;
+                Tema saat ini: {theme}
+            &lt;/Text&gt;
+            &lt;ThemedButton title="Ganti Tema" onPress={toggleTheme} /&gt;
+            &lt;ThemedButton title="Button Tambahan" onPress={() =&gt; { }} /&gt;
+
+        &lt;/View&gt;
+    );
+}
+</code></pre>
+<p><code>useContext(ThemeContext)</code> digunakan untuk mengakses value atau fungsi yang diturunkan oleh <code>ThemeContext</code>.</p>
+<p><strong>App.tsx</strong></p>
+<pre><code class="language-jsx">import { StatusBar } from 'expo-status-bar';
+import { StyleSheet, Text, View } from 'react-native';
+import { ThemeProvider } from './context/ThemeContext';
+import HomeScreen from './screens/HomeScreen';
+
+export default function App() {
+  return (
+    &lt;ThemeProvider&gt;
+      &lt;HomeScreen /&gt;
+    &lt;/ThemeProvider&gt;
+  );
+}
+</code></pre>
+<h2 id="alur-program"><a class="header" href="#alur-program">Alur Program</a></h2>
+<ol>
+<li><code>App.tsx</code> → Komponen parent yang membungkus seluruh komponen lainnya dengan <code>ThemeProvider</code> agar seluruh komponen <em>child</em> dapat mengakses <code>ThemeContext</code>.</li>
+<li><code>ThemeContext.tsx</code> → Menyimpan state tema (<code>light</code> atau <code>dark</code>) dan menyediakan fungsi <code>toggleTheme</code> untuk mengubah <code>state</code> tema.</li>
+<li><code>HomeScreen.tsx</code> → Menampilkan teks sesuai tema + tombol untuk ganti tema.</li>
+<li><code>ThemedButton.tsx</code> → Komponen tombol yang mengatur gaya sesuai tema.</li>
+</ol>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="style-layout-react-native.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="side-effects.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next prefetch" href="props.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="reference.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -323,11 +303,11 @@ Prinsipnya mirip dengan CSS di web.</p>
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="style-layout-react-native.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="side-effects.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next prefetch" href="props.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="reference.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>

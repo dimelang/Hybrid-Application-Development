@@ -2103,6 +2103,812 @@ Prinsipnya mirip dengan CSS di web.</p>
 &lt;/View&gt;
 
 </code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="props"><a class="header" href="#props">Props</a></h1>
+<p>Dalam React Native, terdapat salah satu konsep penting yang perlu dipahami yaitu <code>props</code>. <code>Props</code>, singkatan dari <strong>properties</strong>, merupakan cara untuk mengirimkan data dari satu komponen ke komponen lain. Bayangkan <code>props</code> seperti sebuah "paket data" yang diberikan oleh komponen induk (<em>parent</em>) kepada komponen anak (<em>child</em>). Dengan cara ini, beberapa komponen dapat berinteraksi atau berkomunikasi dengan baik tanpa harus mengubah struktur dasarnya.</p>
+<p><code>Props</code> bersifat read-only, artinya data yang dikirim melalui props hanya bisa dibaca oleh komponen penerima, tetapi tidak bisa diubah secara langsung dari dalam komponen tersebut. Hal ini menjadikan <code>props</code> sebagai fondasi utama dalam membangun komponen yang dapat digunakan kembali (<em>reusable components</em>).</p>
+<p>Misalkan kita memiliki sebuah komponen bernama <code>Card</code>. Komponen ini dirancang untuk menampilkan nama dan pekerjaan seseorang. Menggunakan <code>props</code>, kita cukup membuat satu komponen <code>Card</code> lalu mengirimkan data yang berbeda melalui <code>props</code>.</p>
+<pre><code class="language-jsx">// App.tsx
+import { View, StyleSheet } from "react-native";
+import Card from "./components/Card";
+
+export default function App() {
+  return (
+    &lt;View style={styles.container}&gt;
+      &lt;Card name="John Petrucci" job="Guitarist" /&gt;
+      &lt;Card name="Mike Portnoy" job="Drummer" /&gt;
+    &lt;/View&gt;
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#fefefe"
+  }
+});
+</code></pre>
+<p>Pada kode di atas, komponen <code>App</code> berperan sebagai parent, sedangkan <code>Card</code> adalah child. Data <code>name</code> dan <code>job</code> dikirim ke dalam <code>Card</code> melalui props.</p>
+<pre><code class="language-jsx">// components/Card.tsx
+import { View, Text, StyleSheet } from "react-native";
+
+export default function Card({ name, job }) {
+  return (
+    &lt;View style={styles.card}&gt;
+      &lt;Text style={styles.name}&gt;{name}&lt;/Text&gt;
+      &lt;Text style={styles.job}&gt;{job}&lt;/Text&gt;
+    &lt;/View&gt;
+  );
+}
+
+const styles = StyleSheet.create({
+  card: {
+    width: 200,
+    padding: 10,
+    margin: 8,
+    borderRadius: 8,
+    backgroundColor: "#e0f7fa",
+    alignItems: "center"
+  },
+  name: {
+    fontSize: 18,
+    fontWeight: "bold"
+  },
+  job: {
+    fontSize: 14,
+    color: "#555"
+  }
+});
+
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="hooks"><a class="header" href="#hooks">Hooks</a></h1>
+<p>Hooks adalah fungsi khusus yang memungkinkan kita untuk menggunakan fitur <code>React</code> seperti <code>state</code>, <code>lifecycle</code>, atau <code>context</code> ke dalam <code>function component</code>. Semua hook memiliki aturan yang sama:</p>
+<ul>
+<li>Selalu dipanggil di level atas <code>function component</code>.</li>
+<li>Tidak dapat digunakan di dalam loop atau kondisi.</li>
+<li>Selalu diawali dengan kata <code>use</code>.</li>
+</ul>
+<p>Di dalam hook terdapat beberapa konsep inti yang perlu dipahami:</p>
+<ol>
+<li>
+<p><a href="state.html"><strong>State Management dengan <code>useState</code></strong></a></p>
+<ul>
+<li>Konsep: menyimpan dan mengubah data di dalam komponen.</li>
+<li>Setiap kali state berubah, komponen akan re-<em>render</em>.</li>
+<li>Contoh: menyimpan teks input, toggle boolean, counter.</li>
+</ul>
+</li>
+<li>
+<p><a href="side-effects.html"><strong>Side Effects dengan <code>useEffect</code></strong></a></p>
+<ul>
+<li>Konsep: menjalankan efek samping setelah render.</li>
+<li>Penting karena React Native sifatnya declarative, dan <code>useEffect</code> dipakai untuk hal yang tidak langsung berhubungan dengan tampilan.</li>
+<li>Contoh: memanggil <code>API</code>, mengatur timer, event listener, dan unsubscribe.</li>
+</ul>
+</li>
+<li>
+<p><a href="context.html"><strong>Context dengan <code>useContext</code></strong></a></p>
+<ul>
+<li>Konsep: berbagi data global antar komponen tanpa harus terus menerus menggunakan <code>props</code>.</li>
+<li>Misalnya: tema aplikasi (dark/light), autentikasi user, bahasa.</li>
+</ul>
+</li>
+<li>
+<p><a href="reference.html"><strong>Reference dengan <code>useRef</code></strong></a></p>
+<ul>
+<li>Konsep: menyimpan nilai yang tidak memicu re-<em>render</em> ketika berubah.</li>
+<li>Contoh: menyimpan nilai sementara (misalnya previous value) dan akses langsung ke komponen (misalnya TextInput focus).</li>
+</ul>
+</li>
+<li>
+<p><a href="reducer.html"><strong>Reducer dengan <code>useReducer</code></strong></a></p>
+<ul>
+<li>Konsep: alternatif dari <code>useState</code> untuk state yang lebih kompleks.</li>
+<li>Contoh: cocok untuk logika yang melibatkan banyak aksi (misalnya form dengan banyak field).</li>
+</ul>
+</li>
+</ol>
+<!-- 6. [**Custom Hooks**](custom-hooks.md)
+    - Konsep: membuat hook sendiri untuk mengabstraksi logika agar dapat digunakan ulang.
+    - Contoh: `useAuth()`, `useFetch()`, `useOrientation()`. -->
+<div style="break-before: page; page-break-before: always;"></div><h1 id="state-usestate"><a class="header" href="#state-usestate">State (<code>useState</code>)</a></h1>
+<p>Setelah sebelumnya kita mengenal <code>props</code> sebagai cara untuk memberikan data dari luar ke dalam sebuah komponen, kini kita akan membahas konsep penting lainnya, yaitu <code>state</code>. Jika <code>props</code> dapat kita ibaratkan seperti paket data yang dikirim dari luar, maka state adalah data milik komponen itu sendiri yang dapat berubah sepanjang waktu.</p>
+<p>Sebuah komponen dapat memiliki <code>state</code> untuk menyimpan informasi yang bersifat dinamis. Misalnya, ketika pengguna menekan tombol, mengetik di dalam sebuah input, atau ketika aplikasi menerima data baru dari server, semua perubahan tersebut bisa dikelola dengan <code>state</code>. Inilah yang membuat aplikasi menjadi interaktif.</p>
+<p>Berbeda dengan <code>props</code> yang hanya bisa dibaca (<strong>read-only</strong>), <code>state</code> dapat diperbarui. Ketika <code>state</code> berubah, React Native akan secara otomatis melakukan <em>re-render</em> pada bagian komponen yang menggunakan <code>state</code> tersebut. Dengan demikian, tampilan aplikasi akan selalu sesuai dengan data terbaru.</p>
+<p>Struktur dasarnya seperti ini:</p>
+<pre><code class="language-jsx">const [value, setValue] = useState(initialValue);
+</code></pre>
+<ul>
+<li><code>value</code> → isi <code>state</code> saat ini.</li>
+<li><code>setValue</code> → fungsi untuk mengubah isi <code>state</code>.</li>
+<li><code>initialValue</code> → nilai awal <code>state</code>.</li>
+</ul>
+<h2 id="contoh-state-1-counter-sederhana"><a class="header" href="#contoh-state-1-counter-sederhana">Contoh State 1: Counter Sederhana</a></h2>
+<p>Sebagai contoh, kita ingin menampilkan angka yang bertambah setiap kali pengguna menekan tombol "+" dan begitupun sebaliknya untuk tombol "-". Untuk menyimpan angka tersebut, kita menggunakan <code>state</code>. Setiap kali tombol ditekan, <code>state</code> diperbarui, dan tampilan angka pada layar pun langsung ikut berubah.</p>
+<pre><code class="language-jsx">// App.tsx
+import React, { useState } from "react";
+import { View, Text, Button, StyleSheet } from "react-native";
+
+export default function App() {
+  // Membuat state bernama "count" dengan nilai awal 0
+  const [count, setCount] = useState(0);
+
+  return (
+    &lt;View style={styles.container}&gt;
+      &lt;Text style={[styles.text, count &lt; 0 ? { color: 'red' } : { color: 'black' }]}&gt;Count: {count}&lt;/Text&gt;
+      &lt;View style={styles.button_container}&gt;
+        &lt;Button 
+          title="+" 
+          onPress={() =&gt; setCount(count + 1)} 
+        /&gt;
+        &lt;Button 
+          title="-" 
+          onPress={() =&gt; setCount(count - 1)} 
+        /&gt;
+      &lt;/View&gt;
+    &lt;/View&gt;
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center"
+  },
+  text: {
+    fontSize: 24,
+    marginBottom: 20
+  },
+  button_container:{
+    flexDirection:'row',
+    justifyContent:'center',
+    alignItems:'center',
+    gap: 15
+  }
+});
+</code></pre>
+<p>Pada contoh di atas, kita menggunakan <strong><code>useState</code></strong> untuk membuat state <code>count</code>. Setiap kali tombol ditekan, fungsi <code>setCount</code> dipanggil untuk memperbarui nilai <code>count</code>. React Native kemudian secara otomatis memperbarui tampilan teks agar sesuai dengan nilai terbaru.</p>
+<h2 id="contoh-state-2-menyimpan-input-teks"><a class="header" href="#contoh-state-2-menyimpan-input-teks">Contoh State 2: Menyimpan Input Teks</a></h2>
+<p>Misalnya, kita ingin membuat aplikasi sederhana yang menampilkan teks berdasarkan teks yang diketik pengguna.</p>
+<pre><code class="language-jsx">import React, { useState } from "react";
+import { View, Text, TextInput, StyleSheet } from "react-native";
+
+export default function App() {
+  // State untuk menyimpan teks dari input
+  const [name, setName] = useState("");
+
+  return (
+    &lt;View style={styles.container}&gt;
+      &lt;Text style={styles.label}&gt;Masukkan nama Anda:&lt;/Text&gt;
+      &lt;TextInput
+        style={styles.input}
+        placeholder="Ketik di sini..."
+        value={name}
+        onChangeText={(text) =&gt; setName(text)}
+      /&gt;
+      &lt;Text style={styles.greeting}&gt;
+        {name ? `Halo, ${name}!` : "Silakan ketik nama Anda"}
+      &lt;/Text&gt;
+    &lt;/View&gt;
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
+  },
+  label: {
+    fontSize: 18,
+    marginBottom: 10,
+  },
+  input: {
+    width: "100%",
+    borderWidth: 1,
+    borderColor: "#aaa",
+    padding: 10,
+    marginBottom: 20,
+    borderRadius: 5,
+  },
+  greeting: {
+    fontSize: 20,
+    fontWeight: "bold",
+  },
+});
+</code></pre>
+<h2 id="contoh-state-3-menggunakan-usestate-pada-reusable-component"><a class="header" href="#contoh-state-3-menggunakan-usestate-pada-reusable-component">Contoh State 3: Menggunakan <code>useState</code> pada reusable component</a></h2>
+<p>Misalnya kita ingin membuat <code>CustomInput</code> yang bisa dipakai di banyak tempat. Komponen ini memiliki state untuk menyimpan teks lokal, lalu menampilkan hasil ketikan.</p>
+<pre><code class="language-jsx">// App.tsx
+import React from "react";
+import { View, StyleSheet } from "react-native";
+import CustomInput from "./components/CustomInput";
+
+export default function App() {
+  return (
+    &lt;View style={styles.container}&gt;
+      &lt;CustomInput label="Nama" placeholder="Masukkan nama Anda" /&gt;
+      &lt;CustomInput label="Email" placeholder="Masukkan email Anda" /&gt;
+    &lt;/View&gt;
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    padding: 20,
+  },
+});
+</code></pre>
+<pre><code class="language-jsx">// components/CustomInput.tsx
+import React, { useState } from "react";
+import { View, Text, TextInput, StyleSheet } from "react-native";
+
+export default function CustomInput({ label, placeholder }) {
+  // State lokal untuk menyimpan teks
+  const [value, setValue] = useState("");
+
+  return (
+    &lt;View style={styles.container}&gt;
+      &lt;Text style={styles.label}&gt;{label}&lt;/Text&gt;
+      &lt;TextInput
+        style={styles.input}
+        placeholder={placeholder}
+        value={value}
+        onChangeText={(text) =&gt; setValue(text)}
+      /&gt;
+      &lt;Text style={styles.preview}&gt;
+        {value ? `Anda mengetik: ${value}` : "Belum ada input"}
+      &lt;/Text&gt;
+    &lt;/View&gt;
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    marginBottom: 20,
+  },
+  label: {
+    fontSize: 16,
+    marginBottom: 5,
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: "#aaa",
+    padding: 10,
+    borderRadius: 5,
+  },
+  preview: {
+    marginTop: 5,
+    fontSize: 14,
+    color: "#555",
+  },
+});
+
+</code></pre>
+<p>Pada contoh program di atas, setiap instance <code>CustomInput</code> punya state masing-masing (jadi input nama tidak mengganggu input email).</p>
+<h2 id="contoh-state-4-array-state"><a class="header" href="#contoh-state-4-array-state">Contoh State 4: Array State</a></h2>
+<pre><code class="language-jsx">import React, { useState } from 'react';
+import { View, Text, Button } from 'react-native';
+
+export default function TodoList() {
+  const [todos, setTodos] = useState([]);
+
+  const addTodo = () =&gt; {
+    setTodos([...todos, `Tugas ${todos.length + 1}`]);
+  };
+
+  return (
+    &lt;View&gt;
+      &lt;Button title="Tambah Tugas" onPress={addTodo} /&gt;
+      {todos.map((todo, index) =&gt; (
+        &lt;Text key={index}&gt;{todo}&lt;/Text&gt;
+      ))}
+    &lt;/View&gt;
+  );
+}
+</code></pre>
+<p>Kalau state berupa array, biasanya kita bikin salinan array lama lalu tambahkan data baru, supaya state tetap immutable.</p>
+<p><code>useState</code> adalah pondasi penting dalam React Native karena hampir semua komponen interaktif butuh state. Tanpa <code>useState</code>, aplikasi cuma hanya berupa sekumpulan teks dan gambar statis.</p>
+<p><code>useState</code> memiliki tiga aturan simpel berikut:</p>
+<ul>
+<li>Mengembalikan sepasang nilai (state saat ini) dan fungsi untuk mengubah state.</li>
+<li>Setiap kali state berubah, komponen otomatis merender ulang.</li>
+<li>State bisa berupa apa pun: string, number, boolean, array, object, bahkan kombinasi.</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="side-effects-useeffect"><a class="header" href="#side-effects-useeffect">Side Effects (<code>useEffect</code>)</a></h1>
+<p>Kalau sebelumnya kita belajar tentang state yang bisa menyimpan data dinamis di sebuah komponen, sekarang saatnya masuk ke hal lain yang tidak kalah penting: side effect.</p>
+<p>Side effect adalah segala hal yang terjadi di luar proses rendering UI. Contohnya:</p>
+<ul>
+<li>Memanggil API untuk mengambil data.</li>
+<li>Mengatur timer atau interval.</li>
+<li>Mengupdate judul aplikasi atau menyimpan data ke storage.</li>
+</ul>
+<p><code>useEffect</code> adalah hook yang memungkinkan kita menjalankan kode setiap kali komponen selesai di-<em>render</em>. Dengan kata lain, dia seperti lifecycle methods di class component (componentDidMount, componentDidUpdate, dan componentWillUnmount) tapi digabung dalam satu fungsi.</p>
+<p>Struktur dasarnya seperti ini:</p>
+<pre><code class="language-jsx">useEffect(() =&gt; {
+  // kode yang mau dijalankan setelah render
+
+  return () =&gt; {
+    // optional: kode cleanup
+  };
+}, [dependencies]);
+</code></pre>
+<ul>
+<li>Bagian pertama <code>(() =&gt; { ... })</code> adalah efek yang dijalankan.</li>
+<li><code>return () =&gt; { ... }</code> adalah cleanup function, dipanggil ketika efek harus dibersihkan (misalnya saat komponen di-unmount atau sebelum efek baru dipasang lagi).</li>
+<li><code>[dependencies]</code> adalah array berisi nilai yang diawasi. Efek hanya dijalankan ulang ketika nilai di array ini berubah.</li>
+</ul>
+<h2 id="contoh-1-dipanggil-setiap-render"><a class="header" href="#contoh-1-dipanggil-setiap-render">Contoh 1: Dipanggil Setiap Render</a></h2>
+<pre><code class="language-jsx">import React, { useState, useEffect } from 'react';
+import { View, Text, Button } from 'react-native';
+
+export default function Counter() {
+  const [count, setCount] = useState(0);
+
+  useEffect(() =&gt; {
+    console.log('Komponen dirender. Nilai count:', count);
+  });
+
+  return (
+    &lt;View&gt;
+      &lt;Text&gt;Count: {count}&lt;/Text&gt;
+      &lt;Button title="Tambah" onPress={() =&gt; setCount(count + 1)} /&gt;
+    &lt;/View&gt;
+  );
+}
+</code></pre>
+<p>Karena kita tidak memberi dependency array, efek ini akan dipanggil setiap kali komponen dirender.</p>
+<h2 id="contoh-2-hanya-sekali"><a class="header" href="#contoh-2-hanya-sekali">Contoh 2: Hanya Sekali</a></h2>
+<pre><code class="language-jsx">useEffect(() =&gt; {
+  console.log('Komponen baru saja muncul di layar');
+
+  // cleanup
+  return () =&gt; {
+    console.log('Komponen hilang dari layar');
+  };
+}, []);
+</code></pre>
+<p>Dengan dependency array kosong <code>[]</code>, efek hanya dijalankan sekali saat komponen pertama kali dipasang, lalu dibersihkan saat komponen dilepas.</p>
+<h2 id="contoh-3-bergantung-pada-state-tertentu"><a class="header" href="#contoh-3-bergantung-pada-state-tertentu">Contoh 3: Bergantung Pada State Tertentu</a></h2>
+<pre><code class="language-jsx">import React, { useState, useEffect } from 'react';
+import { View, Text, Button } from 'react-native';
+
+export default function NameWatcher() {
+  const [name, setName] = useState('Mike');
+  const [age, setAge] = useState(20);
+
+  useEffect(() =&gt; {
+    console.log('Nama berubah:', name);
+  }, [name]); // hanya jalan kalau "name" berubah
+
+  return (
+    &lt;View&gt;
+      &lt;Text&gt;{name} - {age}&lt;/Text&gt;
+      &lt;Button title="Ganti Nama" onPress={() =&gt; setName('Portnoy')} /&gt;
+      &lt;Button title="Tambah Umur" onPress={() =&gt; setAge(age + 1)} /&gt;
+    &lt;/View&gt;
+  );
+}
+</code></pre>
+<p>Efek ini cuma jalan kalau nilai <code>name</code> berubah. Kalau <code>age</code> yang berubah, efek tidak akan dijalankan.</p>
+<h2 id="contoh-4-memanggil-api"><a class="header" href="#contoh-4-memanggil-api">Contoh 4: Memanggil API</a></h2>
+<pre><code class="language-jsx">import React, { useEffect, useState } from 'react';
+import { View, Text, ActivityIndicator } from 'react-native';
+
+export default function UserList() {
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() =&gt; {
+    fetch('https://jsonplaceholder.typicode.com/users')
+      .then((res) =&gt; res.json())
+      .then((data) =&gt; {
+        setUsers(data);
+        setLoading(false);
+      });
+  }, []); // hanya sekali dijalankan saat komponen pertama kali render
+
+  if (loading) return &lt;ActivityIndicator /&gt;;
+
+  return (
+    &lt;View&gt;
+      {users.map((user) =&gt; (
+        &lt;Text key={user.id}&gt;{user.name}&lt;/Text&gt;
+      ))}
+    &lt;/View&gt;
+  );
+}
+</code></pre>
+<p><code>useEffect</code> adalah salah satu hook paling penting di React Native. Memungkinkan kita untuk menangani hal-hal yang berhubungan dengan dunia luar render UI seperti API, timer, event listener, dan lain-lain.</p>
+<p><code>useEffect</code> memiliki tiga aturan simpel berikut:</p>
+<ul>
+<li>Tanpa dependency array → jalan setiap render.</li>
+<li>Dengan array kosong <code>[]</code> → jalan sekali di awal.</li>
+<li>Dengan array berisi state/props → jalan setiap kali nilai itu berubah.</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="context-usecontext"><a class="header" href="#context-usecontext">Context (<code>useContext</code>)</a></h1>
+<p>Ketika ukuran aplikasi masih tergolong kecil, komunikasi antar komponen yang umumnya melalui <code>props</code> cukup mudah dilakukan. Bayangkan apabila data yang dikirimkan ke banyak komponen dan berada di hirarki yang cukup dalam. Menggunakan <code>props</code> untuk mengirimkan data ke setiap level tentunya bukan teknik yang efektif karena nantinya akan mempersulit pengelolaan aplikasi.</p>
+<p>Dengan <code>context</code>, data dapat disimpan secara global sehingga dapat diakses oleh komponen mana pun tanpa harus melempar data menggunakan <code>props</code>.</p>
+<p>Secara sederhana, <code>Context</code> memiliki tiga bagian utama:</p>
+<ul>
+<li><strong>Membuat Context</strong> → menggunakan <code>React.createContext()</code>.</li>
+<li><strong>Provider</strong> → komponen yang membungkus bagian aplikasi, dan isinya adalah data yang akan dibagikan.</li>
+<li><strong>Consumer</strong> → komponen yang membaca data dari <code>Context</code>.</li>
+</ul>
+<h2 id="contoh-theme-context-darklight-mode"><a class="header" href="#contoh-theme-context-darklight-mode">Contoh: Theme Context (Dark/Light Mode)</a></h2>
+<p>Struktur folder:</p>
+<pre><code class="language-bash">/components
+   └── ThemedButton.tsx
+/context
+   └── ThemeContext.tsx
+/screens
+   └── HomeScreen.tsx
+App.tsx
+</code></pre>
+<p><strong>ThemeContext.tsx</strong></p>
+<pre><code class="language-jsx">import React from "react";
+import { createContext, useState } from "react";
+
+export const ThemeContext = React.createContext('light'); // nilai default
+
+export function ThemeProvider({ children }) {
+    const [theme, setTheme] = useState('light');
+    const toggleTheme = () =&gt; setTheme(theme == 'light' ? 'dark' : 'light');
+    return (
+        &lt;ThemeContext.Provider value={{ theme, toggleTheme }}&gt;
+            {children}
+        &lt;/ThemeContext.Provider&gt;
+    );
+}
+</code></pre>
+<p><code>React.createContext('light')</code> bertindak sebagai wadah (context) untuk menyimpan data yang dapat digunakan di seluruh komponen. Di sini context akan menyimpan theme (light/dark) dan fungsi toggleTheme.</p>
+<p><code>ThemeProvider</code> adalah komponen pembungkus dengan <code>state</code> awal bernilai light. <code>ThemeContext.Provider</code> membagikan data (<code>theme</code>, <code>toggleTheme</code>) ke semua komponen di dalamnya (<code>children</code>). Artinya, komponen apa pun yang ada di bawah <code>ThemeProvider</code> dapat mengambil <code>theme</code> dan <code>toggleTheme</code>.</p>
+<p><strong>ThemedButton.tsx</strong></p>
+<pre><code class="language-jsx">import { useContext } from "react";
+import { ThemeContext } from "../context/ThemeContext";
+import { Text, TouchableOpacity } from "react-native";
+
+export default function ThemedButton({ title, onPress }) {
+    const { theme } = useContext(ThemeContext);
+
+    const backgroundColor = theme === 'light' ? '#007BFF' : '#555';
+    const textColor = theme === 'light' ? '#fff' : '#ddd';
+
+    return (
+        &lt;TouchableOpacity
+            style={{
+                backgroundColor,
+                padding: 12,
+                borderRadius: 8,
+                margin: 5,
+            }}
+            onPress={onPress}&gt;
+            &lt;Text style={{ color: textColor, fontWeight: 'bold' }}&gt;{title}&lt;/Text&gt;
+        &lt;/TouchableOpacity&gt;
+    );
+}
+</code></pre>
+<p><strong>HomeScreen.tsx</strong></p>
+<pre><code class="language-jsx">import { useContext } from "react";
+import { ThemeContext } from "../context/ThemeContext";
+import { Text, View } from "react-native";
+import ThemedButton from "../components/ThemedButton";
+
+export default function HomeScreen() {
+    const { theme, toggleTheme } = useContext(ThemeContext);
+    return (
+        &lt;View style={{
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: theme === 'light' ? '#fff' : '#333',
+        }}&gt;
+            &lt;Text style={{ color: theme === 'light' ? '#000' : '#fff' }}&gt;
+                Tema saat ini: {theme}
+            &lt;/Text&gt;
+            &lt;ThemedButton title="Ganti Tema" onPress={toggleTheme} /&gt;
+            &lt;ThemedButton title="Button Tambahan" onPress={() =&gt; { }} /&gt;
+
+        &lt;/View&gt;
+    );
+}
+</code></pre>
+<p><code>useContext(ThemeContext)</code> digunakan untuk mengakses value atau fungsi yang diturunkan oleh <code>ThemeContext</code>.</p>
+<p><strong>App.tsx</strong></p>
+<pre><code class="language-jsx">import { StatusBar } from 'expo-status-bar';
+import { StyleSheet, Text, View } from 'react-native';
+import { ThemeProvider } from './context/ThemeContext';
+import HomeScreen from './screens/HomeScreen';
+
+export default function App() {
+  return (
+    &lt;ThemeProvider&gt;
+      &lt;HomeScreen /&gt;
+    &lt;/ThemeProvider&gt;
+  );
+}
+</code></pre>
+<h2 id="alur-program"><a class="header" href="#alur-program">Alur Program</a></h2>
+<ol>
+<li><code>App.tsx</code> → Komponen parent yang membungkus seluruh komponen lainnya dengan <code>ThemeProvider</code> agar seluruh komponen <em>child</em> dapat mengakses <code>ThemeContext</code>.</li>
+<li><code>ThemeContext.tsx</code> → Menyimpan state tema (<code>light</code> atau <code>dark</code>) dan menyediakan fungsi <code>toggleTheme</code> untuk mengubah <code>state</code> tema.</li>
+<li><code>HomeScreen.tsx</code> → Menampilkan teks sesuai tema + tombol untuk ganti tema.</li>
+<li><code>ThemedButton.tsx</code> → Komponen tombol yang mengatur gaya sesuai tema.</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="reference-useref"><a class="header" href="#reference-useref">Reference (<code>useRef</code>)</a></h1>
+<p><code>useRef</code> adalah salah satu hooks pada React Native yang berguna untuk menyimpan nilai atau mereferensikan elemen tanpa menyebabkan komponen melakukan render ulang. Kalau <code>useState</code> selalu bikin render ulang saat nilainya berubah, <code>useRef</code> tidak. Nilai yang disimpan di <code>useRef</code> tetap ada selama komponen hidup, tapi perubahan nilainya tidak memicu re-<em>render</em>.</p>
+<p><code>useRef</code> cocok digunakan pada kasus:</p>
+<ol>
+<li>Menyimpan nilai lama (previous value).</li>
+<li>Mengakses dan mengontrol elemen UI (misalnya TextInput).</li>
+<li>Menyimpan variabel yang berubah-ubah tapi tidak perlu re-<em>render</em> misalnya timer.</li>
+<li>Membuat animasi</li>
+</ol>
+<h2 id="contoh-1-menyimpan-nilai-lama"><a class="header" href="#contoh-1-menyimpan-nilai-lama">Contoh 1: Menyimpan Nilai Lama</a></h2>
+<p>Kadang kita ingin tahu nilai sebelum <code>state</code> berubah. <code>useRef</code> dapat menyimpan history ini.</p>
+<pre><code class="language-jsx">import React, { useState, useEffect, useRef } from "react";
+import { View, Text, Button } from "react-native";
+
+export default function App() {
+  const [score, setScore] = useState(0);
+  const prevScoreRef = useRef(0);
+
+  useEffect(() =&gt; {
+    prevScoreRef.current = score; // update setiap kali score berubah
+  }, [score]);
+
+  return (
+    &lt;View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}&gt;
+      &lt;Text&gt;Current Score: {score}&lt;/Text&gt;
+      &lt;Text&gt;Previous Score: {prevScoreRef.current}&lt;/Text&gt;
+      &lt;Button title="Add 10" onPress={() =&gt; setScore(score + 10)} /&gt;
+    &lt;/View&gt;
+  );
+}
+</code></pre>
+<p><code>prevScoreRef.current</code> selalu menyimpan nilai sebelum update.</p>
+<h2 id="contoh-2-mengontrol-input"><a class="header" href="#contoh-2-mengontrol-input">Contoh 2: Mengontrol Input</a></h2>
+<p>Dengan <code>useRef</code>, kita dapat fokus langsung ke input tanpa perlu <code>state</code> tambahan.</p>
+<pre><code class="language-jsx">import React, { useRef } from "react";
+import { View, TextInput, Button } from "react-native";
+
+export default function App() {
+  const inputRef = useRef(null);
+
+  const focusInput = () =&gt; {
+    inputRef.current.focus(); // langsung fokus ke input
+  };
+
+  return (
+    &lt;View style={{ padding: 20 }}&gt;
+      &lt;TextInput
+        ref={inputRef}
+        style={{ borderWidth: 1, padding: 10, marginBottom: 10 }}
+        placeholder="Type something..."
+      /&gt;
+      &lt;Button title="Focus Input" onPress={focusInput} /&gt;
+    &lt;/View&gt;
+  );
+}
+</code></pre>
+<p><code>inputRef</code> dipakai untuk mengakses komponen TextInput langsung.</p>
+<h2 id="contoh-3-timer-dengan-useref"><a class="header" href="#contoh-3-timer-dengan-useref">Contoh 3: Timer dengan useRef</a></h2>
+<pre><code class="language-jsx">import React, { useRef, useState } from "react";
+import { View, Text, Button } from "react-native";
+
+export default function App() {
+  const [seconds, setSeconds] = useState(0);
+  const timerRef = useRef(null);
+
+  const startTimer = () =&gt; {
+    if (timerRef.current) return; // cegah timer ganda
+    timerRef.current = setInterval(() =&gt; {
+      setSeconds((prev) =&gt; prev + 1);
+    }, 1000);
+  };
+
+  const stopTimer = () =&gt; {
+    clearInterval(timerRef.current);
+    timerRef.current = null;
+  };
+
+  return (
+    &lt;View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}&gt;
+      &lt;Text&gt;⏱ {seconds} seconds&lt;/Text&gt;
+      &lt;Button title="Start" onPress={startTimer} /&gt;
+      &lt;Button title="Stop" onPress={stopTimer} /&gt;
+    &lt;/View&gt;
+  );
+}
+</code></pre>
+<h2 id="contoh-4-animasi-dengan-useref"><a class="header" href="#contoh-4-animasi-dengan-useref">Contoh 4: Animasi dengan useRef</a></h2>
+<pre><code class="language-jsx">import React, { useRef, useEffect } from "react";
+import { View, Animated } from "react-native";
+
+export default function App() {
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() =&gt; {
+    Animated.timing(fadeAnim, {
+      toValue: 1,
+      duration: 2000,
+      useNativeDriver: true,
+    }).start();
+  }, []);
+
+  return (
+    &lt;Animated.View
+      style={{
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        opacity: fadeAnim, // nilai dari useRef
+      }}
+    &gt;
+      &lt;View style={{ width: 100, height: 100, backgroundColor: "tomato" }} /&gt;
+    &lt;/Animated.View&gt;
+  );
+}
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="reducer-usereducer"><a class="header" href="#reducer-usereducer">Reducer (<code>useReducer</code>)</a></h1>
+<p><code>useReducer</code> adalah hook di React Native yang digunakan untuk mengelola state yang lebih kompleks dibanding <code>useState</code>. Jika <code>useState</code> cocok untuk perubahan state yang sederhana, <code>useReducer</code> lebih cocok digunakan saat kita memiliki logika update state yang melibatkan banyak kondisi atau aturan.</p>
+<pre><code class="language-jsx">const [state, dispatch] = useReducer(reducer, initialState);
+</code></pre>
+<ul>
+<li><strong>state</strong> → nilai state saat ini</li>
+<li><strong>dispatch</strong> → fungsi untuk mengirimkan action</li>
+<li><strong>reducer</strong> → fungsi yang menentukan bagaimana state berubah</li>
+<li><strong>initialState</strong> → nilai awal state</li>
+</ul>
+<pre><code class="language-jsx">function reducer(state, action) {
+  switch (action.type) {
+    case "actionType":
+      return stateBaru;
+    default:
+      return state;
+  }
+}
+</code></pre>
+<p>Reducer menerima state lama dan sebuah action, lalu mengembalikan state baru.</p>
+<h2 id="contoh-1-counter"><a class="header" href="#contoh-1-counter">Contoh 1: Counter</a></h2>
+<pre><code class="language-jsx">import React, { useReducer } from "react";
+import { View, Text, Button } from "react-native";
+
+const initialState = { count: 0 };
+
+
+function reducer(state, action) {
+  switch (action.type) {
+    case "increment":
+      return { count: state.count + 1 };
+    case "decrement":
+      return { count: state.count - 1 };
+    default:
+      return state;
+  }
+}
+
+export default function App() {
+  const [state, dispatch] = useReducer(reducer, initialState});
+
+  return (
+    &lt;View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}&gt;
+      &lt;Text style={{ fontSize: 24 }}&gt;Count: {state.count}&lt;/Text&gt;
+      &lt;Button title="Tambah" onPress={() =&gt; dispatch({ type: "increment" })} /&gt;
+      &lt;Button title="Kurangi" onPress={() =&gt; dispatch({ type: "decrement" })} /&gt;
+    &lt;/View&gt;
+  );
+}
+</code></pre>
+<p>Dengan <code>dispatch</code>, kita mengirim action (misalnya <code>{ type: "increment" }</code>), lalu reducer mengatur perubahan <code>state</code>.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="event-handling"><a class="header" href="#event-handling">Event Handling</a></h1>
+<p>Pada dasarnya, event handling adalah mekanisme untuk menangani aksi yang dilakukan pengguna, seperti menekan tombol, mengetik teks, atau melakukan scroll. Di React Native, event handling dilakukan dengan cara menghubungkan sebuah event handler (fungsi) dengan properti event dari suatu komponen. Secara umum, ada beberapa kategori event yang sering dipakai:</p>
+<p><strong>1. Event pada komponen interaktif (tombol, touchable)</strong></p>
+<ul>
+<li><code>onPress</code> → saat komponen ditekan (Button, TouchableOpacity, Pressable).</li>
+<li><code>onLongPress</code> → saat ditekan lama.</li>
+<li><code>onPressIn</code> dan <code>onPressOut</code> → saat jari menyentuh &amp; melepas.</li>
+</ul>
+<p><strong>2. Event pada input teks</strong></p>
+<ul>
+<li><code>onChangeText</code> → saat teks berubah.</li>
+<li><code>onFocus</code> → saat input aktif (fokus).</li>
+<li><code>onBlur</code> → saat input kehilangan fokus.</li>
+<li><code>onSubmitEditing</code> → saat user menekan tombol submit/enter.</li>
+</ul>
+<p><strong>3. Event pada list / scroll</strong></p>
+<ul>
+<li><code>onScroll</code> → saat daftar/scrollview digulir.</li>
+<li><code>onEndReached</code> (FlatList/SectionList) → saat mendekati akhir daftar.</li>
+<li><code>onRefresh</code> → saat user menarik ke bawah (pull to refresh).</li>
+</ul>
+<p><strong>4. Event gesture / sentuhan</strong></p>
+<ul>
+<li><code>onTouchStart</code>, <code>onTouchMove</code>, <code>onTouchEnd</code> → event dasar sentuhan.</li>
+<li>Jika pakai <code>PanResponder</code> atau library react-native-gesture-handler, bisa dapat event lebih kompleks seperti swipe, drag, fling.</li>
+</ul>
+<p><strong>5. Event pada image &amp; media</strong></p>
+<ul>
+<li><code>onLoad</code> dan <code>onError</code> (Image) → saat gambar berhasil/gagal dimuat.</li>
+<li><code>onLoadStart</code> dan <code>onLoadEnd</code> → progres load gambar.</li>
+</ul>
+<h2 id="contoh-event-handling-1"><a class="header" href="#contoh-event-handling-1">Contoh Event Handling 1</a></h2>
+<pre><code class="language-jsx">// App.tsx
+import { useState } from "react";
+import { View, Text, Button, StyleSheet } from "react-native";
+
+export default function App() {
+  const [count, setCount] = useState(0);
+
+  const handlePress = () =&gt; {
+    setCount(count + 1); // setiap kali tombol ditekan, count bertambah
+  };
+
+  return (
+    &lt;View style={styles.container}&gt;
+      &lt;Text style={styles.text}&gt;Jumlah klik: {count}&lt;/Text&gt;
+      &lt;Button title="Klik Saya" onPress={handlePress} /&gt;
+    &lt;/View&gt;
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  text: {
+    fontSize: 20,
+    marginBottom: 20,
+  },
+});
+</code></pre>
+<p>Pada contoh di atas, event <code>onPress</code> dari komponen <code>Button</code> dipasangkan dengan fungsi <code>handlePress</code>. Setiap kali tombol ditekan, state <code>count</code> akan bertambah satu, dan perubahan state ini akan langsung di-<em>rerender</em> pada teks yang ditampilkan.</p>
+<h2 id="contoh-event-handling-2"><a class="header" href="#contoh-event-handling-2">Contoh Event Handling 2</a></h2>
+<pre><code class="language-jsx">// App.tsx
+import { useState } from "react";
+import { View, Text, TextInput, StyleSheet } from "react-native";
+
+export default function App() {
+  const [name, setName] = useState("");
+
+  return (
+    &lt;View style={styles.container}&gt;
+      &lt;TextInput
+        style={styles.input}
+        placeholder="Ketik nama Anda"
+        onChangeText={(text) =&gt; setName(text)}
+      /&gt;
+      &lt;Text style={styles.text}&gt;Halo, {name}!&lt;/Text&gt;
+    &lt;/View&gt;
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: "#ccc",
+    padding: 10,
+    width: 200,
+    marginBottom: 20,
+  },
+  text: {
+    fontSize: 18,
+  },
+});
+</code></pre>
+<p>Di sini, setiap kali pengguna mengetik, event <code>onChangeText</code> akan dijalankan dan memperbarui state name. Tampilan pun otomatis menyesuaikan dengan isi teks terbaru.</p>
 
                     </main>
 
