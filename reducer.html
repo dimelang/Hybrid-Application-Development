@@ -196,36 +196,104 @@
 </code></pre>
 <p>Reducer menerima state lama dan sebuah action, lalu mengembalikan state baru.</p>
 <h2 id="contoh-1-counter"><a class="header" href="#contoh-1-counter">Contoh 1: Counter</a></h2>
-<pre><code class="language-jsx">import React, { useReducer } from "react";
-import { View, Text, Button } from "react-native";
-
-const initialState = { count: 0 };
-
-
-function reducer(state, action) {
-  switch (action.type) {
-    case "increment":
-      return { count: state.count + 1 };
-    case "decrement":
-      return { count: state.count - 1 };
-    default:
-      return state;
-  }
-}
+<h3 id="apptsx"><a class="header" href="#apptsx">App.tsx</a></h3>
+<pre><code class="language-jsx">
+import { StatusBar } from 'expo-status-bar';
+import { useReducer } from 'react';
+import { StyleSheet, View } from 'react-native';
+import Counter from './components/Counter';
 
 export default function App() {
-  const [state, dispatch] = useReducer(reducer, initialState});
-
   return (
-    &lt;View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}&gt;
-      &lt;Text style={{ fontSize: 24 }}&gt;Count: {state.count}&lt;/Text&gt;
-      &lt;Button title="Tambah" onPress={() =&gt; dispatch({ type: "increment" })} /&gt;
-      &lt;Button title="Kurangi" onPress={() =&gt; dispatch({ type: "decrement" })} /&gt;
+    &lt;View style={styles.container}&gt;
+      &lt;Counter title="Counter" /&gt;
     &lt;/View&gt;
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 20
+  }
+});
 </code></pre>
-<p>Dengan <code>dispatch</code>, kita mengirim action (misalnya <code>{ type: "increment" }</code>), lalu reducer mengatur perubahan <code>state</code>.</p>
+<h3 id="componentscountertsx"><a class="header" href="#componentscountertsx">components/Counter.tsx</a></h3>
+<pre><code class="language-jsx">
+import { useReducer } from "react";
+import { Button, StyleSheet, Text, View } from "react-native";
+
+type State = {
+    count: number
+}
+
+const initialState: State = { count: 0 };
+
+type Action = { jenis: "increment" } | { jenis: "decrement" };
+
+const reducer = (state: State, action: Action): State =&gt; {
+    switch (action.jenis) {
+        case "increment":
+            return { count: state.count + 1 };
+        case "decrement":
+            return { count: state.count - 1 };
+        default:
+            return state;
+    }
+}
+
+type CounterProps = { title: string }
+export default function Counter({ title }: CounterProps) {
+    const [state, dispatch] = useReducer(reducer, initialState);
+
+    return (
+        &lt;View style={styles.card}&gt;
+            &lt;Text style={styles.title}&gt;{title}&lt;/Text&gt;
+            &lt;Text style={[styles.content, state.count &lt; 0 &amp;&amp; { color: 'red' }]}&gt;{state.count}&lt;/Text&gt;
+            &lt;View style={styles.button_container}&gt;
+                &lt;Button title="Kurangi" onPress={() =&gt; dispatch({ jenis: "decrement" })} /&gt;
+                &lt;Button title="Tambah" onPress={() =&gt; dispatch({ jenis: 'increment' })} /&gt;
+            &lt;/View&gt;
+        &lt;/View&gt;
+    );
+}
+
+const styles = StyleSheet.create({
+    card: {
+        width: 240,
+        padding: 10,
+        borderRadius: 8,
+        backgroundColor: '#fff',
+        elevation: 3,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+    },
+    title: {
+        fontSize: 18,
+        fontWeight: 'bold',
+    },
+    content: {
+        alignSelf: 'center',
+        fontSize: 28,
+        fontWeight: "600",
+    },
+    button_container: {
+        padding: 8,
+        borderTopWidth: 1,
+        borderTopColor: '#4b4b4bff',
+        flexDirection: 'row',
+        gap: 10,
+        justifyContent: 'center',
+        alignItems: 'center'
+    }
+});
+</code></pre>
+<p>Dengan <code>dispatch</code>, kita mengirim action (misalnya <code>{ jenis: "increment" }</code>), lalu reducer mengatur perubahan <code>state</code>.</p>
 
                     </main>
 

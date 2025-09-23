@@ -1326,6 +1326,8 @@ Jalankan terminal command berikut pada directory project.</p>
 </li>
 </ol>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="komponen-react-native"><a class="header" href="#komponen-react-native">Komponen React Native</a></h1>
+<p>Ketika kita membuat sebuah aplikasi, sebenarnya kita sedang menyusun potongan-potongan kecil yang bersama-sama membentuk satu kesatuan tampilan. Potongan kecil ini dalam React Native disebut komponen. Bisa dibilang, komponen adalah "building blocks" dari aplikasi mobile.</p>
+<p>Hal menarik lainnya, React Native tidak hanya menyediakan komponen bawaan, tapi kita juga dapat membuat komponen buatan sendiri (custom component). Ini membuat kode kita lebih terstruktur, lebih mudah digunakan ulang, dan tentu saja lebih rapi.</p>
 <p>Dalam <strong>React Native</strong>, <code>App.tsx</code> merupakan file utama yang pertama kali dijalankan ketika aplikasi dibuka. Kalau di web, mirip seperti <code>index.html</code> + <code>index.js</code>.</p>
 <h3 id="struktur-dasar-apptsx-react-native-cli"><a class="header" href="#struktur-dasar-apptsx-react-native-cli">Struktur dasar <code>App.tsx</code> (React Native CLI)</a></h3>
 <pre><code class="language-ts">import { NewAppScreen } from '@react-native/new-app-screen';
@@ -1480,6 +1482,7 @@ const styles = StyleSheet.create({
 </code></pre>
 <p>Amati perbedaan sebelum dan sesudah dimodifikasi.</p>
 <p>React Native menyediakan sekumpulan komponen bawaan (built-in components) yang digunakan untuk membangun UI aplikasi. Komponen ini mirip dengan elemen HTML di web, tetapi disesuaikan dengan dunia mobile.</p>
+<p>Selain komponen bawaan dari React Native, kita juga dapat menggunakan third-party yang sudah terkenal seperti <a href="https://reactnativepaper.com/">React Native Paper</a>, <a href="https://gluestack.io/">GlueStack</a>, <a href="https://reactnativeelements.com/">React Native Elements</a>, <a href="https://akveo.github.io/react-native-ui-kitten/">UI Kitten</a>, dan <a href="https://tamagui.dev/">Tamagui</a></p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="view"><a class="header" href="#view">View</a></h1>
 <p>Komponen ini umumnya digunakan sebagai container untuk menampung komponen lain (mirip dengan <code>&lt;div&gt;</code> di HTML). View memiliki sifat fleksibel dan bisa digunakan untuk berbagai kebutuhan seperti layout, styling, hingga wrapper komponen.</p>
 <h3 id="view-sebagai-container-pusat"><a class="header" href="#view-sebagai-container-pusat">View sebagai container pusat</a></h3>
@@ -2133,7 +2136,9 @@ const styles = StyleSheet.create({
 <pre><code class="language-jsx">// components/Card.tsx
 import { View, Text, StyleSheet } from "react-native";
 
-export default function Card({ name, job }) {
+type CardProps = {name:string, job:string}
+
+export default function Card({ name, job }:CardProps) {
   return (
     &lt;View style={styles.card}&gt;
       &lt;Text style={styles.name}&gt;{name}&lt;/Text&gt;
@@ -2776,36 +2781,104 @@ export default function App() {
 </code></pre>
 <p>Reducer menerima state lama dan sebuah action, lalu mengembalikan state baru.</p>
 <h2 id="contoh-1-counter"><a class="header" href="#contoh-1-counter">Contoh 1: Counter</a></h2>
-<pre><code class="language-jsx">import React, { useReducer } from "react";
-import { View, Text, Button } from "react-native";
-
-const initialState = { count: 0 };
-
-
-function reducer(state, action) {
-  switch (action.type) {
-    case "increment":
-      return { count: state.count + 1 };
-    case "decrement":
-      return { count: state.count - 1 };
-    default:
-      return state;
-  }
-}
+<h3 id="apptsx"><a class="header" href="#apptsx">App.tsx</a></h3>
+<pre><code class="language-jsx">
+import { StatusBar } from 'expo-status-bar';
+import { useReducer } from 'react';
+import { StyleSheet, View } from 'react-native';
+import Counter from './components/Counter';
 
 export default function App() {
-  const [state, dispatch] = useReducer(reducer, initialState});
-
   return (
-    &lt;View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}&gt;
-      &lt;Text style={{ fontSize: 24 }}&gt;Count: {state.count}&lt;/Text&gt;
-      &lt;Button title="Tambah" onPress={() =&gt; dispatch({ type: "increment" })} /&gt;
-      &lt;Button title="Kurangi" onPress={() =&gt; dispatch({ type: "decrement" })} /&gt;
+    &lt;View style={styles.container}&gt;
+      &lt;Counter title="Counter" /&gt;
     &lt;/View&gt;
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 20
+  }
+});
 </code></pre>
-<p>Dengan <code>dispatch</code>, kita mengirim action (misalnya <code>{ type: "increment" }</code>), lalu reducer mengatur perubahan <code>state</code>.</p>
+<h3 id="componentscountertsx"><a class="header" href="#componentscountertsx">components/Counter.tsx</a></h3>
+<pre><code class="language-jsx">
+import { useReducer } from "react";
+import { Button, StyleSheet, Text, View } from "react-native";
+
+type State = {
+    count: number
+}
+
+const initialState: State = { count: 0 };
+
+type Action = { jenis: "increment" } | { jenis: "decrement" };
+
+const reducer = (state: State, action: Action): State =&gt; {
+    switch (action.jenis) {
+        case "increment":
+            return { count: state.count + 1 };
+        case "decrement":
+            return { count: state.count - 1 };
+        default:
+            return state;
+    }
+}
+
+type CounterProps = { title: string }
+export default function Counter({ title }: CounterProps) {
+    const [state, dispatch] = useReducer(reducer, initialState);
+
+    return (
+        &lt;View style={styles.card}&gt;
+            &lt;Text style={styles.title}&gt;{title}&lt;/Text&gt;
+            &lt;Text style={[styles.content, state.count &lt; 0 &amp;&amp; { color: 'red' }]}&gt;{state.count}&lt;/Text&gt;
+            &lt;View style={styles.button_container}&gt;
+                &lt;Button title="Kurangi" onPress={() =&gt; dispatch({ jenis: "decrement" })} /&gt;
+                &lt;Button title="Tambah" onPress={() =&gt; dispatch({ jenis: 'increment' })} /&gt;
+            &lt;/View&gt;
+        &lt;/View&gt;
+    );
+}
+
+const styles = StyleSheet.create({
+    card: {
+        width: 240,
+        padding: 10,
+        borderRadius: 8,
+        backgroundColor: '#fff',
+        elevation: 3,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+    },
+    title: {
+        fontSize: 18,
+        fontWeight: 'bold',
+    },
+    content: {
+        alignSelf: 'center',
+        fontSize: 28,
+        fontWeight: "600",
+    },
+    button_container: {
+        padding: 8,
+        borderTopWidth: 1,
+        borderTopColor: '#4b4b4bff',
+        flexDirection: 'row',
+        gap: 10,
+        justifyContent: 'center',
+        alignItems: 'center'
+    }
+});
+</code></pre>
+<p>Dengan <code>dispatch</code>, kita mengirim action (misalnya <code>{ jenis: "increment" }</code>), lalu reducer mengatur perubahan <code>state</code>.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="event-handling"><a class="header" href="#event-handling">Event Handling</a></h1>
 <p>Pada dasarnya, event handling adalah mekanisme untuk menangani aksi yang dilakukan pengguna, seperti menekan tombol, mengetik teks, atau melakukan scroll. Di React Native, event handling dilakukan dengan cara menghubungkan sebuah event handler (fungsi) dengan properti event dari suatu komponen. Secara umum, ada beberapa kategori event yang sering dipakai:</p>
 <p><strong>1. Event pada komponen interaktif (tombol, touchable)</strong></p>
