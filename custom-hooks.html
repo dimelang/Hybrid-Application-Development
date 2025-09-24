@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Hooks - Hybrid Application Development</title>
+        <title>Custom Hooks - Hybrid Application Development</title>
 
 
         <!-- Custom HTML head -->
@@ -175,70 +175,76 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="hooks"><a class="header" href="#hooks">Hooks</a></h1>
-<p>Hooks adalah fungsi khusus yang memungkinkan kita untuk menggunakan fitur <code>React</code> seperti <code>state</code>, <code>lifecycle</code>, atau <code>context</code> ke dalam <code>function component</code>. Semua hook memiliki aturan yang sama:</p>
-<ul>
-<li>Selalu dipanggil di level atas <code>function component</code>.</li>
-<li>Tidak dapat digunakan di dalam loop atau kondisi.</li>
-<li>Selalu diawali dengan kata <code>use</code>.</li>
-</ul>
-<p>Di dalam hook terdapat beberapa konsep inti yang perlu dipahami:</p>
+                        <h1 id="custom-hooks"><a class="header" href="#custom-hooks">Custom Hooks</a></h1>
+<p>Custom Hook adalah fungsi buatan kita sendiri yang mengikuti aturan Hook (diawali dengan <code>use...</code>) untuk mengenkapsulasi logic tertentu agar dapat digunakan ulang di berbagai komponen.</p>
+<p>Jika <code>useState</code>, <code>useEffect</code>, <code>useReducer</code>, dll adalah hook bawaan <strong>React Native</strong>, maka custom hook memungkinkan kita bikin versi sendiri sesuai kebutuhan.</p>
+<p>Custom hook memberikan beberapa keuntungan, seperti:</p>
 <ol>
-<li>
-<p><a href="state.html"><strong>State Management dengan <code>useState</code></strong></a></p>
-<ul>
-<li>Konsep: menyimpan dan mengubah data di dalam komponen.</li>
-<li>Setiap kali state berubah, komponen akan re-<em>render</em>.</li>
-<li>Contoh: menyimpan teks input, toggle boolean, counter.</li>
-</ul>
-</li>
-<li>
-<p><a href="side-effects.html"><strong>Side Effects dengan <code>useEffect</code></strong></a></p>
-<ul>
-<li>Konsep: menjalankan efek samping setelah render.</li>
-<li>Penting karena React Native sifatnya declarative, dan <code>useEffect</code> dipakai untuk hal yang tidak langsung berhubungan dengan tampilan.</li>
-<li>Contoh: memanggil <code>API</code>, mengatur timer, event listener, dan unsubscribe.</li>
-</ul>
-</li>
-<li>
-<p><a href="context.html"><strong>Context dengan <code>useContext</code></strong></a></p>
-<ul>
-<li>Konsep: berbagi data global antar komponen tanpa harus terus menerus menggunakan <code>props</code>.</li>
-<li>Misalnya: tema aplikasi (dark/light), autentikasi user, bahasa.</li>
-</ul>
-</li>
-<li>
-<p><a href="reference.html"><strong>Reference dengan <code>useRef</code></strong></a></p>
-<ul>
-<li>Konsep: menyimpan nilai yang tidak memicu re-<em>render</em> ketika berubah.</li>
-<li>Contoh: menyimpan nilai sementara (misalnya previous value) dan akses langsung ke komponen (misalnya TextInput focus).</li>
-</ul>
-</li>
-<li>
-<p><a href="reducer.html"><strong>Reducer dengan <code>useReducer</code></strong></a></p>
-<ul>
-<li>Konsep: alternatif dari <code>useState</code> untuk state yang lebih kompleks.</li>
-<li>Contoh: cocok untuk logika yang melibatkan banyak aksi (misalnya form dengan banyak field).</li>
-</ul>
-</li>
-<li>
-<p><a href="custom-hooks.html"><strong>Custom Hooks</strong></a></p>
-<ul>
-<li>Konsep: membuat hook sendiri untuk mengabstraksi logika agar dapat digunakan ulang.</li>
-<li>Contoh: <code>useAuth()</code>, <code>useFetch()</code>, <code>useOrientation()</code>.</li>
-</ul>
-</li>
+<li>Kode lebih bersih &amp; reusable</li>
+<li>Logic &amp; UI terpisah</li>
+<li>Lebih mudah testing</li>
 </ol>
+<h2 id="contoh-1-hook-untuk-input-text"><a class="header" href="#contoh-1-hook-untuk-input-text">Contoh 1: Hook untuk Input Text</a></h2>
+<pre><code class="language-jsx">// hooks/UseInput.ts
+import { useState } from "react";
+
+// custom hook
+function useInput(initialValue = "") {
+  const [value, setValue] = useState(initialValue);
+
+  const onChangeText = (text) =&gt; setValue(text);
+  const reset = () =&gt; setValue("");
+
+  return { value, onChangeText, reset };
+}
+
+export default useInput;
+</code></pre>
+<pre><code class="language-jsx">// App.tsx
+import React from "react";
+import { View, TextInput, Button, Text } from "react-native";
+import useInput from "./hooks/UseInput";
+
+export default function App() {
+  const name = useInput("");
+  const email = useInput("");
+
+  return (
+    &lt;View style={{ padding: 20 }}&gt;
+      &lt;TextInput
+        placeholder="Nama"
+        value={name.value}
+        onChangeText={name.onChangeText}
+        style={{ borderWidth: 1, marginBottom: 10, padding: 5 }}
+      /&gt;
+      &lt;TextInput
+        placeholder="Email"
+        value={email.value}
+        onChangeText={email.onChangeText}
+        style={{ borderWidth: 1, marginBottom: 10, padding: 5 }}
+      /&gt;
+      &lt;Button title="Submit" onPress={() =&gt; {
+        console.log("Nama:", name.value, "Email:", email.value);
+        name.reset();
+        email.reset();
+      }} /&gt;
+      &lt;Text style={{ marginTop: 10 }}&gt;
+        Nama: {name.value} | Email: {email.value}
+      &lt;/Text&gt;
+    &lt;/View&gt;
+  );
+}
+</code></pre>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="props.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="reducer.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next prefetch" href="state.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="event-handling.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -248,11 +254,11 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="props.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="reducer.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next prefetch" href="state.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="event-handling.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>
