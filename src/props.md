@@ -65,5 +65,6 @@ const styles = StyleSheet.create({
     color: "#555"
   }
 });
-
 ```
+
+Pada kode di atas, struktur dari `props` perlu didefinisikan terlebih dahulu melalui `type CardProps`.

@@ -38,5 +38,5 @@
     - [Context](context.md)
     - [Reference](reference.md)
     - [Reducer](reducer.md)
-    <!-- - [Custom Hooks](custom-hooks.md) -->
+    - [Custom Hooks](custom-hooks.md)
   - [Event Handling](event-handling.md)

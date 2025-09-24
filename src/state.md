@@ -4,16 +4,18 @@ Setelah sebelumnya kita mengenal `props` sebagai cara untuk memberikan data dari
 
 Sebuah komponen dapat memiliki `state` untuk menyimpan informasi yang bersifat dinamis. Misalnya, ketika pengguna menekan tombol, mengetik di dalam sebuah input, atau ketika aplikasi menerima data baru dari server, semua perubahan tersebut bisa dikelola dengan `state`. Inilah yang membuat aplikasi menjadi interaktif.
 
-Berbeda dengan `props` yang hanya bisa dibaca (**read-only**), `state` dapat diperbarui. Ketika `state` berubah, React Native akan secara otomatis melakukan *re-render* pada bagian komponen yang menggunakan `state` tersebut. Dengan demikian, tampilan aplikasi akan selalu sesuai dengan data terbaru.
+Berbeda dengan `props` yang hanya bisa dibaca (**read-only**), `state` dapat diperbarui. Ketika `state` berubah, **React Native** akan secara otomatis melakukan *re-render* pada bagian komponen yang menggunakan `state` tersebut. Dengan demikian, tampilan aplikasi akan selalu sesuai dengan data terbaru.
 
 Struktur dasarnya seperti ini:
 
 ```jsx
 const [value, setValue] = useState(initialValue);
 ```
-- `value` → isi `state` saat ini.
-- `setValue` → fungsi untuk mengubah isi `state`.
-- `initialValue` → nilai awal `state`.
+- `value`: isi `state` saat ini.
+- `setValue`: fungsi untuk mengubah isi dari `state`.
+- `initialValue`: nilai awal `state`.
+- `useState`: hook **React Native**.
+
 
 
 
@@ -31,14 +33,18 @@ export default function App() {
 
   return (
     <View style={styles.container}>
+      // Komponen ini akan me-render jika ada perubahan nilai state
       <Text style={[styles.text, count < 0 ? { color: 'red' } : { color: 'black' }]}>Count: {count}</Text>
       <View style={styles.button_container}>
         <Button 
           title="+" 
+          // memanggil fungsi SetCount untuk menambah nilai state ketika button ditekan
           onPress={() => setCount(count + 1)} 
         />
+
         <Button 
           title="-" 
+          // memanggil fungsi SetCount untuk mengurangi nilai state ketika button ditekan
           onPress={() => setCount(count - 1)} 
         />
       </View>
@@ -71,11 +77,12 @@ Pada contoh di atas, kita menggunakan **`useState`** untuk membuat state `count`
 ## Contoh State 2: Menyimpan Input Teks
 Misalnya, kita ingin membuat aplikasi sederhana yang menampilkan teks berdasarkan teks yang diketik pengguna.
 ```jsx
+// App.tsx
 import React, { useState } from "react";
 import { View, Text, TextInput, StyleSheet } from "react-native";
 
 export default function App() {
-  // State untuk menyimpan teks dari input
+  // Membuat state bernama "name" dengan nilai awal empty string
   const [name, setName] = useState("");
 
   return (
@@ -85,8 +92,11 @@ export default function App() {
         style={styles.input}
         placeholder="Ketik di sini..."
         value={name}
+        // memanggil fungsi setName untuk mengubah nilai state (name) sesuai dengan input user
         onChangeText={(text) => setName(text)}
       />
+
+      // Komponen ini akan me-render jika ada perubahan nilai state
       <Text style={styles.greeting}>
         {name ? `Halo, ${name}!` : "Silakan ketik nama Anda"}
       </Text>
@@ -123,8 +133,8 @@ const styles = StyleSheet.create({
 ## Contoh State 3: Menggunakan `useState` pada reusable component
 Misalnya kita ingin membuat `CustomInput` yang bisa dipakai di banyak tempat. Komponen ini memiliki state untuk menyimpan teks lokal, lalu menampilkan hasil ketikan.
 
+### App.tsx
 ```jsx
-// App.tsx
 import React from "react";
 import { View, StyleSheet } from "react-native";
 import CustomInput from "./components/CustomInput";
@@ -147,13 +157,18 @@ const styles = StyleSheet.create({
 });
 ```
 
+### components/CustomInput.tsx
 ```jsx
-// components/CustomInput.tsx
 import React, { useState } from "react";
 import { View, Text, TextInput, StyleSheet } from "react-native";
 
-export default function CustomInput({ label, placeholder }) {
-  // State lokal untuk menyimpan teks
+type CustomInputProps = {
+  label: string,
+  placeholder: string
+};
+
+export default function CustomInput({ label, placeholder }:CustomInputProps) {
+  // Membuat state lokal bernama "value" dengan nilai awal empty string
   const [value, setValue] = useState("");
 
   return (
@@ -163,8 +178,11 @@ export default function CustomInput({ label, placeholder }) {
         style={styles.input}
         placeholder={placeholder}
         value={value}
+        // memanggil fungsi setValue untuk mengubah nilai state sesuai dengan input user
         onChangeText={(text) => setValue(text)}
       />
+
+      // komponen akan di re-render jika nilai state berubah
       <Text style={styles.preview}>
         {value ? `Anda mengetik: ${value}` : "Belum ada input"}
       </Text>
@@ -195,22 +213,27 @@ const styles = StyleSheet.create({
 
 ```
 
-Pada contoh program di atas, setiap instance `CustomInput` punya state masing-masing (jadi input nama tidak mengganggu input email).
+Pada contoh program di atas, setiap instance `CustomInput` (yang ditambahkan ke dalam App()) memiliki state masing-masing (sehingga input nama tidak mengganggu input email).
 
 ## Contoh State 4: Array State
+
+### components/TodoList.tsx
 ```jsx
 import React, { useState } from 'react';
 import { View, Text, Button } from 'react-native';
 
 export default function TodoList() {
+  
   const [todos, setTodos] = useState([]);
 
   const addTodo = () => {
+    // membuat salinan array lama sehingga data yang sudah tersimpan tidak hilang
     setTodos([...todos, `Tugas ${todos.length + 1}`]);
   };
 
   return (
     <View>
+      // memanggil fungsi addTodo untuk menambah data baru ke dalam state
       <Button title="Tambah Tugas" onPress={addTodo} />
       {todos.map((todo, index) => (
         <Text key={index}>{todo}</Text>
@@ -219,7 +242,7 @@ export default function TodoList() {
   );
 }
 ```
-Kalau state berupa array, biasanya kita bikin salinan array lama lalu tambahkan data baru, supaya state tetap immutable.
+Kalau state berupa array, biasanya perlu membuat salinan array lama lalu tambahkan data baru, agar state tetap immutable (`...todos`).
 
 `useState` adalah pondasi penting dalam React Native karena hampir semua komponen interaktif butuh state. Tanpa `useState`, aplikasi cuma hanya berupa sekumpulan teks dan gambar statis.
 

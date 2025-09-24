@@ -31,9 +31,9 @@ Di dalam hook terdapat beberapa konsep inti yang perlu dipahami:
     - Konsep: alternatif dari `useState` untuk state yang lebih kompleks.
     - Contoh: cocok untuk logika yang melibatkan banyak aksi (misalnya form dengan banyak field).
 
-<!-- 6. [**Custom Hooks**](custom-hooks.md)
+6. [**Custom Hooks**](custom-hooks.md)
     - Konsep: membuat hook sendiri untuk mengabstraksi logika agar dapat digunakan ulang.
-    - Contoh: `useAuth()`, `useFetch()`, `useOrientation()`. -->
+    - Contoh: `useAuth()`, `useFetch()`, `useOrientation()`.
 
 
 
