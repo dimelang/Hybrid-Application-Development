@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Event Handling - Hybrid Application Development</title>
+        <title>Navigation - Hybrid Application Development</title>
 
 
         <!-- Custom HTML head -->
@@ -175,119 +175,38 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="event-handling"><a class="header" href="#event-handling">Event Handling</a></h1>
-<p>Pada dasarnya, event handling adalah mekanisme untuk menangani aksi yang dilakukan pengguna, seperti menekan tombol, mengetik teks, atau melakukan scroll. Di React Native, event handling dilakukan dengan cara menghubungkan sebuah event handler (fungsi) dengan properti event dari suatu komponen. Secara umum, ada beberapa kategori event yang sering dipakai:</p>
-<p><strong>1. Event pada komponen interaktif (tombol, touchable)</strong></p>
+                        <h1 id="navigation"><a class="header" href="#navigation">Navigation</a></h1>
+<p>Saat membuat aplikasi mobile, biasanya tidak hanya terdiri atas satu halaman saja. Misalnya aplikasi belanja online: ada halaman beranda, halaman detail produk, halaman keranjang belanja, hingga halaman profil pengguna. Semua halaman ini harus bisa saling terhubung agar pengalaman pengguna berjalan mulus. Bayangkan kalau aplikasi hanya menampilkan satu halaman statis, pengguna pasti akan kesulitan, karena tidak bisa berpindah ke informasi lain. Inilah alasan mengapa navigasi menjadi bagian yang sangat penting dalam pengembangan aplikasi mobile.</p>
+<p>Di React Native sendiri, <strong>tidak terdapat navigasi bawaan</strong>. Artinya, diperlukan library tambahan untuk menangani navigasi antar halaman. Library yang paling populer dan direkomendasikan adalah <strong>React Navigation</strong>.</p>
+<p>Dengan React Navigation, kita dapat:</p>
 <ul>
-<li><code>onPress</code> → saat komponen ditekan (Button, TouchableOpacity, Pressable).</li>
-<li><code>onLongPress</code> → saat ditekan lama.</li>
-<li><code>onPressIn</code> dan <code>onPressOut</code> → saat jari menyentuh &amp; melepas.</li>
+<li>Membuat alur berpindah antar layar dengan Stack Navigation.</li>
+<li>Membuat menu bawah dengan Tab Navigation.</li>
+<li>Membuat menu samping dengan Drawer Navigation.</li>
 </ul>
-<p><strong>2. Event pada input teks</strong></p>
-<ul>
-<li><code>onChangeText</code> → saat teks berubah.</li>
-<li><code>onFocus</code> → saat input aktif (fokus).</li>
-<li><code>onBlur</code> → saat input kehilangan fokus.</li>
-<li><code>onSubmitEditing</code> → saat user menekan tombol submit/enter.</li>
-</ul>
-<p><strong>3. Event pada list / scroll</strong></p>
-<ul>
-<li><code>onScroll</code> → saat daftar/scrollview digulir.</li>
-<li><code>onEndReached</code> (FlatList/SectionList) → saat mendekati akhir daftar.</li>
-<li><code>onRefresh</code> → saat user menarik ke bawah (pull to refresh).</li>
-</ul>
-<p><strong>4. Event gesture / sentuhan</strong></p>
-<ul>
-<li><code>onTouchStart</code>, <code>onTouchMove</code>, <code>onTouchEnd</code> → event dasar sentuhan.</li>
-<li>Jika pakai <code>PanResponder</code> atau library react-native-gesture-handler, bisa dapat event lebih kompleks seperti swipe, drag, fling.</li>
-</ul>
-<p><strong>5. Event pada image &amp; media</strong></p>
-<ul>
-<li><code>onLoad</code> dan <code>onError</code> (Image) → saat gambar berhasil/gagal dimuat.</li>
-<li><code>onLoadStart</code> dan <code>onLoadEnd</code> → progres load gambar.</li>
-</ul>
-<h2 id="contoh-event-handling-1"><a class="header" href="#contoh-event-handling-1">Contoh Event Handling 1</a></h2>
-<pre><code class="language-jsx">// App.tsx
-import { useState } from "react";
-import { View, Text, Button, StyleSheet } from "react-native";
-
-export default function App() {
-  const [count, setCount] = useState(0);
-
-  const handlePress = () =&gt; {
-    setCount(count + 1); // setiap kali tombol ditekan, count bertambah
-  };
-
-  return (
-    &lt;View style={styles.container}&gt;
-      &lt;Text style={styles.text}&gt;Jumlah klik: {count}&lt;/Text&gt;
-      &lt;Button title="Klik Saya" onPress={handlePress} /&gt;
-    &lt;/View&gt;
-  );
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  text: {
-    fontSize: 20,
-    marginBottom: 20,
-  },
-});
+<h2 id="instalasi"><a class="header" href="#instalasi">Instalasi</a></h2>
+<p>Setelah membuat project baru, tambahkan atau install dependencies berikut:</p>
+<pre><code class="language-bash">npm install @react-navigation/native
 </code></pre>
-<p>Pada contoh di atas, event <code>onPress</code> dari komponen <code>Button</code> dipasangkan dengan fungsi <code>handlePress</code>. Setiap kali tombol ditekan, state <code>count</code> akan bertambah satu, dan perubahan state ini akan langsung di-<em>rerender</em> pada teks yang ditampilkan.</p>
-<h2 id="contoh-event-handling-2"><a class="header" href="#contoh-event-handling-2">Contoh Event Handling 2</a></h2>
-<pre><code class="language-jsx">// App.tsx
-import { useState } from "react";
-import { View, Text, TextInput, StyleSheet } from "react-native";
-
-export default function App() {
-  const [name, setName] = useState("");
-
-  return (
-    &lt;View style={styles.container}&gt;
-      &lt;TextInput
-        style={styles.input}
-        placeholder="Ketik nama Anda"
-        onChangeText={(text) =&gt; setName(text)}
-      /&gt;
-      &lt;Text style={styles.text}&gt;Halo, {name}!&lt;/Text&gt;
-    &lt;/View&gt;
-  );
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: "#ccc",
-    padding: 10,
-    width: 200,
-    marginBottom: 20,
-  },
-  text: {
-    fontSize: 18,
-  },
-});
+<p><strong>Expo</strong></p>
+<pre><code class="language-bash">npx expo install react-native-screens react-native-safe-area-context react-native-gesture-handler react-native-reanimated
 </code></pre>
-<p>Di sini, setiap kali pengguna mengetik, event <code>onChangeText</code> akan dijalankan dan memperbarui state name. Tampilan pun otomatis menyesuaikan dengan isi teks terbaru.</p>
+<p><strong>React Native CLI</strong></p>
+<pre><code class="language-bash">npm install react-native-screens react-native-safe-area-context react-native-gesture-handler react-native-reanimated
+</code></pre>
+<p>iOS</p>
+<pre><code class="language-bash">npx pod-install ios
+</code></pre>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="custom-hooks.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="event-handling.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next prefetch" href="navigation.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="stack-navigation.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -297,11 +216,11 @@ const styles = StyleSheet.create({
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="custom-hooks.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="event-handling.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next prefetch" href="navigation.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="stack-navigation.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>

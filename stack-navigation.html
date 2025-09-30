@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Event Handling - Hybrid Application Development</title>
+        <title>Stack - Hybrid Application Development</title>
 
 
         <!-- Custom HTML head -->
@@ -175,119 +175,178 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="event-handling"><a class="header" href="#event-handling">Event Handling</a></h1>
-<p>Pada dasarnya, event handling adalah mekanisme untuk menangani aksi yang dilakukan pengguna, seperti menekan tombol, mengetik teks, atau melakukan scroll. Di React Native, event handling dilakukan dengan cara menghubungkan sebuah event handler (fungsi) dengan properti event dari suatu komponen. Secara umum, ada beberapa kategori event yang sering dipakai:</p>
-<p><strong>1. Event pada komponen interaktif (tombol, touchable)</strong></p>
+                        <h1 id="stack-navigation"><a class="header" href="#stack-navigation">Stack Navigation</a></h1>
+<h2 id="konsep-dasar"><a class="header" href="#konsep-dasar">Konsep Dasar</a></h2>
 <ul>
-<li><code>onPress</code> → saat komponen ditekan (Button, TouchableOpacity, Pressable).</li>
-<li><code>onLongPress</code> → saat ditekan lama.</li>
-<li><code>onPressIn</code> dan <code>onPressOut</code> → saat jari menyentuh &amp; melepas.</li>
-</ul>
-<p><strong>2. Event pada input teks</strong></p>
+<li>Stack navigation mirip tumpukan kartu.</li>
+<li>Setiap kali pindah ke layar baru → layar ditaruh di atas stack.</li>
+<li>Ketika kembali → layar di atas dihapus, dan kita kembali ke layar sebelumnya.</li>
+<li>Ini cocok untuk alur seperti: <code>Home → Detail → Settings</code></li>
+<li>Mekanismenya mirip riwayat browser:
 <ul>
-<li><code>onChangeText</code> → saat teks berubah.</li>
-<li><code>onFocus</code> → saat input aktif (fokus).</li>
-<li><code>onBlur</code> → saat input kehilangan fokus.</li>
-<li><code>onSubmitEditing</code> → saat user menekan tombol submit/enter.</li>
+<li><code>navigate()</code> = buka halaman baru dan <code>push</code> stack.</li>
+<li><code>goBack()</code> = kembali ke halaman sebelumnya <code>pop</code> stack.</li>
 </ul>
-<p><strong>3. Event pada list / scroll</strong></p>
+</li>
+</ul>
+<h2 id="struktur-implementasi"><a class="header" href="#struktur-implementasi">Struktur Implementasi</a></h2>
+<p>Sebenarnya, navigasi jenis ini dapat diinisialisasi langsung pada file main yaitu <code>App.tsx</code>. Struktur modular lebih disukai karena kemudahannya dalam proyek jangka panjang yang selalu berkembang.</p>
+<pre><code class="language-bash">project/
+│ App.tsx
+│
+├── navigations/
+│   └── StackNavigator.tsx
+│
+└── screens/
+    ├── HomeScreen.tsx
+    └── DetailScreen.tsx
+</code></pre>
+<h2 id="instalasi"><a class="header" href="#instalasi">Instalasi</a></h2>
+<pre><code class="language-bash">npm install @react-navigation/native-stack
+</code></pre>
+<h2 id="contoh"><a class="header" href="#contoh">Contoh</a></h2>
+<h3 id="screenshomescreentsx"><a class="header" href="#screenshomescreentsx">screens/HomeScreen.tsx</a></h3>
+<pre><code class="language-javascript">import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { View, Text, Button } from 'react-native';
+import { RootStackParamList } from '../navigations/StackNavigator';
+
+type Props = NativeStackScreenProps&lt;RootStackParamList, 'Home'&gt;
+
+export default function HomeScreen({ navigation }: Props) {
+    return (
+        &lt;View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}&gt;
+            &lt;Text style={{ fontSize: 20 }}&gt;Ini Home Screen&lt;/Text&gt;
+            &lt;Button
+                title="Lihat Detail"
+                onPress={() =&gt; navigation.navigate('Detail', { id: 101, barang: "Laptop" })}
+            /&gt;
+        &lt;/View&gt;
+    );
+}
+</code></pre>
 <ul>
-<li><code>onScroll</code> → saat daftar/scrollview digulir.</li>
-<li><code>onEndReached</code> (FlatList/SectionList) → saat mendekati akhir daftar.</li>
-<li><code>onRefresh</code> → saat user menarik ke bawah (pull to refresh).</li>
+<li><code>Props = NativeStackScreenProps&lt;RootStackParamList, 'Home'&gt;</code>: mendefinisikan props khusus untuk halaman Home. Strukturnya dapat dilihat pada <a href="#TabNavigator.tsx">bagian ini</a>.</li>
+<li><code>navigation</code>: digunakan untuk berpindah ke halaman lain.</li>
+<li><code>navigation.navigate('Detail', { id: 101, barang: "Laptop" })</code>: pindah ke halaman Detail, sekaligus mengirim data id = 101 dan barang = "Laptop".</li>
 </ul>
-<p><strong>4. Event gesture / sentuhan</strong></p>
+<p>Jadi, <code>HomeScreen.tsx</code> adalah halaman awal aplikasi yang dapat mengarahkan user ke halaman detail dengan parameter.</p>
+<h3 id="screensdetailscreentsx"><a class="header" href="#screensdetailscreentsx">screens/DetailScreen.tsx</a></h3>
+<pre><code class="language-javascript">import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { View, Text, Button } from 'react-native';
+import { RootStackParamList } from '../navigations/StackNavigator';
+
+type Props = NativeStackScreenProps&lt;RootStackParamList, 'Detail'&gt;
+
+export default function DetailScreen({ route, navigation }: Props) {
+    const { id, barang } = route.params || {};
+
+    return (
+        &lt;View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}&gt;
+            &lt;Text style={{ fontSize: 20 }}&gt;Ini Detail Screen&lt;/Text&gt;
+            &lt;Text&gt;ID: {id}&lt;/Text&gt;
+            &lt;Text&gt;Barang: {barang}&lt;/Text&gt;
+            &lt;Button title="Kembali" onPress={() =&gt; navigation.goBack()} /&gt;
+        &lt;/View&gt;
+    );
+}
+</code></pre>
 <ul>
-<li><code>onTouchStart</code>, <code>onTouchMove</code>, <code>onTouchEnd</code> → event dasar sentuhan.</li>
-<li>Jika pakai <code>PanResponder</code> atau library react-native-gesture-handler, bisa dapat event lebih kompleks seperti swipe, drag, fling.</li>
+<li><code>Props = NativeStackScreenProps&lt;RootStackParamList, 'Detail'&gt;</code>: tipe props khusus untuk halaman Detail. Strukturnya dapat dilihat pada <a href="#TabNavigator.tsx">bagian ini</a>.</li>
+<li><code>route.params</code>: berisi data yang dikirim dari Home.</li>
+<li><code>navigation</code>: digunakan untuk kembali atau pindah ke halaman lain.</li>
+<li><code>const { id, barang } = route.params</code>: mengambil parameter id dan barang.</li>
 </ul>
-<p><strong>5. Event pada image &amp; media</strong></p>
+<p>Jadi, <code>DetailScreen.tsx</code> adalah halaman kedua yang menerima data dari Home dan bisa kembali ke halaman sebelumnya.</p>
+<h3 id="TabNavigator.tsx"><a class="header" href="#TabNavigator.tsx">navigations/StackNavigator.tsx</a></h3>
+<pre><code class="language-javascript">import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import HomeScreen from '../screens/HomeScreen';
+import DetailScreen from '../screens/DetailScreen';
+
+export type RootStackParamList = {
+    Home: undefined,
+    Detail: { id: number, barang: string }
+}
+
+const Stack = createNativeStackNavigator&lt;RootStackParamList&gt;();
+
+export default function StackNavigator() {
+    return (
+        &lt;Stack.Navigator initialRouteName="Home"
+            screenOptions={{
+                headerStyle: {
+                    backgroundColor: '#f4511e',
+                },
+                headerTintColor: '#fff',
+                headerTitleStyle: {
+                    fontWeight: 'bold',
+                },
+            }}
+        &gt;
+            &lt;Stack.Screen
+                name="Home"
+                component={HomeScreen}
+                options={{
+                    title: 'Halaman Utama',
+                }}
+            /&gt;
+            &lt;Stack.Screen
+                name="Detail"
+                component={DetailScreen}
+                options={{ title: 'Detail Item' }}
+            /&gt;
+        &lt;/Stack.Navigator&gt;
+    );
+}
+</code></pre>
 <ul>
-<li><code>onLoad</code> dan <code>onError</code> (Image) → saat gambar berhasil/gagal dimuat.</li>
-<li><code>onLoadStart</code> dan <code>onLoadEnd</code> → progres load gambar.</li>
+<li><code>RootStackParamList</code>: mendefinisikan semua screen dan parameter yang boleh dipassing.
+<ul>
+<li><code>Home: undefined</code>: Home tidak menerima parameter.</li>
+<li><code>Detail: { id: number, barang: string }</code>: Detail wajib menerima parameter id bertipe number dan barang bertipe string.</li>
 </ul>
-<h2 id="contoh-event-handling-1"><a class="header" href="#contoh-event-handling-1">Contoh Event Handling 1</a></h2>
-<pre><code class="language-jsx">// App.tsx
-import { useState } from "react";
-import { View, Text, Button, StyleSheet } from "react-native";
+</li>
+<li><code>createNativeStackNavigator&lt;RootStackParamList&gt;()</code>: membuat navigator dengan dukungan type checking TypeScript.</li>
+<li><code>Stack.Navigator</code>: mendefinisikan kumpulan screen.</li>
+<li><code>initialRouteName="Home"</code>: halaman pertama.</li>
+<li><code>screenOptions</code>: konfigurasi header dan <code>options</code> lainnya dapat dilihat pada <a href="https://reactnavigation.org/docs/native-stack-navigator#options" target="_blank">halaman ini</a></li>
+<li><code>Stack.Screen</code>: tiap layar didaftarkan di sini dengan:
+<ul>
+<li><code>name</code>: nama route.</li>
+<li><code>component</code>: file halaman.</li>
+<li><code>options</code>: properti tambahan (misalnya judul di header).</li>
+<li>API lainnya dapat dilihat pada <a href="https://reactnavigation.org/docs/stack-navigator/#api-definition" target="_blank">halaman ini</a></li>
+</ul>
+</li>
+</ul>
+<p>Jadi, <code>StackNavigator.tsx</code> adalah peta aplikasi yang mengatur halaman apa saja yang ada dan bagaimana rutenya.</p>
+<h3 id="apptsx"><a class="header" href="#apptsx">App.tsx</a></h3>
+<pre><code class="language-javascript">import { NavigationContainer } from '@react-navigation/native';
+import StackNavigator from './navigations/StackNavigator';
 
 export default function App() {
-  const [count, setCount] = useState(0);
-
-  const handlePress = () =&gt; {
-    setCount(count + 1); // setiap kali tombol ditekan, count bertambah
-  };
-
   return (
-    &lt;View style={styles.container}&gt;
-      &lt;Text style={styles.text}&gt;Jumlah klik: {count}&lt;/Text&gt;
-      &lt;Button title="Klik Saya" onPress={handlePress} /&gt;
-    &lt;/View&gt;
+    &lt;NavigationContainer&gt;
+      &lt;StackNavigator /&gt;
+    &lt;/NavigationContainer&gt;
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  text: {
-    fontSize: 20,
-    marginBottom: 20,
-  },
-});
 </code></pre>
-<p>Pada contoh di atas, event <code>onPress</code> dari komponen <code>Button</code> dipasangkan dengan fungsi <code>handlePress</code>. Setiap kali tombol ditekan, state <code>count</code> akan bertambah satu, dan perubahan state ini akan langsung di-<em>rerender</em> pada teks yang ditampilkan.</p>
-<h2 id="contoh-event-handling-2"><a class="header" href="#contoh-event-handling-2">Contoh Event Handling 2</a></h2>
-<pre><code class="language-jsx">// App.tsx
-import { useState } from "react";
-import { View, Text, TextInput, StyleSheet } from "react-native";
-
-export default function App() {
-  const [name, setName] = useState("");
-
-  return (
-    &lt;View style={styles.container}&gt;
-      &lt;TextInput
-        style={styles.input}
-        placeholder="Ketik nama Anda"
-        onChangeText={(text) =&gt; setName(text)}
-      /&gt;
-      &lt;Text style={styles.text}&gt;Halo, {name}!&lt;/Text&gt;
-    &lt;/View&gt;
-  );
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: "#ccc",
-    padding: 10,
-    width: 200,
-    marginBottom: 20,
-  },
-  text: {
-    fontSize: 18,
-  },
-});
-</code></pre>
-<p>Di sini, setiap kali pengguna mengetik, event <code>onChangeText</code> akan dijalankan dan memperbarui state name. Tampilan pun otomatis menyesuaikan dengan isi teks terbaru.</p>
+<ul>
+<li><code>NavigationContainer</code>: komponen utama dari React Navigation yang membungkus seluruh aplikasi. Tanpa ini, navigasi tidak dapat berjalan.</li>
+<li><code>StackNavigator</code>: definisi struktur navigasi.</li>
+</ul>
+<p>Jadi, <code>App.tsx</code> adalah pintu masuk aplikasi yang menghubungkan navigasi dengan seluruh halaman.</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="custom-hooks.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="navigation.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next prefetch" href="navigation.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="bottom-tabs-navigation.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -297,11 +356,11 @@ const styles = StyleSheet.create({
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="custom-hooks.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="navigation.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next prefetch" href="navigation.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="bottom-tabs-navigation.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>

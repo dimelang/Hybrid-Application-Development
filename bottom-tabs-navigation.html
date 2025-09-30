@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Event Handling - Hybrid Application Development</title>
+        <title>Bottom Tabs - Hybrid Application Development</title>
 
 
         <!-- Custom HTML head -->
@@ -175,119 +175,200 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="event-handling"><a class="header" href="#event-handling">Event Handling</a></h1>
-<p>Pada dasarnya, event handling adalah mekanisme untuk menangani aksi yang dilakukan pengguna, seperti menekan tombol, mengetik teks, atau melakukan scroll. Di React Native, event handling dilakukan dengan cara menghubungkan sebuah event handler (fungsi) dengan properti event dari suatu komponen. Secara umum, ada beberapa kategori event yang sering dipakai:</p>
-<p><strong>1. Event pada komponen interaktif (tombol, touchable)</strong></p>
+                        <h1 id="bottom-tabs-navigation"><a class="header" href="#bottom-tabs-navigation">Bottom Tabs Navigation</a></h1>
+<h2 id="konsep-dasar"><a class="header" href="#konsep-dasar">Konsep Dasar</a></h2>
 <ul>
-<li><code>onPress</code> → saat komponen ditekan (Button, TouchableOpacity, Pressable).</li>
-<li><code>onLongPress</code> → saat ditekan lama.</li>
-<li><code>onPressIn</code> dan <code>onPressOut</code> → saat jari menyentuh &amp; melepas.</li>
-</ul>
-<p><strong>2. Event pada input teks</strong></p>
+<li>Bottom Tabs navigation menampilkan menu tab di bawah layar.</li>
+<li>Setiap tab adalah sebuah halaman (atau bahkan bisa berupa navigator lain seperti Stack).</li>
+<li>Cocok untuk aplikasi dengan menu utama seperti: Home, Profile, Settings.</li>
+<li>Karakteristiknya:
 <ul>
-<li><code>onChangeText</code> → saat teks berubah.</li>
-<li><code>onFocus</code> → saat input aktif (fokus).</li>
-<li><code>onBlur</code> → saat input kehilangan fokus.</li>
-<li><code>onSubmitEditing</code> → saat user menekan tombol submit/enter.</li>
+<li>Tab yang aktif akan menampilkan screen terkait.</li>
+<li>Navigasi antar tab tidak tumpukan (stack), jadi berpindah tab tidak menyimpan riwayat antar tab.</li>
+<li>Bisa diberi ikon dan label untuk tiap tab.</li>
 </ul>
-<p><strong>3. Event pada list / scroll</strong></p>
+</li>
+</ul>
+<h2 id="struktur-implementasi"><a class="header" href="#struktur-implementasi">Struktur Implementasi</a></h2>
+<pre><code class="language-bash">project/
+│ App.tsx
+│
+├── navigations/
+│   └── TabNavigator.tsx
+│
+└── screens/
+    ├── HomeScreen.tsx
+    ├── SearchScreen.tsx
+    └── ProfileScreen.tsx
+</code></pre>
+<p>Struktur project di atas bukanlah aturan yang wajib diikuti. Struktur di atas menggunakan pendekatan modular karena:</p>
 <ul>
-<li><code>onScroll</code> → saat daftar/scrollview digulir.</li>
-<li><code>onEndReached</code> (FlatList/SectionList) → saat mendekati akhir daftar.</li>
-<li><code>onRefresh</code> → saat user menarik ke bawah (pull to refresh).</li>
+<li>Maintainable: mudah diatur jika screen semakin banyak.</li>
+<li>Scalable: mudah menambahkan jenis navigasi lainnya seperti Stack atau Drawer.</li>
+<li>Clean code: App.tsx tetap terlihat ringkas.</li>
 </ul>
-<p><strong>4. Event gesture / sentuhan</strong></p>
+<h2 id="instalasi"><a class="header" href="#instalasi">Instalasi</a></h2>
+<pre><code class="language-bash">npm install @react-navigation/bottom-tabs
+npx expo install @expo/vector-icons
+</code></pre>
+<h2 id="contoh"><a class="header" href="#contoh">Contoh</a></h2>
+<h3 id="screenshomescreentsx"><a class="header" href="#screenshomescreentsx">screens/HomeScreen.tsx</a></h3>
+<pre><code class="language-javascript">import { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
+import { RootParamList } from "../navigations/TabNavigator";
+import { Button, Text, View } from "react-native";
+
+type Props = BottomTabScreenProps&lt;RootParamList, 'Home'&gt;;
+
+export default function HomeScreen({ navigation }: Props) {
+    return (
+        &lt;View style={{ flex: 1, justifyContent: "center", alignItems: 'center', gap: 15 }}&gt;
+            &lt;Text style={{ fontSize: 18 }}&gt;Ini Home Screen&lt;/Text&gt;
+            &lt;Button title="Ke Profil" onPress={() =&gt; navigation.navigate('Profile')} /&gt;
+        &lt;/View&gt;
+    );
+}
+</code></pre>
 <ul>
-<li><code>onTouchStart</code>, <code>onTouchMove</code>, <code>onTouchEnd</code> → event dasar sentuhan.</li>
-<li>Jika pakai <code>PanResponder</code> atau library react-native-gesture-handler, bisa dapat event lebih kompleks seperti swipe, drag, fling.</li>
+<li><code>Props = BottomTabScreenProps&lt;RootParamList, 'Home'&gt;</code>: mendefinisikan props khusus untuk halaman Home.</li>
+<li><code>navigation</code>: digunakan untuk berpindah ke halaman lain.</li>
+<li><code>navigation.navigate('Profile')</code>: pindah ke halaman Profile.</li>
 </ul>
-<p><strong>5. Event pada image &amp; media</strong></p>
+<p>Jadi, <code>HomeScreen.tsx</code> adalah halaman awal aplikasi yang dapat mengarahkan user ke halaman Profile.</p>
+<h3 id="screensprofilescreentsx"><a class="header" href="#screensprofilescreentsx">screens/ProfileScreen.tsx</a></h3>
+<pre><code class="language-javascript">import { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
+import { RootParamList } from "../navigations/TabNavigator";
+import { Text, View } from "react-native";
+
+type Props = BottomTabScreenProps&lt;RootParamList, 'Profile'&gt;;
+
+export default function ProfileScreen({ }: Props) {
+    return (
+        &lt;View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}&gt;
+            &lt;Text style={{ fontSize: 18 }}&gt;Ini Profil Screen&lt;/Text&gt;
+        &lt;/View&gt;
+    );
+}
+</code></pre>
 <ul>
-<li><code>onLoad</code> dan <code>onError</code> (Image) → saat gambar berhasil/gagal dimuat.</li>
-<li><code>onLoadStart</code> dan <code>onLoadEnd</code> → progres load gambar.</li>
+<li><code>Props = BottomTabScreenProps&lt;RootParamList, 'Profile'&gt;</code>: mendefinisikan props khusus untuk halaman Profile, namun karena type data untuk <code>prop</code> didefinisikan dengan <code>undefined</code> <a href="#TabNavigator.tsx">lihat disini</a>, maka tidak ada parameter pada halaman ini.</li>
 </ul>
-<h2 id="contoh-event-handling-1"><a class="header" href="#contoh-event-handling-1">Contoh Event Handling 1</a></h2>
-<pre><code class="language-jsx">// App.tsx
-import { useState } from "react";
-import { View, Text, Button, StyleSheet } from "react-native";
+<h3 id="screenssettingscreentsx"><a class="header" href="#screenssettingscreentsx">screens/SettingScreen.tsx</a></h3>
+<pre><code class="language-javascript">import { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
+import { RootParamList } from "../navigations/TabNavigator";
+import { Text, View } from "react-native";
+
+type Props = BottomTabScreenProps&lt;RootParamList, 'Setting'&gt;;
+
+export default function SettingScreen() {
+    return (
+        &lt;View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}&gt;
+            &lt;Text style={{ fontSize: 18 }}&gt;Ini Setting Screen&lt;/Text&gt;
+        &lt;/View&gt;
+    );
+}
+</code></pre>
+<ul>
+<li><code>Props = BottomTabScreenProps&lt;RootParamList, 'Setting'&gt;</code>: mendefinisikan props khusus untuk halaman Profile, namun karena type data untuk <code>prop</code> didefinisikan dengan <code>undefined</code> <a href="#TabNavigator.tsx">lihat disini</a>, maka tidak ada parameter pada halaman ini.</li>
+</ul>
+<h3 id="TabNavigator.tsx"><a class="header" href="#TabNavigator.tsx">navigations/TabNavigator.tsx</a></h3>
+<pre><code class="language-javascript">import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import HomeScreen from "../screens/HomeScreen";
+import ProfileScreen from "../screens/ProfileScreen";
+import SettingScreen from "../screens/SettingScreen";
+import { Ionicons } from "@expo/vector-icons";
+
+
+export type RootParamList = {
+    Home: undefined,
+    Profile: undefined,
+    Setting: undefined
+};
+
+const Tab = createBottomTabNavigator&lt;RootParamList&gt;();
+
+export default function TabNavigator() {
+    return (
+        &lt;Tab.Navigator initialRouteName="Home"
+            screenOptions={{
+                headerShown: true,
+                tabBarActiveTintColor: '#f4511e',
+                tabBarInactiveTintColor: 'gray',
+            }}
+        &gt;
+            &lt;Tab.Screen name="Home" component={HomeScreen} options={{
+                title: "Halaman Utama",
+                tabBarLabel: 'Home',
+                tabBarIcon: ({ focused, color, size }) =&gt; (
+                    &lt;Ionicons name={focused ? 'home' : 'home-outline'}
+                        color={color}
+                        size={size} /&gt;
+                )
+            }} /&gt;
+            &lt;Tab.Screen name="Profile" component={ProfileScreen} options={{
+                title: "Halaman Profil",
+                tabBarLabel: 'Profile',
+                tabBarIcon: ({ focused, color, size }) =&gt; (
+                    &lt;Ionicons name={focused ? 'person' : 'person-outline'}
+                        color={color}
+                        size={size} /&gt;
+                )
+            }} /&gt;
+            &lt;Tab.Screen name="Setting" component={SettingScreen} options={{
+                title: "Halaman Setting",
+                tabBarLabel: 'Home',
+                tabBarIcon: ({ focused, color, size }) =&gt; (
+                    &lt;Ionicons name={focused ? 'settings' : 'settings-outline'}
+                        color={color}
+                        size={size} /&gt;
+                )
+            }} /&gt;
+        &lt;/Tab.Navigator&gt;
+    )
+}
+</code></pre>
+<ul>
+<li><code>RootParamList </code>: mendefinisikan semua screen dan parameter yang boleh dipassing.
+<ul>
+<li><code>Home: undefined</code>: Home tidak menerima parameter.</li>
+<li><code>Profile: undefined</code>: Profile tidak menerima parameter.</li>
+<li><code>Setting: undefined</code>: Setting tidak menerima parameter.</li>
+</ul>
+</li>
+<li><code>createBottomTabNavigator&lt;RootParamList&gt;()</code>: membuat navigator dengan dukungan type checking TypeScript.</li>
+<li><code>Tab.Navigator</code>: mendefinisikan kumpulan tab.</li>
+<li><code>initialRouteName="Home"</code>: halaman pertama.</li>
+<li><code>screenOptions</code>: konfigurasi header dan <code>options</code> lainnya dapat dilihat pada <a href="https://reactnavigation.org/docs/bottom-tab-navigator/" target="_blank">halaman ini</a></li>
+<li><code>Tab.Screen</code>: tiap layar didaftarkan di sini dengan:
+<ul>
+<li><code>name</code>: nama route.</li>
+<li><code>component</code>: file halaman.</li>
+<li><code>options</code>: properti tambahan (misalnya judul di header dan icon tab).</li>
+</ul>
+</li>
+</ul>
+<p>Jadi, <code>TabNavigator.tsx</code> adalah peta aplikasi yang mengatur halaman apa saja yang ada dan bagaimana rutenya.</p>
+<h3 id="apptsx"><a class="header" href="#apptsx">App.tsx</a></h3>
+<pre><code class="language-javascript">import { NavigationContainer } from '@react-navigation/native';
+import TabNavigator from './navigations/TabNavigator';
 
 export default function App() {
-  const [count, setCount] = useState(0);
-
-  const handlePress = () =&gt; {
-    setCount(count + 1); // setiap kali tombol ditekan, count bertambah
-  };
-
   return (
-    &lt;View style={styles.container}&gt;
-      &lt;Text style={styles.text}&gt;Jumlah klik: {count}&lt;/Text&gt;
-      &lt;Button title="Klik Saya" onPress={handlePress} /&gt;
-    &lt;/View&gt;
+    &lt;NavigationContainer&gt;
+      &lt;TabNavigator /&gt;
+    &lt;/NavigationContainer&gt;
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  text: {
-    fontSize: 20,
-    marginBottom: 20,
-  },
-});
 </code></pre>
-<p>Pada contoh di atas, event <code>onPress</code> dari komponen <code>Button</code> dipasangkan dengan fungsi <code>handlePress</code>. Setiap kali tombol ditekan, state <code>count</code> akan bertambah satu, dan perubahan state ini akan langsung di-<em>rerender</em> pada teks yang ditampilkan.</p>
-<h2 id="contoh-event-handling-2"><a class="header" href="#contoh-event-handling-2">Contoh Event Handling 2</a></h2>
-<pre><code class="language-jsx">// App.tsx
-import { useState } from "react";
-import { View, Text, TextInput, StyleSheet } from "react-native";
-
-export default function App() {
-  const [name, setName] = useState("");
-
-  return (
-    &lt;View style={styles.container}&gt;
-      &lt;TextInput
-        style={styles.input}
-        placeholder="Ketik nama Anda"
-        onChangeText={(text) =&gt; setName(text)}
-      /&gt;
-      &lt;Text style={styles.text}&gt;Halo, {name}!&lt;/Text&gt;
-    &lt;/View&gt;
-  );
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: "#ccc",
-    padding: 10,
-    width: 200,
-    marginBottom: 20,
-  },
-  text: {
-    fontSize: 18,
-  },
-});
-</code></pre>
-<p>Di sini, setiap kali pengguna mengetik, event <code>onChangeText</code> akan dijalankan dan memperbarui state name. Tampilan pun otomatis menyesuaikan dengan isi teks terbaru.</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="custom-hooks.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="stack-navigation.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next prefetch" href="navigation.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="drawer-navigation.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -297,11 +378,11 @@ const styles = StyleSheet.create({
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="custom-hooks.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="stack-navigation.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next prefetch" href="navigation.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="drawer-navigation.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>
