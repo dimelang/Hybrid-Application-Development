@@ -28,19 +28,28 @@ App.tsx
 import React from "react";
 import { createContext, useState } from "react";
 
-export const ThemeContext = React.createContext('light'); // nilai default
+type ContextType = {
+    theme:string,
+    toggleTheme: () => void
+}
 
-export function ThemeProvider({ children }) {
+type Props = {
+    children: ReactNode
+}
+
+export const ThemeContext = createContext<ContextType>('light'); // nilai default
+
+export function ThemeProvider({ props }:Props) {
     const [theme, setTheme] = useState('light');
     const toggleTheme = () => setTheme(theme == 'light' ? 'dark' : 'light');
     return (
         <ThemeContext.Provider value={{ theme, toggleTheme }}>
-            {children}
+            {props.children}
         </ThemeContext.Provider>
     );
 }
 ```
-`React.createContext('light')` bertindak sebagai wadah (context) untuk menyimpan data yang dapat digunakan di seluruh komponen. Di sini context akan menyimpan theme (light/dark) dan fungsi toggleTheme.
+`createContext('light')` bertindak sebagai wadah (context) untuk menyimpan data yang dapat digunakan di seluruh komponen. Di sini context akan menyimpan theme (light/dark) dan fungsi toggleTheme.
 
 `ThemeProvider` adalah komponen pembungkus dengan `state` awal bernilai light. `ThemeContext.Provider` membagikan data (`theme`, `toggleTheme`) ke semua komponen di dalamnya (`children`). Artinya, komponen apa pun yang ada di bawah `ThemeProvider` dapat mengambil `theme` dan `toggleTheme`.
 
@@ -50,7 +59,12 @@ import { useContext } from "react";
 import { ThemeContext } from "../context/ThemeContext";
 import { Text, TouchableOpacity } from "react-native";
 
-export default function ThemedButton({ title, onPress }) {
+type Props = {
+    title: string,
+    onPress: () => void
+};
+
+export default function ThemedButton({props}:Props) {
     const { theme } = useContext(ThemeContext);
 
     const backgroundColor = theme === 'light' ? '#007BFF' : '#555';
@@ -64,8 +78,8 @@ export default function ThemedButton({ title, onPress }) {
                 borderRadius: 8,
                 margin: 5,
             }}
-            onPress={onPress}>
-            <Text style={{ color: textColor, fontWeight: 'bold' }}>{title}</Text>
+            onPress={props.onPress}>
+            <Text style={{ color: textColor, fontWeight: 'bold' }}>{props.title}</Text>
         </TouchableOpacity>
     );
 }

@@ -27,8 +27,11 @@
     - [Image](component-image.md)
     - [TextInput](component-textinput.md)
     - [Button](component-button.md)
+    - [Touchable](touchable.md)
     - [ScrollView](component-scrollview.md)
     - [FlatList](component-flatlist.md)
+    - [Progress](progress.md)
+    - [Modal Dialog](modal-dialog.md)
   - [Style & Layout](style-layout-react-native.md)
     - [Style & Layout Lanjutan](style-layout-react-native-lanjutan.md)
   - [Props](props.md)
@@ -44,3 +47,6 @@
     - [Stack](stack-navigation.md)
     - [Bottom Tabs](bottom-tabs-navigation.md)
     - [Drawer](drawer-navigation.md)
+  <!-- - [Animation](animation.md)
+    - [Animated API](animated-api.md)
+    - [Reanimated & Gesture Handler](reanimated-gesture-handler.md) -->
