@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>FlatList - Hybrid Application Development</title>
+        <title>Modal Dialog - Hybrid Application Development</title>
 
 
         <!-- Custom HTML head -->
@@ -175,90 +175,63 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="flatlist"><a class="header" href="#flatlist">FlatList</a></h1>
-<p>Komponen <strong><code>FlatList</code></strong> digunakan untuk menampilkan daftar data dalam jumlah banyak secara <strong>efisien</strong>.<br />
-Berbeda dengan <code>ScrollView</code> (yang merender semua item sekaligus), <code>FlatList</code> hanya merender item yang terlihat di layar, sehingga lebih hemat memori dan performa.</p>
-<hr />
-<h3 id="flatlist-dasar"><a class="header" href="#flatlist-dasar">FlatList Dasar</a></h3>
-<pre><code class="language-ts">import { FlatList, Text, StyleSheet, View } from 'react-native';
-
-const DATA = Array.from({ length: 20 }, (_, i) =&gt; ({
-  id: i.toString(),
-  title: `Item ${i + 1}`,
-}));
+                        <h1 id="modal-dialog"><a class="header" href="#modal-dialog">Modal Dialog</a></h1>
+<p>Komponen <code>Modal</code> di React Native digunakan untuk menampilkan konten sementara yang muncul di atas layar utama. Biasanya dipakai untuk popup, konfirmasi, form input, atau pesan penting.</p>
+<h2 id="modal-dasar"><a class="header" href="#modal-dasar">Modal Dasar</a></h2>
+<pre><code class="language-javascript">import React, { useState } from 'react';
+import { Modal, View, Text, Button } from 'react-native';
 
 export default function App() {
+  const [visible, setVisible] = useState(false);
+
   return (
-    &lt;FlatList
-      data={DATA}
-      keyExtractor={(item) =&gt; item.id}
-      renderItem={({ item }) =&gt; (
-        &lt;View style={styles.item}&gt;
-          &lt;Text style={styles.text}&gt;{item.title}&lt;/Text&gt;
+    &lt;View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}&gt;
+      &lt;Button title="Tampilkan Modal" onPress={() =&gt; setVisible(true)} /&gt;
+
+      &lt;Modal
+        visible={visible}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={() =&gt; setVisible(false)} // untuk Android back button
+      &gt;
+        &lt;View style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: 'rgba(0,0,0,0.5)'
+        }}&gt;
+          &lt;View style={{
+            width: 300,
+            padding: 20,
+            backgroundColor: 'white',
+            borderRadius: 10
+          }}&gt;
+            &lt;Text style={{ fontSize: 18, marginBottom: 20 }}&gt;Halo, ini modal!&lt;/Text&gt;
+            &lt;Button title="Tutup" onPress={() =&gt; setVisible(false)} /&gt;
+          &lt;/View&gt;
         &lt;/View&gt;
-      )}
-    /&gt;
+      &lt;/Modal&gt;
+    &lt;/View&gt;
   );
 }
-
-const styles = StyleSheet.create({
-  item: {
-    padding: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
-  },
-  text: {
-    fontSize: 18,
-  },
-});
 </code></pre>
-<h3 id="flatlist-horizontal"><a class="header" href="#flatlist-horizontal">FlatList Horizontal</a></h3>
-<pre><code class="language-ts">&lt;FlatList
-  data={DATA}
-  horizontal
-  keyExtractor={(item) =&gt; item.id}
-  renderItem={({ item }) =&gt; (
-    &lt;View style={{ margin: 10, padding: 20, backgroundColor: '#eee' }}&gt;
-      &lt;Text&gt;{item.title}&lt;/Text&gt;
-    &lt;/View&gt;
-  )}
-/&gt;
-</code></pre>
-<h3 id="menambahkan-header--footer"><a class="header" href="#menambahkan-header--footer">Menambahkan Header &amp; Footer</a></h3>
-<pre><code class="language-ts">&lt;FlatList
-  data={DATA}
-  keyExtractor={(item) =&gt; item.id}
-  renderItem={({ item }) =&gt; (
-    &lt;View style={styles.item}&gt;
-      &lt;Text style={styles.text}&gt;{item.title}&lt;/Text&gt;
-    &lt;/View&gt;
-  )}
-  ListHeaderComponent={&lt;Text style={styles.header}&gt;Daftar Item&lt;/Text&gt;}
-  ListFooterComponent={&lt;Text style={styles.footer}&gt;Akhir List&lt;/Text&gt;}
-/&gt;
-</code></pre>
-<h3 id="menambahkan-separator"><a class="header" href="#menambahkan-separator">Menambahkan Separator</a></h3>
-<pre><code class="language-ts">&lt;FlatList
-  data={DATA}
-  keyExtractor={(item) =&gt; item.id}
-  renderItem={({ item }) =&gt; (
-    &lt;View style={styles.item}&gt;
-      &lt;Text style={styles.text}&gt;{item.title}&lt;/Text&gt;
-    &lt;/View&gt;
-  )}
-  ItemSeparatorComponent={() =&gt; &lt;View style={{ height: 1, backgroundColor: '#ccc' }} /&gt;}
-/&gt;
-</code></pre>
+<p>Komponen ini memiliki beberapa property penting:</p>
+<ul>
+<li><code>visible</code>: kontrol apakah modal muncul atau tidak.</li>
+<li><code>transparent</code>: jika true, background luar modal bisa transparan.</li>
+<li><code>animationType</code>: animasi saat modal muncul/hilang (none, slide, fade).</li>
+<li><code>onRequestClose</code>: dipanggil ketika user tekan back button di Android.</li>
+</ul>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="component-scrollview.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="progress.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next prefetch" href="progress.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="style-layout-react-native.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -268,11 +241,11 @@ const styles = StyleSheet.create({
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="component-scrollview.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="progress.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next prefetch" href="progress.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="style-layout-react-native.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>

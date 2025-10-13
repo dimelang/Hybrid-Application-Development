@@ -261,35 +261,6 @@ export default function App() {
   );
 }
 </code></pre>
-<h2 id="contoh-4-animasi-dengan-useref"><a class="header" href="#contoh-4-animasi-dengan-useref">Contoh 4: Animasi dengan useRef</a></h2>
-<pre><code class="language-jsx">import React, { useRef, useEffect } from "react";
-import { View, Animated } from "react-native";
-
-export default function App() {
-  const fadeAnim = useRef(new Animated.Value(0)).current;
-
-  useEffect(() =&gt; {
-    Animated.timing(fadeAnim, {
-      toValue: 1,
-      duration: 2000,
-      useNativeDriver: true,
-    }).start();
-  }, []);
-
-  return (
-    &lt;Animated.View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        opacity: fadeAnim, // nilai dari useRef
-      }}
-    &gt;
-      &lt;View style={{ width: 100, height: 100, backgroundColor: "tomato" }} /&gt;
-    &lt;/Animated.View&gt;
-  );
-}
-</code></pre>
 
                     </main>
 

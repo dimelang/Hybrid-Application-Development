@@ -1759,6 +1759,76 @@ export default function App() {
   color="green"
 /&gt;
 </code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="touchable"><a class="header" href="#touchable">Touchable</a></h1>
+<p>Komponen <code>Touchable</code> di React Native digunakan untuk membuat area yang bisa ditekan (pressable area).
+Berbeda dengan <a href="component-button.html"><code>Button</code></a> bawaan yang terbatas dalam kustomisasi, <code>Touchable</code> memberikan fleksibilitas penuh untuk membuat tombol dengan gaya dan isi sesuai kebutuhan (misalnya teks, ikon, atau gambar).</p>
+<p>React Native menyediakan beberapa varian Touchable seperti:</p>
+<ul>
+<li><code>TouchableOpacity</code></li>
+<li><code>TouchableHighlight</code></li>
+<li><code>TouchableWithoutFeedback</code></li>
+</ul>
+<h2 id="touchableopacity"><a class="header" href="#touchableopacity">TouchableOpacity</a></h2>
+<pre><code class="language-javascript">import { Text, View, TouchableOpacity, Alert } from 'react-native';
+
+export default function App() {
+  return (
+    &lt;View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}&gt;
+      &lt;TouchableOpacity
+        onPress={() =&gt; Alert.alert('Tombol ditekan!')}
+        style={{
+          backgroundColor: '#4CAF50',
+          paddingVertical: 12,
+          paddingHorizontal: 20,
+          borderRadius: 8,
+        }}
+      &gt;
+        &lt;Text style={{ color: 'white', fontSize: 16 }}&gt;Klik Saya&lt;/Text&gt;
+      &lt;/TouchableOpacity&gt;
+    &lt;/View&gt;
+  );
+}
+</code></pre>
+<ul>
+<li><code>onPress</code>: fungsi yang dijalankan ketika tombol ditekan.</li>
+<li><code>style</code> → bisa bebas dikustomisasi, tidak seperti Button.</li>
+<li><code>Text</code> atau komponen lain bisa dimasukkan sebagai isi tombol.</li>
+</ul>
+<h2 id="touchablehighlight"><a class="header" href="#touchablehighlight">TouchableHighlight</a></h2>
+<p>Memberikan efek highlight saat tombol ditekan.</p>
+<pre><code class="language-javascript">import { Text, View, TouchableHighlight } from 'react-native';
+export default function App() {
+  return (
+    &lt;View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}&gt;
+      &lt;TouchableHighlight onPress={() =&gt; console.log('Highlight!')}
+        underlayColor="#DDDDDD"
+        style={{
+            backgroundColor: '#2196F3',
+            padding: 12,
+            borderRadius: 8,
+        }}
+      &gt;
+        &lt;Text style={{ color: 'white', textAlign: 'center' }}&gt;Tombol Highlight&lt;/Text&gt;
+      &lt;/TouchableHighlight&gt;
+    &lt;/View&gt;
+  );
+}
+</code></pre>
+<h2 id="touchablewithoutfeedback"><a class="header" href="#touchablewithoutfeedback">TouchableWithoutFeedback</a></h2>
+<p>Tidak memberikan efek visual, cocok jika ingin mendapatkan kontrol penuh terhadap tampilan.</p>
+<pre><code class="language-javascript">import { Text, View, TouchableWithoutFeedback } from 'react-native';
+export default function App() {
+  return (
+    &lt;View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}&gt;
+        &lt;TouchableWithoutFeedback onPress={() =&gt; console.log('Tanpa efek')}&gt;
+            &lt;View style={{ backgroundColor: '#FF5722', padding: 12, borderRadius: 8 }}&gt;
+                &lt;Text style={{ color: 'white' }}&gt;Tanpa Efek&lt;/Text&gt;
+            &lt;/View&gt;
+        &lt;/TouchableWithoutFeedback&gt; 
+    &lt;/View&gt;
+  );
+}
+</code></pre>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="scrollview"><a class="header" href="#scrollview">ScrollView</a></h1>
 <p>Komponen <strong><code>ScrollView</code></strong> digunakan untuk membuat area yang dapat digulir (scroll), baik secara <strong>vertikal</strong> maupun <strong>horizontal</strong>.<br />
 Berbeda dengan <code>FlatList</code> (yang lebih efisien untuk data besar), <code>ScrollView</code> cocok digunakan ketika jumlah elemen <strong>relatif sedikit</strong>.</p>
@@ -1918,6 +1988,102 @@ const styles = StyleSheet.create({
   ItemSeparatorComponent={() =&gt; &lt;View style={{ height: 1, backgroundColor: '#ccc' }} /&gt;}
 /&gt;
 </code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="progress"><a class="header" href="#progress">Progress</a></h1>
+<p>Komponen Progress Bar digunakan untuk menampilkan kemajuan proses (misalnya loading data, upload file, atau download). React Native tidak menyediakan progress bar bawaan di semua platform, tapi kita dapat menggunakan <code>ProgressBar</code> dari <code>react-native-progress</code>.</p>
+<h2 id="instalasi-1"><a class="header" href="#instalasi-1">Instalasi</a></h2>
+<p>Untuk menggunakan Progress, kita perlu meng-install library third party</p>
+<pre><code class="language-bash">npm install react-native-progress
+</code></pre>
+<h2 id="contoh"><a class="header" href="#contoh">Contoh</a></h2>
+<pre><code class="language-javascript">import { StatusBar } from 'expo-status-bar';
+import { useEffect, useState } from 'react';
+import { StyleSheet, Text, View } from 'react-native';
+import * as Progress from 'react-native-progress';
+
+export default function App() {
+  const [progress, setProgress] = useState(0);
+
+  useEffect(() =&gt; {
+    const interval = setInterval(() =&gt; {
+      setProgress((prev) =&gt; (prev &gt;= 1 ? 0 : prev + Math.random() * (0.5 - 0.01) + 0.01))
+    }, 1000);
+    return () =&gt; clearInterval(interval);
+  }, []);
+
+  return (
+    &lt;View style={styles.container}&gt;
+      &lt;Progress.Bar progress={progress} width={200} /&gt; // bar progress
+      &lt;Progress.Circle progress={progress} size={80} showsText={true} /&gt;  // circle progress
+      &lt;Progress.Bar indeterminate={true} width={200} /&gt;  // intermediate progress (durasi tidak diketahui)
+      &lt;Progress.Bar
+        progress={progress}
+        width={250}
+        color="green"
+        unfilledColor="#ddd"
+        borderWidth={2}
+        borderColor="black"
+      /&gt;  // custom style progress
+    &lt;/View&gt;
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 15
+  },
+});
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="modal-dialog"><a class="header" href="#modal-dialog">Modal Dialog</a></h1>
+<p>Komponen <code>Modal</code> di React Native digunakan untuk menampilkan konten sementara yang muncul di atas layar utama. Biasanya dipakai untuk popup, konfirmasi, form input, atau pesan penting.</p>
+<h2 id="modal-dasar"><a class="header" href="#modal-dasar">Modal Dasar</a></h2>
+<pre><code class="language-javascript">import React, { useState } from 'react';
+import { Modal, View, Text, Button } from 'react-native';
+
+export default function App() {
+  const [visible, setVisible] = useState(false);
+
+  return (
+    &lt;View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}&gt;
+      &lt;Button title="Tampilkan Modal" onPress={() =&gt; setVisible(true)} /&gt;
+
+      &lt;Modal
+        visible={visible}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={() =&gt; setVisible(false)} // untuk Android back button
+      &gt;
+        &lt;View style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: 'rgba(0,0,0,0.5)'
+        }}&gt;
+          &lt;View style={{
+            width: 300,
+            padding: 20,
+            backgroundColor: 'white',
+            borderRadius: 10
+          }}&gt;
+            &lt;Text style={{ fontSize: 18, marginBottom: 20 }}&gt;Halo, ini modal!&lt;/Text&gt;
+            &lt;Button title="Tutup" onPress={() =&gt; setVisible(false)} /&gt;
+          &lt;/View&gt;
+        &lt;/View&gt;
+      &lt;/Modal&gt;
+    &lt;/View&gt;
+  );
+}
+</code></pre>
+<p>Komponen ini memiliki beberapa property penting:</p>
+<ul>
+<li><code>visible</code>: kontrol apakah modal muncul atau tidak.</li>
+<li><code>transparent</code>: jika true, background luar modal bisa transparan.</li>
+<li><code>animationType</code>: animasi saat modal muncul/hilang (none, slide, fade).</li>
+<li><code>onRequestClose</code>: dipanggil ketika user tekan back button di Android.</li>
+</ul>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="style--layout"><a class="header" href="#style--layout">Style &amp; Layout</a></h1>
 <p>Di React Native, styling dilakukan menggunakan <strong>JavaScript</strong>.<br />
 Kita menggunakan <strong><code>StyleSheet</code></strong> atau <strong>inline style</strong> untuk mengatur tampilan komponen.</p>
@@ -2584,26 +2750,40 @@ App.tsx
 <pre><code class="language-jsx">import React from "react";
 import { createContext, useState } from "react";
 
-export const ThemeContext = React.createContext('light'); // nilai default
+type ContextType = {
+    theme:string,
+    toggleTheme: () =&gt; void
+}
 
-export function ThemeProvider({ children }) {
+type Props = {
+    children: ReactNode
+}
+
+export const ThemeContext = createContext&lt;ContextType&gt;('light'); // nilai default
+
+export function ThemeProvider({ props }:Props) {
     const [theme, setTheme] = useState('light');
     const toggleTheme = () =&gt; setTheme(theme == 'light' ? 'dark' : 'light');
     return (
         &lt;ThemeContext.Provider value={{ theme, toggleTheme }}&gt;
-            {children}
+            {props.children}
         &lt;/ThemeContext.Provider&gt;
     );
 }
 </code></pre>
-<p><code>React.createContext('light')</code> bertindak sebagai wadah (context) untuk menyimpan data yang dapat digunakan di seluruh komponen. Di sini context akan menyimpan theme (light/dark) dan fungsi toggleTheme.</p>
+<p><code>createContext('light')</code> bertindak sebagai wadah (context) untuk menyimpan data yang dapat digunakan di seluruh komponen. Di sini context akan menyimpan theme (light/dark) dan fungsi toggleTheme.</p>
 <p><code>ThemeProvider</code> adalah komponen pembungkus dengan <code>state</code> awal bernilai light. <code>ThemeContext.Provider</code> membagikan data (<code>theme</code>, <code>toggleTheme</code>) ke semua komponen di dalamnya (<code>children</code>). Artinya, komponen apa pun yang ada di bawah <code>ThemeProvider</code> dapat mengambil <code>theme</code> dan <code>toggleTheme</code>.</p>
 <p><strong>ThemedButton.tsx</strong></p>
 <pre><code class="language-jsx">import { useContext } from "react";
 import { ThemeContext } from "../context/ThemeContext";
 import { Text, TouchableOpacity } from "react-native";
 
-export default function ThemedButton({ title, onPress }) {
+type Props = {
+    title: string,
+    onPress: () =&gt; void
+};
+
+export default function ThemedButton({props}:Props) {
     const { theme } = useContext(ThemeContext);
 
     const backgroundColor = theme === 'light' ? '#007BFF' : '#555';
@@ -2617,8 +2797,8 @@ export default function ThemedButton({ title, onPress }) {
                 borderRadius: 8,
                 margin: 5,
             }}
-            onPress={onPress}&gt;
-            &lt;Text style={{ color: textColor, fontWeight: 'bold' }}&gt;{title}&lt;/Text&gt;
+            onPress={props.onPress}&gt;
+            &lt;Text style={{ color: textColor, fontWeight: 'bold' }}&gt;{props.title}&lt;/Text&gt;
         &lt;/TouchableOpacity&gt;
     );
 }
@@ -2753,35 +2933,6 @@ export default function App() {
       &lt;Button title="Start" onPress={startTimer} /&gt;
       &lt;Button title="Stop" onPress={stopTimer} /&gt;
     &lt;/View&gt;
-  );
-}
-</code></pre>
-<h2 id="contoh-4-animasi-dengan-useref"><a class="header" href="#contoh-4-animasi-dengan-useref">Contoh 4: Animasi dengan useRef</a></h2>
-<pre><code class="language-jsx">import React, { useRef, useEffect } from "react";
-import { View, Animated } from "react-native";
-
-export default function App() {
-  const fadeAnim = useRef(new Animated.Value(0)).current;
-
-  useEffect(() =&gt; {
-    Animated.timing(fadeAnim, {
-      toValue: 1,
-      duration: 2000,
-      useNativeDriver: true,
-    }).start();
-  }, []);
-
-  return (
-    &lt;Animated.View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        opacity: fadeAnim, // nilai dari useRef
-      }}
-    &gt;
-      &lt;View style={{ width: 100, height: 100, backgroundColor: "tomato" }} /&gt;
-    &lt;/Animated.View&gt;
   );
 }
 </code></pre>
@@ -3076,7 +3227,7 @@ const styles = StyleSheet.create({
 <li>Membuat menu bawah dengan Tab Navigation.</li>
 <li>Membuat menu samping dengan Drawer Navigation.</li>
 </ul>
-<h2 id="instalasi-1"><a class="header" href="#instalasi-1">Instalasi</a></h2>
+<h2 id="instalasi-2"><a class="header" href="#instalasi-2">Instalasi</a></h2>
 <p>Setelah membuat project baru, tambahkan atau install dependencies berikut:</p>
 <pre><code class="language-bash">npm install @react-navigation/native
 </code></pre>
@@ -3115,10 +3266,10 @@ const styles = StyleSheet.create({
     ├── HomeScreen.tsx
     └── DetailScreen.tsx
 </code></pre>
-<h2 id="instalasi-2"><a class="header" href="#instalasi-2">Instalasi</a></h2>
+<h2 id="instalasi-3"><a class="header" href="#instalasi-3">Instalasi</a></h2>
 <pre><code class="language-bash">npm install @react-navigation/native-stack
 </code></pre>
-<h2 id="contoh"><a class="header" href="#contoh">Contoh</a></h2>
+<h2 id="contoh-1"><a class="header" href="#contoh-1">Contoh</a></h2>
 <h3 id="screenshomescreentsx"><a class="header" href="#screenshomescreentsx">screens/HomeScreen.tsx</a></h3>
 <pre><code class="language-javascript">import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { View, Text, Button } from 'react-native';
@@ -3283,11 +3434,11 @@ export default function App() {
 <li>Scalable: mudah menambahkan jenis navigasi lainnya seperti Stack atau Drawer.</li>
 <li>Clean code: App.tsx tetap terlihat ringkas.</li>
 </ul>
-<h2 id="instalasi-3"><a class="header" href="#instalasi-3">Instalasi</a></h2>
+<h2 id="instalasi-4"><a class="header" href="#instalasi-4">Instalasi</a></h2>
 <pre><code class="language-bash">npm install @react-navigation/bottom-tabs
 npx expo install @expo/vector-icons
 </code></pre>
-<h2 id="contoh-1"><a class="header" href="#contoh-1">Contoh</a></h2>
+<h2 id="contoh-2"><a class="header" href="#contoh-2">Contoh</a></h2>
 <h3 id="screenshomescreentsx-1"><a class="header" href="#screenshomescreentsx-1">screens/HomeScreen.tsx</a></h3>
 <pre><code class="language-javascript">import { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
 import { RootParamList } from "../navigations/TabNavigator";
@@ -3467,11 +3618,11 @@ export default function App() {
 <li>Scalable: mudah menambahkan jenis navigasi lainnya seperti Stack atau Drawer.</li>
 <li>Clean code: App.tsx tetap terlihat ringkas.</li>
 </ul>
-<h2 id="instalasi-4"><a class="header" href="#instalasi-4">Instalasi</a></h2>
+<h2 id="instalasi-5"><a class="header" href="#instalasi-5">Instalasi</a></h2>
 <pre><code class="language-bash">npm install @react-navigation/drawer
 npx expo install @expo/vector-icons
 </code></pre>
-<h2 id="contoh-2"><a class="header" href="#contoh-2">Contoh</a></h2>
+<h2 id="contoh-3"><a class="header" href="#contoh-3">Contoh</a></h2>
 <h3 id="screenshomescreentsx-2"><a class="header" href="#screenshomescreentsx-2">screens/HomeScreen.tsx</a></h3>
 <pre><code class="language-javascript">import { DrawerScreenProps } from "@react-navigation/drawer";
 import { RootParamList } from "../navigations/DrawerNavigator";

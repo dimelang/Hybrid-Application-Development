@@ -198,26 +198,40 @@ App.tsx
 <pre><code class="language-jsx">import React from "react";
 import { createContext, useState } from "react";
 
-export const ThemeContext = React.createContext('light'); // nilai default
+type ContextType = {
+    theme:string,
+    toggleTheme: () =&gt; void
+}
 
-export function ThemeProvider({ children }) {
+type Props = {
+    children: ReactNode
+}
+
+export const ThemeContext = createContext&lt;ContextType&gt;('light'); // nilai default
+
+export function ThemeProvider({ props }:Props) {
     const [theme, setTheme] = useState('light');
     const toggleTheme = () =&gt; setTheme(theme == 'light' ? 'dark' : 'light');
     return (
         &lt;ThemeContext.Provider value={{ theme, toggleTheme }}&gt;
-            {children}
+            {props.children}
         &lt;/ThemeContext.Provider&gt;
     );
 }
 </code></pre>
-<p><code>React.createContext('light')</code> bertindak sebagai wadah (context) untuk menyimpan data yang dapat digunakan di seluruh komponen. Di sini context akan menyimpan theme (light/dark) dan fungsi toggleTheme.</p>
+<p><code>createContext('light')</code> bertindak sebagai wadah (context) untuk menyimpan data yang dapat digunakan di seluruh komponen. Di sini context akan menyimpan theme (light/dark) dan fungsi toggleTheme.</p>
 <p><code>ThemeProvider</code> adalah komponen pembungkus dengan <code>state</code> awal bernilai light. <code>ThemeContext.Provider</code> membagikan data (<code>theme</code>, <code>toggleTheme</code>) ke semua komponen di dalamnya (<code>children</code>). Artinya, komponen apa pun yang ada di bawah <code>ThemeProvider</code> dapat mengambil <code>theme</code> dan <code>toggleTheme</code>.</p>
 <p><strong>ThemedButton.tsx</strong></p>
 <pre><code class="language-jsx">import { useContext } from "react";
 import { ThemeContext } from "../context/ThemeContext";
 import { Text, TouchableOpacity } from "react-native";
 
-export default function ThemedButton({ title, onPress }) {
+type Props = {
+    title: string,
+    onPress: () =&gt; void
+};
+
+export default function ThemedButton({props}:Props) {
     const { theme } = useContext(ThemeContext);
 
     const backgroundColor = theme === 'light' ? '#007BFF' : '#555';
@@ -231,8 +245,8 @@ export default function ThemedButton({ title, onPress }) {
                 borderRadius: 8,
                 margin: 5,
             }}
-            onPress={onPress}&gt;
-            &lt;Text style={{ color: textColor, fontWeight: 'bold' }}&gt;{title}&lt;/Text&gt;
+            onPress={props.onPress}&gt;
+            &lt;Text style={{ color: textColor, fontWeight: 'bold' }}&gt;{props.title}&lt;/Text&gt;
         &lt;/TouchableOpacity&gt;
     );
 }
