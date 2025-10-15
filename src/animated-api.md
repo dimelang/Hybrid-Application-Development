@@ -72,7 +72,7 @@ App.tsx
 ```
 
 **FadeBox.tsx**
-```typescript
+```tsx
 import { useRef } from "react";
 import { Animated, Text, View, Button } from "react-native";
 
@@ -111,6 +111,114 @@ export default function FadeBox() {
             <View style={{ marginTop: 20, flexDirection: 'row', gap: 10 }}>
                 <Button title="Fade In" onPress={fadeIn} />
                 <Button title="Fade Out" onPress={fadeOut} />
+            </View>
+        </View>
+    );
+}
+```
+
+***Penjelasan***
+
+`const fadeAnim = useRef(new Animated.Value(0)).current;` membuat nilai animasi awal dengan nilai 0. Nilai tersebut disimpan dalam `fadeAnim`, dan nantinya akan diubah oleh fungsi `fadeIn()` dan `fadeOut()`. 
+    - `useRef()` digunakan agar nilai fadeAnim tidak di-reset setiap kali komponen di-render ulang.
+    - `Animated.Value(0)` berarti nilai awal untuk properti animasi (dalam hal ini opacity) adalah 0, artinya komponen dimulai dalam keadaan transparan.
+
+`fadeIn()` memiliki beberapa property, yaitu:
+    - `Animated.timing()` mengatur perubahan nilai animasi secara bertahap.
+    - `toValue: 1` artinya fadeAnim akan meningkat dari 0 → 1, membuat komponen semakin terlihat.
+    - `duration: 1000` menunjukkan animasi berlangsung selama 1 detik (1000 ms).
+    - `useNativeDriver: true` membuat animasi dijalankan di native thread, sehingga lebih halus dan efisien.
+
+`fadeOut()` memiliki beberapa property yang serupa dengan fungsi fadeOut(). Perbedaan terletak pada nilai dari property `toValue: 1` yang menunjukkan `opacity` akan turun dari 1 → 0.
+
+`Animated.View` digunakan agar properti style bisa dianimasikan. Properti `opacity` dihubungkan langsung ke `fadeAnim`. Saat `fadeAnim` berubah, React Native akan otomatis menyesuaikan opacity komponen atau membuat efek fade in dan fade out.
+
+
+**ScaleBox.tsx**
+```tsx
+import { useRef } from "react";
+import { Animated, View, EasingFunction, Text, Button, Easing } from "react-native";
+
+export default function ScaleBox() {
+    const scaleAnim = useRef(new Animated.Value(0)).current;
+
+    const zoomIn = () => {
+        Animated.spring(scaleAnim, {
+            toValue: 1,
+            friction: 2,
+            tension: 40,
+            useNativeDriver: true
+        }).start()
+    }
+
+    const zoomOut = () => {
+        Animated.spring(scaleAnim, {
+            toValue: 0,
+            friction: 4,
+            tension: 60,
+            useNativeDriver: true
+        }).start()
+    }
+
+    return (
+        <View style={{ alignItems: 'center', padding: 10, borderColor: '#fdfd', borderWidth: 1, borderRadius: 7, width: '30%' }}>
+            <Animated.View style={{
+                transform: [
+                    { scale: scaleAnim }
+                ],
+                width: 150,
+                height: 150,
+                backgroundColor: '#87eba2',
+                borderRadius: 10,
+                justifyContent: 'center',
+                alignItems: 'center',
+            }}>
+                <Text style={{ fontWeight: 'bold' }}>Slide Box</Text>
+            </Animated.View>
+            <View style={{ marginTop: 20, flexDirection: 'row', gap: 10 }}>
+                <Button title="Zoom In" onPress={zoomIn} />
+                <Button title="Zoom Out" onPress={zoomOut} />
+            </View>
+        </View>
+    );
+}
+```
+
+**TranslateBox.tsx**
+```tsx
+import { useRef } from "react";
+import { Animated, Text, View, Button } from "react-native";
+
+export default function TranslatedBox() {
+    const slideAnim = useRef(new Animated.Value(0)).current;
+
+    const startDecay = () => {
+        slideAnim.setValue(0);
+        Animated.decay(slideAnim, {
+            velocity: 1.5,
+            deceleration: 0.997,
+            useNativeDriver: true
+        }).start();
+    }
+
+    return (
+        <View style={{ alignItems: 'center', padding: 10, borderColor: '#fdfd', borderWidth: 1, borderRadius: 7, width: '30%' }}>
+            <Animated.View style={{
+                transform: [
+                    { translateY: slideAnim }
+                ],
+                width: 150,
+                height: 150,
+                backgroundColor: '#87eba2',
+                borderRadius: 10,
+                justifyContent: 'center',
+                alignItems: 'center',
+            }}>
+                <Text style={{ fontWeight: 'bold' }}>Slide Box</Text>
+            </Animated.View>
+            <View style={{ marginTop: 20, flexDirection: 'row', gap: 10 }}>
+                <Button title="Start deacy" onPress={startDecay} />
+                <Button title="Reset deacy" onPress={() => slideAnim.setValue(0)} />
             </View>
         </View>
     );

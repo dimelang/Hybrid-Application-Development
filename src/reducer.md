@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
 ```
 
 ### components/Counter.tsx
-```jsx
+```tsx
 
 import { useReducer } from "react";
 import { Button, StyleSheet, Text, View } from "react-native";

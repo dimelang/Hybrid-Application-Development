@@ -24,7 +24,7 @@ App.tsx
 ```
 
 **ThemeContext.tsx**
-```jsx
+```tsx
 import React from "react";
 import { createContext, useState } from "react";
 
@@ -54,7 +54,7 @@ export function ThemeProvider({ props }:Props) {
 `ThemeProvider` adalah komponen pembungkus dengan `state` awal bernilai light. `ThemeContext.Provider` membagikan data (`theme`, `toggleTheme`) ke semua komponen di dalamnya (`children`). Artinya, komponen apa pun yang ada di bawah `ThemeProvider` dapat mengambil `theme` dan `toggleTheme`.
 
 **ThemedButton.tsx**
-```jsx
+```tsx
 import { useContext } from "react";
 import { ThemeContext } from "../context/ThemeContext";
 import { Text, TouchableOpacity } from "react-native";
@@ -86,7 +86,7 @@ export default function ThemedButton({props}:Props) {
 ```
 
 **HomeScreen.tsx**
-```jsx
+```tsx
 import { useContext } from "react";
 import { ThemeContext } from "../context/ThemeContext";
 import { Text, View } from "react-native";
@@ -115,7 +115,7 @@ export default function HomeScreen() {
 `useContext(ThemeContext)` digunakan untuk mengakses value atau fungsi yang diturunkan oleh `ThemeContext`.
 
 **App.tsx**
-```jsx
+```tsx
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
 import { ThemeProvider } from './context/ThemeContext';

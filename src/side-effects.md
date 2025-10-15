@@ -11,7 +11,7 @@ Side effect adalah segala hal yang terjadi di luar proses rendering UI. Contohny
 
 Struktur dasarnya seperti ini:
 
-```jsx
+```tsx
 useEffect(() => {
   // kode yang mau dijalankan setelah render
 
@@ -26,7 +26,7 @@ useEffect(() => {
 - `[dependencies]` adalah array berisi nilai yang diawasi. Efek hanya dijalankan ulang ketika nilai di array ini berubah.
 
 ## Contoh 1: Dipanggil Setiap Render
-```jsx
+```tsx
 import React, { useState, useEffect } from 'react';
 import { View, Text, Button } from 'react-native';
 
@@ -48,7 +48,7 @@ export default function Counter() {
 Karena kita tidak memberi dependency array, efek ini akan dipanggil setiap kali komponen dirender.
 
 ## Contoh 2: Hanya Sekali
-```jsx
+```tsx
 useEffect(() => {
   console.log('Komponen baru saja muncul di layar');
 
@@ -62,7 +62,7 @@ Dengan dependency array kosong `[]`, efek hanya dijalankan sekali saat komponen 
 
 
 ## Contoh 3: Bergantung Pada State Tertentu
-```jsx
+```tsx
 import React, { useState, useEffect } from 'react';
 import { View, Text, Button } from 'react-native';
 
@@ -87,7 +87,7 @@ Efek ini cuma jalan kalau nilai `name` berubah. Kalau `age` yang berubah, efek t
 
 
 ## Contoh 4: Memanggil API
-```jsx
+```tsx
 import React, { useEffect, useState } from 'react';
 import { View, Text, ActivityIndicator } from 'react-native';
 

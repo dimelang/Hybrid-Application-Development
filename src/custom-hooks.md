@@ -10,7 +10,7 @@ Custom hook memberikan beberapa keuntungan, seperti:
 3. Lebih mudah testing
 
 ## Contoh 1: Hook untuk Input Text
-```jsx
+```tsx
 // hooks/UseInput.ts
 import { useState } from "react";
 
@@ -27,7 +27,7 @@ function useInput(initialValue = "") {
 export default useInput;
 ```
 
-```jsx
+```tsx
 // App.tsx
 import React from "react";
 import { View, TextInput, Button, Text } from "react-native";

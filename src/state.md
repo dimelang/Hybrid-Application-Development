@@ -22,7 +22,7 @@ const [value, setValue] = useState(initialValue);
 ## Contoh State 1: Counter Sederhana
 Sebagai contoh, kita ingin menampilkan angka yang bertambah setiap kali pengguna menekan tombol "+" dan begitupun sebaliknya untuk tombol "-". Untuk menyimpan angka tersebut, kita menggunakan `state`. Setiap kali tombol ditekan, `state` diperbarui, dan tampilan angka pada layar pun langsung ikut berubah.
 
-```jsx
+```typescript
 // App.tsx
 import React, { useState } from "react";
 import { View, Text, Button, StyleSheet } from "react-native";
@@ -76,7 +76,7 @@ Pada contoh di atas, kita menggunakan **`useState`** untuk membuat state `count`
 
 ## Contoh State 2: Menyimpan Input Teks
 Misalnya, kita ingin membuat aplikasi sederhana yang menampilkan teks berdasarkan teks yang diketik pengguna.
-```jsx
+```typescript
 // App.tsx
 import React, { useState } from "react";
 import { View, Text, TextInput, StyleSheet } from "react-native";
@@ -134,7 +134,7 @@ const styles = StyleSheet.create({
 Misalnya kita ingin membuat `CustomInput` yang bisa dipakai di banyak tempat. Komponen ini memiliki state untuk menyimpan teks lokal, lalu menampilkan hasil ketikan.
 
 ### App.tsx
-```jsx
+```typescript
 import React from "react";
 import { View, StyleSheet } from "react-native";
 import CustomInput from "./components/CustomInput";
@@ -158,7 +158,7 @@ const styles = StyleSheet.create({
 ```
 
 ### components/CustomInput.tsx
-```jsx
+```typescript
 import React, { useState } from "react";
 import { View, Text, TextInput, StyleSheet } from "react-native";
 
@@ -218,7 +218,7 @@ Pada contoh program di atas, setiap instance `CustomInput` (yang ditambahkan ke 
 ## Contoh State 4: Array State
 
 ### components/TodoList.tsx
-```jsx
+```typescript
 import React, { useState } from 'react';
 import { View, Text, Button } from 'react-native';
 

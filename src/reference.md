@@ -10,7 +10,7 @@
 
 ## Contoh 1: Menyimpan Nilai Lama
 Kadang kita ingin tahu nilai sebelum `state` berubah. `useRef` dapat menyimpan history ini.
-```jsx
+```tsx
 import React, { useState, useEffect, useRef } from "react";
 import { View, Text, Button } from "react-native";
 
@@ -35,7 +35,7 @@ export default function App() {
 
 ## Contoh 2: Mengontrol Input
 Dengan `useRef`, kita dapat fokus langsung ke input tanpa perlu `state` tambahan.
-```jsx
+```tsx
 import React, { useRef } from "react";
 import { View, TextInput, Button } from "react-native";
 
@@ -61,7 +61,7 @@ export default function App() {
 `inputRef` dipakai untuk mengakses komponen TextInput langsung.
 
 ## Contoh 3: Timer dengan useRef
-```jsx
+```tsx
 import React, { useRef, useState } from "react";
 import { View, Text, Button } from "react-native";
 
