@@ -185,7 +185,7 @@
 <li>Lebih mudah testing</li>
 </ol>
 <h2 id="contoh-1-hook-untuk-input-text"><a class="header" href="#contoh-1-hook-untuk-input-text">Contoh 1: Hook untuk Input Text</a></h2>
-<pre><code class="language-jsx">// hooks/UseInput.ts
+<pre><code class="language-tsx">// hooks/UseInput.ts
 import { useState } from "react";
 
 // custom hook
@@ -200,7 +200,7 @@ function useInput(initialValue = "") {
 
 export default useInput;
 </code></pre>
-<pre><code class="language-jsx">// App.tsx
+<pre><code class="language-tsx">// App.tsx
 import React from "react";
 import { View, TextInput, Button, Text } from "react-native";
 import useInput from "./hooks/UseInput";

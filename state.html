@@ -190,7 +190,7 @@
 </ul>
 <h2 id="contoh-state-1-counter-sederhana"><a class="header" href="#contoh-state-1-counter-sederhana">Contoh State 1: Counter Sederhana</a></h2>
 <p>Sebagai contoh, kita ingin menampilkan angka yang bertambah setiap kali pengguna menekan tombol "+" dan begitupun sebaliknya untuk tombol "-". Untuk menyimpan angka tersebut, kita menggunakan <code>state</code>. Setiap kali tombol ditekan, <code>state</code> diperbarui, dan tampilan angka pada layar pun langsung ikut berubah.</p>
-<pre><code class="language-jsx">// App.tsx
+<pre><code class="language-typescript">// App.tsx
 import React, { useState } from "react";
 import { View, Text, Button, StyleSheet } from "react-native";
 
@@ -240,7 +240,7 @@ const styles = StyleSheet.create({
 <p>Pada contoh di atas, kita menggunakan <strong><code>useState</code></strong> untuk membuat state <code>count</code>. Setiap kali tombol ditekan, fungsi <code>setCount</code> dipanggil untuk memperbarui nilai <code>count</code>. React Native kemudian secara otomatis memperbarui tampilan teks agar sesuai dengan nilai terbaru.</p>
 <h2 id="contoh-state-2-menyimpan-input-teks"><a class="header" href="#contoh-state-2-menyimpan-input-teks">Contoh State 2: Menyimpan Input Teks</a></h2>
 <p>Misalnya, kita ingin membuat aplikasi sederhana yang menampilkan teks berdasarkan teks yang diketik pengguna.</p>
-<pre><code class="language-jsx">// App.tsx
+<pre><code class="language-typescript">// App.tsx
 import React, { useState } from "react";
 import { View, Text, TextInput, StyleSheet } from "react-native";
 
@@ -295,7 +295,7 @@ const styles = StyleSheet.create({
 <h2 id="contoh-state-3-menggunakan-usestate-pada-reusable-component"><a class="header" href="#contoh-state-3-menggunakan-usestate-pada-reusable-component">Contoh State 3: Menggunakan <code>useState</code> pada reusable component</a></h2>
 <p>Misalnya kita ingin membuat <code>CustomInput</code> yang bisa dipakai di banyak tempat. Komponen ini memiliki state untuk menyimpan teks lokal, lalu menampilkan hasil ketikan.</p>
 <h3 id="apptsx"><a class="header" href="#apptsx">App.tsx</a></h3>
-<pre><code class="language-jsx">import React from "react";
+<pre><code class="language-typescript">import React from "react";
 import { View, StyleSheet } from "react-native";
 import CustomInput from "./components/CustomInput";
 
@@ -317,7 +317,7 @@ const styles = StyleSheet.create({
 });
 </code></pre>
 <h3 id="componentscustominputtsx"><a class="header" href="#componentscustominputtsx">components/CustomInput.tsx</a></h3>
-<pre><code class="language-jsx">import React, { useState } from "react";
+<pre><code class="language-typescript">import React, { useState } from "react";
 import { View, Text, TextInput, StyleSheet } from "react-native";
 
 type CustomInputProps = {
@@ -373,7 +373,7 @@ const styles = StyleSheet.create({
 <p>Pada contoh program di atas, setiap instance <code>CustomInput</code> (yang ditambahkan ke dalam App()) memiliki state masing-masing (sehingga input nama tidak mengganggu input email).</p>
 <h2 id="contoh-state-4-array-state"><a class="header" href="#contoh-state-4-array-state">Contoh State 4: Array State</a></h2>
 <h3 id="componentstodolisttsx"><a class="header" href="#componentstodolisttsx">components/TodoList.tsx</a></h3>
-<pre><code class="language-jsx">import React, { useState } from 'react';
+<pre><code class="language-typescript">import React, { useState } from 'react';
 import { View, Text, Button } from 'react-native';
 
 export default function TodoList() {

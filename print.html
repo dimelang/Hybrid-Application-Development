@@ -2402,7 +2402,7 @@ const styles = StyleSheet.create({
 </ul>
 <h2 id="contoh-state-1-counter-sederhana"><a class="header" href="#contoh-state-1-counter-sederhana">Contoh State 1: Counter Sederhana</a></h2>
 <p>Sebagai contoh, kita ingin menampilkan angka yang bertambah setiap kali pengguna menekan tombol "+" dan begitupun sebaliknya untuk tombol "-". Untuk menyimpan angka tersebut, kita menggunakan <code>state</code>. Setiap kali tombol ditekan, <code>state</code> diperbarui, dan tampilan angka pada layar pun langsung ikut berubah.</p>
-<pre><code class="language-jsx">// App.tsx
+<pre><code class="language-typescript">// App.tsx
 import React, { useState } from "react";
 import { View, Text, Button, StyleSheet } from "react-native";
 
@@ -2452,7 +2452,7 @@ const styles = StyleSheet.create({
 <p>Pada contoh di atas, kita menggunakan <strong><code>useState</code></strong> untuk membuat state <code>count</code>. Setiap kali tombol ditekan, fungsi <code>setCount</code> dipanggil untuk memperbarui nilai <code>count</code>. React Native kemudian secara otomatis memperbarui tampilan teks agar sesuai dengan nilai terbaru.</p>
 <h2 id="contoh-state-2-menyimpan-input-teks"><a class="header" href="#contoh-state-2-menyimpan-input-teks">Contoh State 2: Menyimpan Input Teks</a></h2>
 <p>Misalnya, kita ingin membuat aplikasi sederhana yang menampilkan teks berdasarkan teks yang diketik pengguna.</p>
-<pre><code class="language-jsx">// App.tsx
+<pre><code class="language-typescript">// App.tsx
 import React, { useState } from "react";
 import { View, Text, TextInput, StyleSheet } from "react-native";
 
@@ -2507,7 +2507,7 @@ const styles = StyleSheet.create({
 <h2 id="contoh-state-3-menggunakan-usestate-pada-reusable-component"><a class="header" href="#contoh-state-3-menggunakan-usestate-pada-reusable-component">Contoh State 3: Menggunakan <code>useState</code> pada reusable component</a></h2>
 <p>Misalnya kita ingin membuat <code>CustomInput</code> yang bisa dipakai di banyak tempat. Komponen ini memiliki state untuk menyimpan teks lokal, lalu menampilkan hasil ketikan.</p>
 <h3 id="apptsx"><a class="header" href="#apptsx">App.tsx</a></h3>
-<pre><code class="language-jsx">import React from "react";
+<pre><code class="language-typescript">import React from "react";
 import { View, StyleSheet } from "react-native";
 import CustomInput from "./components/CustomInput";
 
@@ -2529,7 +2529,7 @@ const styles = StyleSheet.create({
 });
 </code></pre>
 <h3 id="componentscustominputtsx"><a class="header" href="#componentscustominputtsx">components/CustomInput.tsx</a></h3>
-<pre><code class="language-jsx">import React, { useState } from "react";
+<pre><code class="language-typescript">import React, { useState } from "react";
 import { View, Text, TextInput, StyleSheet } from "react-native";
 
 type CustomInputProps = {
@@ -2585,7 +2585,7 @@ const styles = StyleSheet.create({
 <p>Pada contoh program di atas, setiap instance <code>CustomInput</code> (yang ditambahkan ke dalam App()) memiliki state masing-masing (sehingga input nama tidak mengganggu input email).</p>
 <h2 id="contoh-state-4-array-state"><a class="header" href="#contoh-state-4-array-state">Contoh State 4: Array State</a></h2>
 <h3 id="componentstodolisttsx"><a class="header" href="#componentstodolisttsx">components/TodoList.tsx</a></h3>
-<pre><code class="language-jsx">import React, { useState } from 'react';
+<pre><code class="language-typescript">import React, { useState } from 'react';
 import { View, Text, Button } from 'react-native';
 
 export default function TodoList() {
@@ -2626,7 +2626,7 @@ export default function TodoList() {
 </ul>
 <p><code>useEffect</code> adalah hook yang memungkinkan kita menjalankan kode setiap kali komponen selesai di-<em>render</em>. Dengan kata lain, dia seperti lifecycle methods di class component (componentDidMount, componentDidUpdate, dan componentWillUnmount) tapi digabung dalam satu fungsi.</p>
 <p>Struktur dasarnya seperti ini:</p>
-<pre><code class="language-jsx">useEffect(() =&gt; {
+<pre><code class="language-tsx">useEffect(() =&gt; {
   // kode yang mau dijalankan setelah render
 
   return () =&gt; {
@@ -2640,7 +2640,7 @@ export default function TodoList() {
 <li><code>[dependencies]</code> adalah array berisi nilai yang diawasi. Efek hanya dijalankan ulang ketika nilai di array ini berubah.</li>
 </ul>
 <h2 id="contoh-1-dipanggil-setiap-render"><a class="header" href="#contoh-1-dipanggil-setiap-render">Contoh 1: Dipanggil Setiap Render</a></h2>
-<pre><code class="language-jsx">import React, { useState, useEffect } from 'react';
+<pre><code class="language-tsx">import React, { useState, useEffect } from 'react';
 import { View, Text, Button } from 'react-native';
 
 export default function Counter() {
@@ -2660,7 +2660,7 @@ export default function Counter() {
 </code></pre>
 <p>Karena kita tidak memberi dependency array, efek ini akan dipanggil setiap kali komponen dirender.</p>
 <h2 id="contoh-2-hanya-sekali"><a class="header" href="#contoh-2-hanya-sekali">Contoh 2: Hanya Sekali</a></h2>
-<pre><code class="language-jsx">useEffect(() =&gt; {
+<pre><code class="language-tsx">useEffect(() =&gt; {
   console.log('Komponen baru saja muncul di layar');
 
   // cleanup
@@ -2671,7 +2671,7 @@ export default function Counter() {
 </code></pre>
 <p>Dengan dependency array kosong <code>[]</code>, efek hanya dijalankan sekali saat komponen pertama kali dipasang, lalu dibersihkan saat komponen dilepas.</p>
 <h2 id="contoh-3-bergantung-pada-state-tertentu"><a class="header" href="#contoh-3-bergantung-pada-state-tertentu">Contoh 3: Bergantung Pada State Tertentu</a></h2>
-<pre><code class="language-jsx">import React, { useState, useEffect } from 'react';
+<pre><code class="language-tsx">import React, { useState, useEffect } from 'react';
 import { View, Text, Button } from 'react-native';
 
 export default function NameWatcher() {
@@ -2693,7 +2693,7 @@ export default function NameWatcher() {
 </code></pre>
 <p>Efek ini cuma jalan kalau nilai <code>name</code> berubah. Kalau <code>age</code> yang berubah, efek tidak akan dijalankan.</p>
 <h2 id="contoh-4-memanggil-api"><a class="header" href="#contoh-4-memanggil-api">Contoh 4: Memanggil API</a></h2>
-<pre><code class="language-jsx">import React, { useEffect, useState } from 'react';
+<pre><code class="language-tsx">import React, { useEffect, useState } from 'react';
 import { View, Text, ActivityIndicator } from 'react-native';
 
 export default function UserList() {
@@ -2747,7 +2747,7 @@ export default function UserList() {
 App.tsx
 </code></pre>
 <p><strong>ThemeContext.tsx</strong></p>
-<pre><code class="language-jsx">import React from "react";
+<pre><code class="language-tsx">import React from "react";
 import { createContext, useState } from "react";
 
 type ContextType = {
@@ -2774,7 +2774,7 @@ export function ThemeProvider({ props }:Props) {
 <p><code>createContext('light')</code> bertindak sebagai wadah (context) untuk menyimpan data yang dapat digunakan di seluruh komponen. Di sini context akan menyimpan theme (light/dark) dan fungsi toggleTheme.</p>
 <p><code>ThemeProvider</code> adalah komponen pembungkus dengan <code>state</code> awal bernilai light. <code>ThemeContext.Provider</code> membagikan data (<code>theme</code>, <code>toggleTheme</code>) ke semua komponen di dalamnya (<code>children</code>). Artinya, komponen apa pun yang ada di bawah <code>ThemeProvider</code> dapat mengambil <code>theme</code> dan <code>toggleTheme</code>.</p>
 <p><strong>ThemedButton.tsx</strong></p>
-<pre><code class="language-jsx">import { useContext } from "react";
+<pre><code class="language-tsx">import { useContext } from "react";
 import { ThemeContext } from "../context/ThemeContext";
 import { Text, TouchableOpacity } from "react-native";
 
@@ -2804,7 +2804,7 @@ export default function ThemedButton({props}:Props) {
 }
 </code></pre>
 <p><strong>HomeScreen.tsx</strong></p>
-<pre><code class="language-jsx">import { useContext } from "react";
+<pre><code class="language-tsx">import { useContext } from "react";
 import { ThemeContext } from "../context/ThemeContext";
 import { Text, View } from "react-native";
 import ThemedButton from "../components/ThemedButton";
@@ -2830,7 +2830,7 @@ export default function HomeScreen() {
 </code></pre>
 <p><code>useContext(ThemeContext)</code> digunakan untuk mengakses value atau fungsi yang diturunkan oleh <code>ThemeContext</code>.</p>
 <p><strong>App.tsx</strong></p>
-<pre><code class="language-jsx">import { StatusBar } from 'expo-status-bar';
+<pre><code class="language-tsx">import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
 import { ThemeProvider } from './context/ThemeContext';
 import HomeScreen from './screens/HomeScreen';
@@ -2861,7 +2861,7 @@ export default function App() {
 </ol>
 <h2 id="contoh-1-menyimpan-nilai-lama"><a class="header" href="#contoh-1-menyimpan-nilai-lama">Contoh 1: Menyimpan Nilai Lama</a></h2>
 <p>Kadang kita ingin tahu nilai sebelum <code>state</code> berubah. <code>useRef</code> dapat menyimpan history ini.</p>
-<pre><code class="language-jsx">import React, { useState, useEffect, useRef } from "react";
+<pre><code class="language-tsx">import React, { useState, useEffect, useRef } from "react";
 import { View, Text, Button } from "react-native";
 
 export default function App() {
@@ -2884,7 +2884,7 @@ export default function App() {
 <p><code>prevScoreRef.current</code> selalu menyimpan nilai sebelum update.</p>
 <h2 id="contoh-2-mengontrol-input"><a class="header" href="#contoh-2-mengontrol-input">Contoh 2: Mengontrol Input</a></h2>
 <p>Dengan <code>useRef</code>, kita dapat fokus langsung ke input tanpa perlu <code>state</code> tambahan.</p>
-<pre><code class="language-jsx">import React, { useRef } from "react";
+<pre><code class="language-tsx">import React, { useRef } from "react";
 import { View, TextInput, Button } from "react-native";
 
 export default function App() {
@@ -2908,7 +2908,7 @@ export default function App() {
 </code></pre>
 <p><code>inputRef</code> dipakai untuk mengakses komponen TextInput langsung.</p>
 <h2 id="contoh-3-timer-dengan-useref"><a class="header" href="#contoh-3-timer-dengan-useref">Contoh 3: Timer dengan useRef</a></h2>
-<pre><code class="language-jsx">import React, { useRef, useState } from "react";
+<pre><code class="language-tsx">import React, { useRef, useState } from "react";
 import { View, Text, Button } from "react-native";
 
 export default function App() {
@@ -2983,7 +2983,7 @@ const styles = StyleSheet.create({
 });
 </code></pre>
 <h3 id="componentscountertsx"><a class="header" href="#componentscountertsx">components/Counter.tsx</a></h3>
-<pre><code class="language-jsx">
+<pre><code class="language-tsx">
 import { useReducer } from "react";
 import { Button, StyleSheet, Text, View } from "react-native";
 
@@ -3065,7 +3065,7 @@ const styles = StyleSheet.create({
 <li>Lebih mudah testing</li>
 </ol>
 <h2 id="contoh-1-hook-untuk-input-text"><a class="header" href="#contoh-1-hook-untuk-input-text">Contoh 1: Hook untuk Input Text</a></h2>
-<pre><code class="language-jsx">// hooks/UseInput.ts
+<pre><code class="language-tsx">// hooks/UseInput.ts
 import { useState } from "react";
 
 // custom hook
@@ -3080,7 +3080,7 @@ function useInput(initialValue = "") {
 
 export default useInput;
 </code></pre>
-<pre><code class="language-jsx">// App.tsx
+<pre><code class="language-tsx">// App.tsx
 import React from "react";
 import { View, TextInput, Button, Text } from "react-native";
 import useInput from "./hooks/UseInput";

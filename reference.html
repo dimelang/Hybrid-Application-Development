@@ -186,7 +186,7 @@
 </ol>
 <h2 id="contoh-1-menyimpan-nilai-lama"><a class="header" href="#contoh-1-menyimpan-nilai-lama">Contoh 1: Menyimpan Nilai Lama</a></h2>
 <p>Kadang kita ingin tahu nilai sebelum <code>state</code> berubah. <code>useRef</code> dapat menyimpan history ini.</p>
-<pre><code class="language-jsx">import React, { useState, useEffect, useRef } from "react";
+<pre><code class="language-tsx">import React, { useState, useEffect, useRef } from "react";
 import { View, Text, Button } from "react-native";
 
 export default function App() {
@@ -209,7 +209,7 @@ export default function App() {
 <p><code>prevScoreRef.current</code> selalu menyimpan nilai sebelum update.</p>
 <h2 id="contoh-2-mengontrol-input"><a class="header" href="#contoh-2-mengontrol-input">Contoh 2: Mengontrol Input</a></h2>
 <p>Dengan <code>useRef</code>, kita dapat fokus langsung ke input tanpa perlu <code>state</code> tambahan.</p>
-<pre><code class="language-jsx">import React, { useRef } from "react";
+<pre><code class="language-tsx">import React, { useRef } from "react";
 import { View, TextInput, Button } from "react-native";
 
 export default function App() {
@@ -233,7 +233,7 @@ export default function App() {
 </code></pre>
 <p><code>inputRef</code> dipakai untuk mengakses komponen TextInput langsung.</p>
 <h2 id="contoh-3-timer-dengan-useref"><a class="header" href="#contoh-3-timer-dengan-useref">Contoh 3: Timer dengan useRef</a></h2>
-<pre><code class="language-jsx">import React, { useRef, useState } from "react";
+<pre><code class="language-tsx">import React, { useRef, useState } from "react";
 import { View, Text, Button } from "react-native";
 
 export default function App() {

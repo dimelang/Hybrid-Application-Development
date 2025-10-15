@@ -185,7 +185,7 @@
 </ul>
 <p><code>useEffect</code> adalah hook yang memungkinkan kita menjalankan kode setiap kali komponen selesai di-<em>render</em>. Dengan kata lain, dia seperti lifecycle methods di class component (componentDidMount, componentDidUpdate, dan componentWillUnmount) tapi digabung dalam satu fungsi.</p>
 <p>Struktur dasarnya seperti ini:</p>
-<pre><code class="language-jsx">useEffect(() =&gt; {
+<pre><code class="language-tsx">useEffect(() =&gt; {
   // kode yang mau dijalankan setelah render
 
   return () =&gt; {
@@ -199,7 +199,7 @@
 <li><code>[dependencies]</code> adalah array berisi nilai yang diawasi. Efek hanya dijalankan ulang ketika nilai di array ini berubah.</li>
 </ul>
 <h2 id="contoh-1-dipanggil-setiap-render"><a class="header" href="#contoh-1-dipanggil-setiap-render">Contoh 1: Dipanggil Setiap Render</a></h2>
-<pre><code class="language-jsx">import React, { useState, useEffect } from 'react';
+<pre><code class="language-tsx">import React, { useState, useEffect } from 'react';
 import { View, Text, Button } from 'react-native';
 
 export default function Counter() {
@@ -219,7 +219,7 @@ export default function Counter() {
 </code></pre>
 <p>Karena kita tidak memberi dependency array, efek ini akan dipanggil setiap kali komponen dirender.</p>
 <h2 id="contoh-2-hanya-sekali"><a class="header" href="#contoh-2-hanya-sekali">Contoh 2: Hanya Sekali</a></h2>
-<pre><code class="language-jsx">useEffect(() =&gt; {
+<pre><code class="language-tsx">useEffect(() =&gt; {
   console.log('Komponen baru saja muncul di layar');
 
   // cleanup
@@ -230,7 +230,7 @@ export default function Counter() {
 </code></pre>
 <p>Dengan dependency array kosong <code>[]</code>, efek hanya dijalankan sekali saat komponen pertama kali dipasang, lalu dibersihkan saat komponen dilepas.</p>
 <h2 id="contoh-3-bergantung-pada-state-tertentu"><a class="header" href="#contoh-3-bergantung-pada-state-tertentu">Contoh 3: Bergantung Pada State Tertentu</a></h2>
-<pre><code class="language-jsx">import React, { useState, useEffect } from 'react';
+<pre><code class="language-tsx">import React, { useState, useEffect } from 'react';
 import { View, Text, Button } from 'react-native';
 
 export default function NameWatcher() {
@@ -252,7 +252,7 @@ export default function NameWatcher() {
 </code></pre>
 <p>Efek ini cuma jalan kalau nilai <code>name</code> berubah. Kalau <code>age</code> yang berubah, efek tidak akan dijalankan.</p>
 <h2 id="contoh-4-memanggil-api"><a class="header" href="#contoh-4-memanggil-api">Contoh 4: Memanggil API</a></h2>
-<pre><code class="language-jsx">import React, { useEffect, useState } from 'react';
+<pre><code class="language-tsx">import React, { useEffect, useState } from 'react';
 import { View, Text, ActivityIndicator } from 'react-native';
 
 export default function UserList() {

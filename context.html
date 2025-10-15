@@ -195,7 +195,7 @@
 App.tsx
 </code></pre>
 <p><strong>ThemeContext.tsx</strong></p>
-<pre><code class="language-jsx">import React from "react";
+<pre><code class="language-tsx">import React from "react";
 import { createContext, useState } from "react";
 
 type ContextType = {
@@ -222,7 +222,7 @@ export function ThemeProvider({ props }:Props) {
 <p><code>createContext('light')</code> bertindak sebagai wadah (context) untuk menyimpan data yang dapat digunakan di seluruh komponen. Di sini context akan menyimpan theme (light/dark) dan fungsi toggleTheme.</p>
 <p><code>ThemeProvider</code> adalah komponen pembungkus dengan <code>state</code> awal bernilai light. <code>ThemeContext.Provider</code> membagikan data (<code>theme</code>, <code>toggleTheme</code>) ke semua komponen di dalamnya (<code>children</code>). Artinya, komponen apa pun yang ada di bawah <code>ThemeProvider</code> dapat mengambil <code>theme</code> dan <code>toggleTheme</code>.</p>
 <p><strong>ThemedButton.tsx</strong></p>
-<pre><code class="language-jsx">import { useContext } from "react";
+<pre><code class="language-tsx">import { useContext } from "react";
 import { ThemeContext } from "../context/ThemeContext";
 import { Text, TouchableOpacity } from "react-native";
 
@@ -252,7 +252,7 @@ export default function ThemedButton({props}:Props) {
 }
 </code></pre>
 <p><strong>HomeScreen.tsx</strong></p>
-<pre><code class="language-jsx">import { useContext } from "react";
+<pre><code class="language-tsx">import { useContext } from "react";
 import { ThemeContext } from "../context/ThemeContext";
 import { Text, View } from "react-native";
 import ThemedButton from "../components/ThemedButton";
@@ -278,7 +278,7 @@ export default function HomeScreen() {
 </code></pre>
 <p><code>useContext(ThemeContext)</code> digunakan untuk mengakses value atau fungsi yang diturunkan oleh <code>ThemeContext</code>.</p>
 <p><strong>App.tsx</strong></p>
-<pre><code class="language-jsx">import { StatusBar } from 'expo-status-bar';
+<pre><code class="language-tsx">import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
 import { ThemeProvider } from './context/ThemeContext';
 import HomeScreen from './screens/HomeScreen';
