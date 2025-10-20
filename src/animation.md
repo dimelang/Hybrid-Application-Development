@@ -1,6 +1,6 @@
 # Animation
 
-Animasi merupakan salah satu aspek penting dalam membuat aplikasi terasa hidup, responsif, dan menyenangkan untuk digunakan. Dengan animasi, transisi antar komponen terasa lebih alami, interaksi lebih jelas, dan pengalaman pengguna meningkat.
+Animasi merupakan salah satu aspek penting dalam memberikan nuansa hidup pada aplikasi. Dengan animasi, transisi antar komponen terasa lebih alami, interaksi lebih nyata, dan pengalaman pengguna meningkat.
 
 React Native menyediakan dua pendekatan utama untuk membuat animasi:
 

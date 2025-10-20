@@ -129,7 +129,7 @@ export default function FadeBox() {
     - `duration: 1000` menunjukkan animasi berlangsung selama 1 detik (1000 ms).
     - `useNativeDriver: true` membuat animasi dijalankan di native thread, sehingga lebih halus dan efisien.
 
-`fadeOut()` memiliki beberapa property yang serupa dengan fungsi fadeOut(). Perbedaan terletak pada nilai dari property `toValue: 1` yang menunjukkan `opacity` akan turun dari 1 → 0.
+`fadeOut()` memiliki beberapa property yang serupa dengan fungsi fadeIn(). Perbedaan terletak pada nilai dari property `toValue: 1` yang menunjukkan `opacity` akan turun dari 1 → 0.
 
 `Animated.View` digunakan agar properti style bisa dianimasikan. Properti `opacity` dihubungkan langsung ke `fadeAnim`. Saat `fadeAnim` berubah, React Native akan otomatis menyesuaikan opacity komponen atau membuat efek fade in dan fade out.
 
@@ -183,6 +183,23 @@ export default function ScaleBox() {
     );
 }
 ```
+***Penjelasan***
+
+`const scaleAnim = useRef(new Animated.Value(0)).current;` membuat nilai animasi awal dengan nilai 0. Nilai tersebut disimpan dalam `scaleAnim`, dan nantinya akan diubah oleh fungsi `zoomIn()` dan `zoomOut()`.
+
+- `useRef()` digunakan agar nilai scaleAnim tidak di-reset setiap kali komponen di-render ulang.
+- `Animated.Value(0)` berarti nilai awal untuk properti animasi (dalam hal ini scale) adalah 0, artinya komponen dimulai dalam ukuran (scale) yang kecil.
+
+`zoomIn()` memiliki beberapa property, yaitu:
+    - `Animated.spring()` untuk menghasilkan efek pegas (spring motion).
+    - `toValue: 1` artinya sacleAnim akan meningkat dari 0 → 1, membuat komponen kembali ke ukuran normal.
+    - `friction` mengontrol gesekan. Semakin tinggi nilainya, maka semakin cepat animasi berhenti.
+    - `tension` mengontrol daya tarik pegas. Semakin besar nilainya, semakin cepat pergerakan awal animasi.
+    - `useNativeDriver: true` membuat animasi dijalankan di native thread, sehingga lebih halus dan efisien.
+
+`zoomOut()` memiliki beberapa property yang serupa dengan fungsi zoomIn(). Perbedaan terletak pada nilai dari property `toValue: 1` yang menunjukkan `scale` akan turun dari 1 → 0.
+
+`Animated.View` digunakan agar properti style bisa dianimasikan. Properti `transform` dengan `{scale: scaleAnim}` dihubungkan langsung ke `scaleAnim`. Saat `sacleAnim` berubah, React Native akan otomatis menyesuaikan ukuran (`scale`) komponen.
 
 **TranslateBox.tsx**
 ```tsx
@@ -193,7 +210,6 @@ export default function TranslatedBox() {
     const slideAnim = useRef(new Animated.Value(0)).current;
 
     const startDecay = () => {
-        slideAnim.setValue(0);
         Animated.decay(slideAnim, {
             velocity: 1.5,
             deceleration: 0.997,
@@ -224,3 +240,18 @@ export default function TranslatedBox() {
     );
 }
 ```
+***Penjelasan***
+
+`const slideAnim = useRef(new Animated.Value(0)).current;` membuat nilai animasi awal dengan nilai 0. Nilai tersebut disimpan dalam `slideAnim`, dan nantinya akan diubah oleh fungsi `startDecay()`.
+
+- `useRef()` digunakan agar nilai `slideAnim` tidak di-*reset* setiap kali komponen di-*render* ulang.
+- `Animated.Value(0)` berarti nilai awal untuk properti animasi (dalam hal ini posisi) adalah 0, artinya komponen dimulai dalam posisi awal yaitu 0.
+
+`startDecay()` memiliki beberapa property, yaitu:
+    - `Animated.decay()` untuk menghasilkan animasi yang berhenti secara alami seperti benda yang bergerak lalu melambat karena gaya gesek.
+    - `velocity: 1` konfigurasi kecepatan awal animasi. Semakin tinggi nilainya, maka semakin cepat animasi bergerak.
+    - `deceleration` mengontrol laju perlambatan. Semakin tinggi nilainya (mendekati 1), maka gerakan berhenti lebih lambat.
+    - `useNativeDriver: true` membuat animasi dijalankan di native thread, sehingga lebih halus dan efisien.
+
+
+`Animated.View` digunakan agar properti style bisa dianimasikan. Properti `transform` dengan `{translateY: scaleAnim}` dihubungkan langsung ke `slideAnim`. Saat `slideAnim` berubah, React Native akan otomatis menyesuaikan posisi (`translateY`) komponen.

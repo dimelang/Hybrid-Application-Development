@@ -47,6 +47,7 @@
     - [Stack](stack-navigation.md)
     - [Bottom Tabs](bottom-tabs-navigation.md)
     - [Drawer](drawer-navigation.md)
-  <!-- - [Animation](animation.md)
+  - [Animation](animation.md)
     - [Animated API](animated-api.md)
-    - [Reanimated & Gesture Handler](reanimated-gesture-handler.md) -->
+    - [Reanimated API](reanimated-api.md)
+    <!-- - [Reanimated & Gesture Handler](reanimated-gesture-handler.md) -->
