@@ -3772,6 +3772,424 @@ export default function App() {
   );
 }
 </code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="animation"><a class="header" href="#animation">Animation</a></h1>
+<p>Animasi merupakan salah satu aspek penting dalam memberikan nuansa hidup pada aplikasi. Dengan animasi, transisi antar komponen terasa lebih alami, interaksi lebih nyata, dan pengalaman pengguna meningkat.</p>
+<p>React Native menyediakan dua pendekatan utama untuk membuat animasi:</p>
+<ol>
+<li><a href="animated-api.html">Animated API (built-in)</a> cocok untuk animasi sederhana &amp; state-driven.</li>
+<li><a href="reanimated-gesture-handler.html">Reanimated library (eksternal)</a> lebih efisien &amp; mendukung gesture interaktif (digunakan di banyak app modern seperti Instagram).</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="animated-api"><a class="header" href="#animated-api">Animated API</a></h1>
+<p><code>Animated</code> adalah API bawaan (tidak butuh instalasi tambahan) React Native untuk mengubah nilai tampilan secara halus dari satu keadaan ke keadaan lainnya. Cocok untuk animasi sederhana berbasis state, seperti:</p>
+<ul>
+<li>Fade in / fade out</li>
+<li>Translasi (geser)</li>
+<li>Skala (zoom)</li>
+<li>Rotasi</li>
+</ul>
+<p><code>Animated</code> memiliki beberapa konsep utama yang perlu diketahui:</p>
+<ul>
+<li>
+<p><code>Animated.Value()</code>: Menyimpan nilai numerik yang berubah seiring waktu. Nilai ini bisa dihubungkan ke properti <code>style</code> seperti <code>opacity</code>, <code>transform</code>, atau <code>position</code>. Biasanya disimpan menggunakan <code>hook</code> <code>useRef</code>.</p>
+<pre><code class="language-tsx">const anim = useRef(new Animated.Value(0)).current;
+</code></pre>
+<p><code>Animated.Value</code> dapat dianggap seperti “state khusus animasi”. Nilainya bisa berubah secara bertahap oleh sistem animasi tanpa menyebabkan re-render React.</p>
+</li>
+<li>
+<p><code>Animated.timing()</code>: Mengubah nilai dalam durasi tertentu. Method ini juga dapat kita berikan <code>delay</code> maupun <code>easing</code>. <code>Easing</code> merupakan kurva animasi yang dimulai dan diakhiri dengan perlahan, namun bergerak cepat di bagian tengahnya. Ini menghasilkan gerakan yang lebih halus dan natural, mirip dengan bagaimana objek di dunia nyata bergerak</p>
+<pre><code class="language-tsx">Animated.timing(anim, {
+    toValue: 1,        // nilai akhir animasi
+    duration: 1000,    // dalam milidetik
+    easing: Easing.bounce,  // kurva animasi
+    delay:100,         // dalam milidetik
+    useNativeDriver: true // untuk performa lebih baik
+}).start();           // wajib agar animasi dijalankan
+</code></pre>
+<p>Konfigurasi lengkapnya dapat dilihat pada halaman <a href="https://reactnative.dev/docs/animated#timing">ini</a>. Sedangkan untuk jenis <code>easing</code> dapat dilihat pada halaman <a href="https://reactnative.dev/docs/easing">ini</a></p>
+</li>
+<li>
+<p><code>Animated.decay()</code>: Membuat animasi yang dimulai dengan kecepatan awal yang diberikan, lalu melambat secara bertahap hingga berhenti sepenuhnya, meniru efek seperti gesekan.</p>
+<pre><code class="language-tsx">Animated.decay(anim, {
+    velocity: 0.5,          // kecepatan awal
+    deceleration: 0.997,    // semakin kecil, semakin cepat berhenti
+    useNativeDriver: true
+}).start();
+
+</code></pre>
+</li>
+<li>
+<p><code>Animated.spring()</code>: Menciptakan efek pegas realistis seperti pantulan dan ayunan.</p>
+<pre><code class="language-tsx">Animated.spring(anim, {
+    toValue: 1,
+    friction: 4,     // gesekan (semakin besar → lebih lambat)
+    tension: 60,     // ketegangan pegas (semakin besar → lebih cepat)
+    useNativeDriver: true
+}).start();
+
+</code></pre>
+</li>
+<li>
+<p><code>Animated.View</code>, <code>Animated.Text</code>, <code>Animated.Image</code>, <code>Animated.ScrollView</code>, <code>Animated.FlatList</code>, <code>Animated.SectionList</code>: Komponen yang dapat dianimasikan.</p>
+<pre><code class="language-tsx">&lt;Animated.View style={{
+    opacity: anim,
+    width: 150,
+    height: 150,
+    backgroundColor: 'skyblue',
+    borderRadius: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+}}&gt;
+</code></pre>
+</li>
+<li>
+<p>Selengkapnya dapat dilihat pada <a href="https://reactnative.dev/docs/animated">laman resmi</a></p>
+</li>
+</ul>
+<h2 id="contoh-animasi"><a class="header" href="#contoh-animasi">Contoh: Animasi</a></h2>
+<p>Struktur folder:</p>
+<pre><code class="language-bash">/components
+   ├── FadeBox.tsx
+   ├── ScaleBox.tsx
+   └── TranslateBox.tsx
+/screens
+   └── HomeScreen.tsx
+App.tsx
+</code></pre>
+<p><strong>FadeBox.tsx</strong></p>
+<pre><code class="language-tsx">import { useRef } from "react";
+import { Animated, Text, View, Button } from "react-native";
+
+export default function FadeBox() {
+    const fadeAnim = useRef(new Animated.Value(0)).current;
+
+    const fadeIn = () =&gt; {
+        Animated.timing(fadeAnim, {
+            toValue: 1,
+            duration: 1000,
+            useNativeDriver: true
+        }).start();
+    }
+
+    const fadeOut = () =&gt; {
+        Animated.timing(fadeAnim, {
+            toValue: 0,
+            duration: 1000,
+            useNativeDriver: true
+        }).start()
+    }
+
+    return (
+        &lt;View style={{ alignItems: 'center', padding: 10, borderColor: '#fdfd', borderWidth: 1, borderRadius: 7, width: '30%' }}&gt;
+            &lt;Animated.View style={{
+                opacity: fadeAnim,
+                width: 150,
+                height: 150,
+                backgroundColor: 'skyblue',
+                borderRadius: 10,
+                justifyContent: 'center',
+                alignItems: 'center',
+            }}&gt;
+                &lt;Text style={{ fontWeight: 'bold' }}&gt;Fade Box&lt;/Text&gt;
+            &lt;/Animated.View&gt;
+            &lt;View style={{ marginTop: 20, flexDirection: 'row', gap: 10 }}&gt;
+                &lt;Button title="Fade In" onPress={fadeIn} /&gt;
+                &lt;Button title="Fade Out" onPress={fadeOut} /&gt;
+            &lt;/View&gt;
+        &lt;/View&gt;
+    );
+}
+</code></pre>
+<p><em><strong>Penjelasan</strong></em></p>
+<p><code>const fadeAnim = useRef(new Animated.Value(0)).current;</code> membuat nilai animasi awal dengan nilai 0. Nilai tersebut disimpan dalam <code>fadeAnim</code>, dan nantinya akan diubah oleh fungsi <code>fadeIn()</code> dan <code>fadeOut()</code>.
+- <code>useRef()</code> digunakan agar nilai fadeAnim tidak di-reset setiap kali komponen di-render ulang.
+- <code>Animated.Value(0)</code> berarti nilai awal untuk properti animasi (dalam hal ini opacity) adalah 0, artinya komponen dimulai dalam keadaan transparan.</p>
+<p><code>fadeIn()</code> memiliki beberapa property, yaitu:
+- <code>Animated.timing()</code> mengatur perubahan nilai animasi secara bertahap.
+- <code>toValue: 1</code> artinya fadeAnim akan meningkat dari 0 → 1, membuat komponen semakin terlihat.
+- <code>duration: 1000</code> menunjukkan animasi berlangsung selama 1 detik (1000 ms).
+- <code>useNativeDriver: true</code> membuat animasi dijalankan di native thread, sehingga lebih halus dan efisien.</p>
+<p><code>fadeOut()</code> memiliki beberapa property yang serupa dengan fungsi fadeIn(). Perbedaan terletak pada nilai dari property <code>toValue: 1</code> yang menunjukkan <code>opacity</code> akan turun dari 1 → 0.</p>
+<p><code>Animated.View</code> digunakan agar properti style bisa dianimasikan. Properti <code>opacity</code> dihubungkan langsung ke <code>fadeAnim</code>. Saat <code>fadeAnim</code> berubah, React Native akan otomatis menyesuaikan opacity komponen atau membuat efek fade in dan fade out.</p>
+<p><strong>ScaleBox.tsx</strong></p>
+<pre><code class="language-tsx">import { useRef } from "react";
+import { Animated, View, EasingFunction, Text, Button, Easing } from "react-native";
+
+export default function ScaleBox() {
+    const scaleAnim = useRef(new Animated.Value(0)).current;
+
+    const zoomIn = () =&gt; {
+        Animated.spring(scaleAnim, {
+            toValue: 1,
+            friction: 2,
+            tension: 40,
+            useNativeDriver: true
+        }).start()
+    }
+
+    const zoomOut = () =&gt; {
+        Animated.spring(scaleAnim, {
+            toValue: 0,
+            friction: 4,
+            tension: 60,
+            useNativeDriver: true
+        }).start()
+    }
+
+    return (
+        &lt;View style={{ alignItems: 'center', padding: 10, borderColor: '#fdfd', borderWidth: 1, borderRadius: 7, width: '30%' }}&gt;
+            &lt;Animated.View style={{
+                transform: [
+                    { scale: scaleAnim }
+                ],
+                width: 150,
+                height: 150,
+                backgroundColor: '#87eba2',
+                borderRadius: 10,
+                justifyContent: 'center',
+                alignItems: 'center',
+            }}&gt;
+                &lt;Text style={{ fontWeight: 'bold' }}&gt;Slide Box&lt;/Text&gt;
+            &lt;/Animated.View&gt;
+            &lt;View style={{ marginTop: 20, flexDirection: 'row', gap: 10 }}&gt;
+                &lt;Button title="Zoom In" onPress={zoomIn} /&gt;
+                &lt;Button title="Zoom Out" onPress={zoomOut} /&gt;
+            &lt;/View&gt;
+        &lt;/View&gt;
+    );
+}
+</code></pre>
+<p><em><strong>Penjelasan</strong></em></p>
+<p><code>const scaleAnim = useRef(new Animated.Value(0)).current;</code> membuat nilai animasi awal dengan nilai 0. Nilai tersebut disimpan dalam <code>scaleAnim</code>, dan nantinya akan diubah oleh fungsi <code>zoomIn()</code> dan <code>zoomOut()</code>.</p>
+<ul>
+<li><code>useRef()</code> digunakan agar nilai scaleAnim tidak di-reset setiap kali komponen di-render ulang.</li>
+<li><code>Animated.Value(0)</code> berarti nilai awal untuk properti animasi (dalam hal ini scale) adalah 0, artinya komponen dimulai dalam ukuran (scale) yang kecil.</li>
+</ul>
+<p><code>zoomIn()</code> memiliki beberapa property, yaitu:
+- <code>Animated.spring()</code> untuk menghasilkan efek pegas (spring motion).
+- <code>toValue: 1</code> artinya sacleAnim akan meningkat dari 0 → 1, membuat komponen kembali ke ukuran normal.
+- <code>friction</code> mengontrol gesekan. Semakin tinggi nilainya, maka semakin cepat animasi berhenti.
+- <code>tension</code> mengontrol daya tarik pegas. Semakin besar nilainya, semakin cepat pergerakan awal animasi.
+- <code>useNativeDriver: true</code> membuat animasi dijalankan di native thread, sehingga lebih halus dan efisien.</p>
+<p><code>zoomOut()</code> memiliki beberapa property yang serupa dengan fungsi zoomIn(). Perbedaan terletak pada nilai dari property <code>toValue: 1</code> yang menunjukkan <code>scale</code> akan turun dari 1 → 0.</p>
+<p><code>Animated.View</code> digunakan agar properti style bisa dianimasikan. Properti <code>transform</code> dengan <code>{scale: scaleAnim}</code> dihubungkan langsung ke <code>scaleAnim</code>. Saat <code>sacleAnim</code> berubah, React Native akan otomatis menyesuaikan ukuran (<code>scale</code>) komponen.</p>
+<p><strong>TranslateBox.tsx</strong></p>
+<pre><code class="language-tsx">import { useRef } from "react";
+import { Animated, Text, View, Button } from "react-native";
+
+export default function TranslatedBox() {
+    const slideAnim = useRef(new Animated.Value(0)).current;
+
+    const startDecay = () =&gt; {
+        Animated.decay(slideAnim, {
+            velocity: 1.5,
+            deceleration: 0.997,
+            useNativeDriver: true
+        }).start();
+    }
+
+    return (
+        &lt;View style={{ alignItems: 'center', padding: 10, borderColor: '#fdfd', borderWidth: 1, borderRadius: 7, width: '30%' }}&gt;
+            &lt;Animated.View style={{
+                transform: [
+                    { translateY: slideAnim }
+                ],
+                width: 150,
+                height: 150,
+                backgroundColor: '#87eba2',
+                borderRadius: 10,
+                justifyContent: 'center',
+                alignItems: 'center',
+            }}&gt;
+                &lt;Text style={{ fontWeight: 'bold' }}&gt;Slide Box&lt;/Text&gt;
+            &lt;/Animated.View&gt;
+            &lt;View style={{ marginTop: 20, flexDirection: 'row', gap: 10 }}&gt;
+                &lt;Button title="Start deacy" onPress={startDecay} /&gt;
+                &lt;Button title="Reset deacy" onPress={() =&gt; slideAnim.setValue(0)} /&gt;
+            &lt;/View&gt;
+        &lt;/View&gt;
+    );
+}
+</code></pre>
+<p><em><strong>Penjelasan</strong></em></p>
+<p><code>const slideAnim = useRef(new Animated.Value(0)).current;</code> membuat nilai animasi awal dengan nilai 0. Nilai tersebut disimpan dalam <code>slideAnim</code>, dan nantinya akan diubah oleh fungsi <code>startDecay()</code>.</p>
+<ul>
+<li><code>useRef()</code> digunakan agar nilai <code>slideAnim</code> tidak di-<em>reset</em> setiap kali komponen di-<em>render</em> ulang.</li>
+<li><code>Animated.Value(0)</code> berarti nilai awal untuk properti animasi (dalam hal ini posisi) adalah 0, artinya komponen dimulai dalam posisi awal yaitu 0.</li>
+</ul>
+<p><code>startDecay()</code> memiliki beberapa property, yaitu:
+- <code>Animated.decay()</code> untuk menghasilkan animasi yang berhenti secara alami seperti benda yang bergerak lalu melambat karena gaya gesek.
+- <code>velocity: 1</code> konfigurasi kecepatan awal animasi. Semakin tinggi nilainya, maka semakin cepat animasi bergerak.
+- <code>deceleration</code> mengontrol laju perlambatan. Semakin tinggi nilainya (mendekati 1), maka gerakan berhenti lebih lambat.
+- <code>useNativeDriver: true</code> membuat animasi dijalankan di native thread, sehingga lebih halus dan efisien.</p>
+<p><code>Animated.View</code> digunakan agar properti style bisa dianimasikan. Properti <code>transform</code> dengan <code>{translateY: scaleAnim}</code> dihubungkan langsung ke <code>slideAnim</code>. Saat <code>slideAnim</code> berubah, React Native akan otomatis menyesuaikan posisi (<code>translateY</code>) komponen.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="reanimated-api"><a class="header" href="#reanimated-api">Reanimated API</a></h1>
+<p>Merupakan library pihak ketiga untuk membuat animasi dengan performa tinggi di React Native. Reanimated memungkinkan kita untuk menjalankan logika animasi langsung di native thread, sehingga animasi tetap halus bahkan ketika JavaScript thread sibuk. <code>Reanimated</code> sangat cocok digunakan untuk animasi interaktif dan kompleks seperti:</p>
+<ul>
+<li>Drag &amp; drop</li>
+<li>Gesture-based animations (dengan <code>react-native-gesture-handler</code>)</li>
+<li>Scroll animations</li>
+<li>Transition antar halaman</li>
+</ul>
+<p>Sebelum menggunakan <a href="https://docs.swmansion.com/react-native-reanimated/"><code>Reanimated</code></a>, terdapat beberapa hal yang perlu dilakukan yaitu instalasi dependency dan melakukan rebuild plugin.</p>
+<h2 id="instalasi-6"><a class="header" href="#instalasi-6">Instalasi</a></h2>
+<pre><code class="language-bash">npm install react-native-reanimated react-native-worklets
+</code></pre>
+<h2 id="rebuild"><a class="header" href="#rebuild">Rebuild</a></h2>
+<p><strong>Expo</strong></p>
+<p>Jalankan perintah berikut pada terminal</p>
+<pre><code class="language-bash">npx expo prebuild
+</code></pre>
+<p><strong>React Native CLI</strong></p>
+<p>Tambahkan plugin <code>react-native-worklets/plugin</code> secara manual pada file <code>babel.config.js</code>. Pastikan <code>react-native-worklets/</code> berada di baris paling akhir.</p>
+<pre><code class="language-js">module.exports = {
+presets: [
+    ... // don't add it here :)
+],
+plugins: [
+    ...
+    'react-native-worklets/plugin',
+],
+};
+</code></pre>
+<p>Khusus penggunaan <code>web</code> yang dibangun menggunakan React native CLI, selain wajib menambahkan <code>react-native-web</code> dan <code>react-dom</code>, kita perlu menambahkan plugin <code>@babel/plugin-proposal-export-namespace-from</code> lalu rebuild dengan cara menambahkan plugin tersebut ke <code>babel.config.js</code>.</p>
+<pre><code class="language-bash">npm install @babel/plugin-proposal-export-namespace-from
+</code></pre>
+<pre><code class="language-js">module.exports = {
+    presets: [
+    ... // don't add it here :)
+    ],
+    plugins: [
+        ...
+        '@babel/plugin-proposal-export-namespace-from',
+        'react-native-worklets/plugin',
+    ],
+};
+</code></pre>
+<p><code>Reanimated</code> memiliki beberapa konsep dasar yang perlu diketahui:</p>
+<h3 id="usesharedvalue"><a class="header" href="#usesharedvalue"><code>useSharedValue</code></a></h3>
+<p>Digunakan untuk menginisialisasi nilai numerik yang bisa berubah tanpa menyebabkan re-<em>render</em> React. Mirip seperti <code>Animated.Value()</code>, tapi lebih efisien karena berjalan di native thread. Untuk mengakses data pada <em>shared value</em>, kita dapat menggunakan property <code>value</code>.</p>
+<pre><code class="language-tsx">const animation_value = useSharedValue(0);  // inisialisasi shared value
+animation_value.value = 1; // mengubah shared value
+
+const animation_value = useSharedValue({x: 0, y: 0});  // inisialisasi shared value
+animation_value.value = {x: 50, y: -20}; // mengubah shared value
+
+const animation_value = useSharedValue([1, 2, 3]);  // inisialisasi shared value
+animation_value.value.push(4);
+animation_value.value = [...animation_value.value, 1000]
+</code></pre>
+<h3 id="useanimatedstyle"><a class="header" href="#useanimatedstyle"><code>useAnimatedStyle</code></a></h3>
+<p>Digunakan untuk membuat <code>object style</code> animasi. Mirip seperti <code>StyleSheet</code> namun, nilainya diambil dari <em>shared value</em>. Setiap kali nilai berubah, style akan diperbarui otomatis di native layer.</p>
+<pre><code class="language-tsx">const animatedStyle = useAnimatedStyle(() =&gt; {
+  return { opacity: opacity.value };
+});
+</code></pre>
+<h3 id="useanimatedprops"><a class="header" href="#useanimatedprops"><code>useAnimatedProps</code></a></h3>
+<p>Memiliki fungsi yang mirip seperti <code>useAnimatedStyle</code>, tetapi bukan untuk style melainkan untuk <code>props</code> dari komponen yang dapat dianimasikan seperti <code>progress</code> pada <code>Animated.ProgressBar</code>, <code>strokeDashoffset</code> pada <code>SVG</code>, atau <code>text</code> pada <code>Animated.TextInput</code>. Artinya, kita dapat memberikan animasi pada suatu komponen jika property yang ingin dianimasikan bukan bagian dari style. Reanimated akan mengupdate props tersebut secara langsung dari native thread sehingga komponen react tidak mengalami re-<em>render</em>.</p>
+<pre><code class="language-tsx">const animatedProps = useAnimatedProps(() =&gt; {
+  return {
+    propertyName: someSharedValue.value,
+  };
+});
+</code></pre>
+<p>Kemudian digunakan di komponen Animated.<Component> seperti ini (misalnya pada komponen View):</p>
+<pre><code class="language-tsx">&lt;Animated.View animatedProps={animatedProps} /&gt;
+</code></pre>
+<h3 id="withtiming"><a class="header" href="#withtiming"><code>withTiming</code></a></h3>
+<p>Merupakan fungsi animasi yang dimiliki oleh Reanimated dan berfungsi untuk membuat nilai <code>shared value</code> berubah secara bertahap dari nilai awal ke nilai target selama periode tertentu. Selain itu, kita juga dapat mengatur kecepatan animasi melalui <code>Easing</code>.</p>
+<pre><code class="language-tsx">import { Easing, ReduceMotion } from 'react-native-reanimated';
+
+withTiming(shared_value.value, {
+    duration: 1000,  // dalam milisecond
+    easing: Easing.inOut(Easing.quad),  
+    reduceMotion: ReduceMotion.System,
+})
+</code></pre>
+<h3 id="withspring"><a class="header" href="#withspring"><code>withSpring</code></a></h3>
+<p>Merupakan fungsi yang digunakan untuk membuat animasi yang meniru gerakan pegas. Artinya, nilai akan bergerak menuju target (toValue), namun dengan sedikit pantulan (overshoot) dan perlambatan alami di akhir.</p>
+<pre><code class="language-tsx">withSpring(sv.value, {
+    stiffness: 900,
+    damping: 120,
+    mass: 4,
+    overshootClamping: false,
+    reduceMotion: ReduceMotion.System,
+})
+</code></pre>
+<p><em>Penjelasan</em></p>
+<ul>
+<li><code>stiffness</code>: Kekuatan pegas (semakin besar = gerakan lebih cepat dan kuat) (default = 900)</li>
+<li><code>damping</code>: Mengatur seberapa cepat gerakan melambat (semakin besar = lebih cepat berhenti) (default = 120)</li>
+<li><code>mass</code>: Berat objek (semakin besar = gerakan lebih lambat) (default = 4)</li>
+<li><code>overshootClamping</code>: Jika true, tidak akan memantul melewati target (default = false)</li>
+</ul>
+<p>Konfigurasi lainnya dari fungsi <code>withSpring</code> dapat dilihat pada <a href="https://docs.swmansion.com/react-native-reanimated/docs/animations/withSpring">laman resmi</a></p>
+<h3 id="withdecay"><a class="header" href="#withdecay"><code>withDecay</code></a></h3>
+<p>Digunakan untuk membuat animasi yang terus bergerak ke arah tertentu dengan kecepatan awal, lalu melambat hingga berhenti secara alami.</p>
+<pre><code class="language-tsx">withDecay({
+    velocity: event.velocityX,
+    deceleration: 0.998,
+    clamp: [-300, 300],
+    velocityFactor: 1,
+    rubberBandEffect: true,
+    rubberBandFactor: 0.6,
+    reduceMotion: ReduceMotion.System,
+})
+</code></pre>
+<p><em>Penjelasan</em></p>
+<ul>
+<li><code>velocity</code>: kecepatan awal gerakan (default = 0).</li>
+<li><code>deceleration</code>: Nilai mendekati 1 membuat animasi melambat dengan lembut dan berjalan lebih lama, sedangkan nilai kecil (misal 0.95) membuat animasi cepat berhenti (default = 0.998).</li>
+<li><code>clamp</code>: Batas minimum dan maksimum posisi. Ketika posisi hasil decay melewati nilai ini, maka animasi akan berhenti di batas tersebut. Contoh [-300, 300] artinya posisi hanya boleh di antara -300 hingga 300.</li>
+<li><code>velocityFactor</code>: Faktor pengali untuk kecepatan awal (<code>velocity</code>). Gunanya untuk mengatur seberapa jauh atau seberapa cepat gerakan decay dimulai tanpa harus mengubah velocity langsung (default = 1).</li>
+<li><code>rubberBandEffect</code>: menambahkan efek pantulan yang lembut seperti "karet" (default = false)</li>
+<li><code>rubberBandFactor</code>: Mengatur seberapa kuat efek pantulan pada <code>rubberBandEffect</code>. Semakin kecil maka pantulan lebih kuat sedangkan semakin besar (lebih elastis) maka pantulan lebih kaku (cepat berhenti) (default = 0.6).</li>
+</ul>
+<h3 id="withsequence"><a class="header" href="#withsequence"><code>withSequence</code></a></h3>
+<p>Digunakan untuk menjalankan beberapa animasi satu per satu (secara berurutan) bukan bersamaan. Umumnya digunakan bersama <code>withTiming()</code>, <code>withSpring()</code>, dan <code>withDecay()</code> untuk membentuk efek kompleks.</p>
+<pre><code class="language-tsx">withSequence(animation1, animation2, animation3, ...)
+</code></pre>
+<p><em>Penjelasan</em>
+Setiap <code>animation</code> bisa berupa <code>withTiming()</code>, <code>withSpring()</code>, <code>withDecay()</code> atau bahkan <code>withDelay()</code> jika ingin memiliki jeda waktu di antaranya.</p>
+<pre><code class="language-tsx">translateX.value = withSequence(
+  withTiming(100, { duration: 500 }),
+  withTiming(-100, { duration: 500 }),
+  withTiming(0, { duration: 500 })
+);
+</code></pre>
+<h3 id="withrepeat"><a class="header" href="#withrepeat"><code>withRepeat</code></a></h3>
+<p>Digunakan untuk menjalankan animasi secara berulang, baik dalam jumlah tertentu maupun tanpa batas (infinite loop). Biasanya digunakan untuk membuat animasi loading atau spinner.</p>
+<pre><code class="language-tsx">withRepeat(animation, numberOfReps?, reverse?, callback?)
+</code></pre>
+<p><em>Penjelasan</em></p>
+<ul>
+<li>animation: animasi yang akan diulang (biasanya menggunakan <code>withTiming</code> atau <code>withSpring</code>)</li>
+<li>numberOfReps: jumlah pengulangan animasi. Gunakan -1 untuk infinite loop. (default = 2)</li>
+<li>reverse: jika <code>true</code>, animasi akan membalik arah setiap kali mengulang. (default = <code>false</code>)</li>
+<li>callback: fungsi yang dipanggil ketika animasi selesai (jika finite)</li>
+</ul>
+<pre><code class="language-tsx">withRepeat(
+    withTiming(200, { duration: 1000 }),
+    2,
+    false,
+    () =&gt; {},
+    ReduceMotion.System,
+)
+</code></pre>
+<h3 id="withdelay"><a class="header" href="#withdelay"><code>withDelay</code></a></h3>
+<p>Digunakan untuk memberikan penundaan (delay) pada animasi sebelum dijalankan. Bisanya dipakai untuk menjalankan animasi yang berurutan atau bisa juga digunakan untuk memberi jeda antar efek.</p>
+<pre><code class="language-tsx">withDelay(delay, animation)
+</code></pre>
+<p><em>Penjelasan</em></p>
+<ul>
+<li>delay: durasi penundaan dalam milidetik sebelum animasi dimulai</li>
+<li>animation: animasi yang ingin dijalankan setelah delay (biasanya <code>withTiming</code>, <code>withSpring</code>, dll)</li>
+</ul>
+<pre><code class="language-tsx">opacity.value = withDelay(
+    1000, // tunggu 1 detik
+    withTiming(1, { duration: 1000 })
+);
+</code></pre>
+<p>Konsep penting lainnya dari Reanimated dapat diakses pada <a href="https://docs.swmansion.com/react-native-reanimated">laman resmi</a></p>
 
                     </main>
 
