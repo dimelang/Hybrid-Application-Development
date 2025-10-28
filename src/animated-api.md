@@ -8,6 +8,18 @@
 - Rotasi
 
 `Animated` memiliki beberapa konsep utama yang perlu diketahui:
+- Tidak seluruh komponen bawaan dari react native dapat menggunakan Animasi. Beberapa komponen yang dapat diberikan animasi adalah: `Animated.View`, `Animated.Text`, `Animated.Image`, `Animated.ScrollView`, `Animated.FlatList`, `Animated.SectionList`.
+    ```tsx
+    <Animated.View style={{
+        opacity: opacityAnim,
+        width: 150,
+        height: 150,
+        backgroundColor: 'skyblue',
+        borderRadius: 10,
+        justifyContent: 'center',
+        alignItems: 'center',
+    }}>
+    ```
 - `Animated.Value()`: Menyimpan nilai numerik yang berubah seiring waktu. Nilai ini bisa dihubungkan ke properti `style` seperti `opacity`, `transform`, atau `position`. Biasanya disimpan menggunakan `hook` `useRef`.
     ```tsx
     const anim = useRef(new Animated.Value(0)).current;
@@ -43,21 +55,96 @@
         tension: 60,     // ketegangan pegas (semakin besar → lebih cepat)
         useNativeDriver: true
     }).start();
+    ```
 
-    ```
-- `Animated.View`, `Animated.Text`, `Animated.Image`, `Animated.ScrollView`, `Animated.FlatList`, `Animated.SectionList`: Komponen yang dapat dianimasikan.
+Beberapa Animasi dapat dikombinasikan menggunakan:
+
+- `Animated.sequence()`: Menyusun dan menjalankan animasi secara berurutan. Animasi dijalankan satu-persatu.
     ```tsx
-    <Animated.View style={{
-        opacity: anim,
-        width: 150,
-        height: 150,
-        backgroundColor: 'skyblue',
-        borderRadius: 10,
-        justifyContent: 'center',
-        alignItems: 'center',
-    }}>
+    Animated.sequence([
+        Animated.timing(anim, {
+            toValue: 1,
+            duration: 1000,
+            easing: Easing.bounce,
+            useNativeDriver: true
+        }),
+        Animated.decay(anim, {
+            velocity: 0.5,
+            deceleration: 0.997,
+            useNativeDriver: true
+        })
+    ]).start();
     ```
-- Selengkapnya dapat dilihat pada [laman resmi](https://reactnative.dev/docs/animated)
+
+- `Animated.delay()`: Menciptakan jeda antar animasi.
+    ```tsx
+    Animated.sequence([
+        Animated.decay()
+        Animated.timing(anim, {
+            toValue: 1,
+            duration: 1000,
+            easing: Easing.bounce,
+            useNativeDriver: true
+        }),
+        Animated.decay()
+        Animated.decay(anim, {
+            velocity: 0.5,
+            deceleration: 0.997,
+            useNativeDriver: true
+        })
+    ]).start();
+    ```
+- `Animated.parallel()`: Menjalankan beberapa animasi secara bersamaan.
+    ```tsx
+    Animated.parallel([
+        Animated.timing(anim, {
+            toValue: 1,
+            duration: 1000,
+            easing: Easing.bounce,
+            useNativeDriver: true
+        }),
+        Animated.decay(anim, {
+            velocity: 0.5,
+            deceleration: 0.997,
+            useNativeDriver: true
+        })
+    ]).start();
+    ```
+- `Animated.stagger()`: Menjalankan rangkaian animasi dengan durasi jeda yang sama.
+    ```tsx
+    Animated.stagger(
+        200, // delay antar animasi
+        [
+            Animated.timing(anim, {
+                toValue: 1,
+                duration: 1000,
+                easing: Easing.bounce,
+                useNativeDriver: true
+            }),
+            Animated.decay(anim, {
+                velocity: 0.5,
+                deceleration: 0.997,
+                useNativeDriver: true
+            })
+        ]
+    ).start();
+    ```
+- `Animated.loop()`: Mengulangi animasi secara terus menerus.
+    ```tsx
+    Animated.loop([
+        Animated.timing(anim, {
+            toValue: 1,
+            duration: 1000,
+            easing: Easing.bounce,
+            useNativeDriver: true
+        }),
+        Animated.decay(anim, {
+            velocity: 0.5,
+            deceleration: 0.997,
+            useNativeDriver: true
+        })
+    ]).start();
+    ```
 
 ## Contoh: Animasi
 Struktur folder:
@@ -120,14 +207,16 @@ export default function FadeBox() {
 ***Penjelasan***
 
 `const fadeAnim = useRef(new Animated.Value(0)).current;` membuat nilai animasi awal dengan nilai 0. Nilai tersebut disimpan dalam `fadeAnim`, dan nantinya akan diubah oleh fungsi `fadeIn()` dan `fadeOut()`. 
-    - `useRef()` digunakan agar nilai fadeAnim tidak di-reset setiap kali komponen di-render ulang.
-    - `Animated.Value(0)` berarti nilai awal untuk properti animasi (dalam hal ini opacity) adalah 0, artinya komponen dimulai dalam keadaan transparan.
+
+- `useRef()` digunakan agar nilai fadeAnim tidak di-reset setiap kali komponen di-render ulang.
+- `Animated.Value(0)` berarti nilai awal untuk properti animasi (dalam hal ini opacity) adalah 0, artinya komponen dimulai dalam keadaan transparan.
 
 `fadeIn()` memiliki beberapa property, yaitu:
-    - `Animated.timing()` mengatur perubahan nilai animasi secara bertahap.
-    - `toValue: 1` artinya fadeAnim akan meningkat dari 0 → 1, membuat komponen semakin terlihat.
-    - `duration: 1000` menunjukkan animasi berlangsung selama 1 detik (1000 ms).
-    - `useNativeDriver: true` membuat animasi dijalankan di native thread, sehingga lebih halus dan efisien.
+
+- `Animated.timing()` mengatur perubahan nilai animasi secara bertahap.
+- `toValue: 1` artinya fadeAnim akan meningkat dari 0 → 1, membuat komponen semakin terlihat.
+- `duration: 1000` menunjukkan animasi berlangsung selama 1 detik (1000 ms).
+- `useNativeDriver: true` membuat animasi dijalankan di native thread, sehingga lebih halus dan efisien.
 
 `fadeOut()` memiliki beberapa property yang serupa dengan fungsi fadeIn(). Perbedaan terletak pada nilai dari property `toValue: 1` yang menunjukkan `opacity` akan turun dari 1 → 0.
 
