@@ -3790,6 +3790,19 @@ export default function App() {
 <p><code>Animated</code> memiliki beberapa konsep utama yang perlu diketahui:</p>
 <ul>
 <li>
+<p>Tidak seluruh komponen bawaan dari react native dapat menggunakan Animasi. Beberapa komponen yang dapat diberikan animasi adalah: <code>Animated.View</code>, <code>Animated.Text</code>, <code>Animated.Image</code>, <code>Animated.ScrollView</code>, <code>Animated.FlatList</code>, <code>Animated.SectionList</code>.</p>
+<pre><code class="language-tsx">&lt;Animated.View style={{
+    opacity: opacityAnim,
+    width: 150,
+    height: 150,
+    backgroundColor: 'skyblue',
+    borderRadius: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+}}&gt;
+</code></pre>
+</li>
+<li>
 <p><code>Animated.Value()</code>: Menyimpan nilai numerik yang berubah seiring waktu. Nilai ini bisa dihubungkan ke properti <code>style</code> seperti <code>opacity</code>, <code>transform</code>, atau <code>position</code>. Biasanya disimpan menggunakan <code>hook</code> <code>useRef</code>.</p>
 <pre><code class="language-tsx">const anim = useRef(new Animated.Value(0)).current;
 </code></pre>
@@ -3825,24 +3838,100 @@ export default function App() {
     tension: 60,     // ketegangan pegas (semakin besar → lebih cepat)
     useNativeDriver: true
 }).start();
-
+</code></pre>
+</li>
+</ul>
+<p>Beberapa Animasi dapat dikombinasikan menggunakan:</p>
+<ul>
+<li>
+<p><code>Animated.sequence()</code>: Menyusun dan menjalankan animasi secara berurutan. Animasi dijalankan satu-persatu.</p>
+<pre><code class="language-tsx">Animated.sequence([
+    Animated.timing(anim, {
+        toValue: 1,
+        duration: 1000,
+        easing: Easing.bounce,
+        useNativeDriver: true
+    }),
+    Animated.decay(anim, {
+        velocity: 0.5,
+        deceleration: 0.997,
+        useNativeDriver: true
+    })
+]).start();
 </code></pre>
 </li>
 <li>
-<p><code>Animated.View</code>, <code>Animated.Text</code>, <code>Animated.Image</code>, <code>Animated.ScrollView</code>, <code>Animated.FlatList</code>, <code>Animated.SectionList</code>: Komponen yang dapat dianimasikan.</p>
-<pre><code class="language-tsx">&lt;Animated.View style={{
-    opacity: anim,
-    width: 150,
-    height: 150,
-    backgroundColor: 'skyblue',
-    borderRadius: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
-}}&gt;
+<p><code>Animated.delay()</code>: Menciptakan jeda antar animasi.</p>
+<pre><code class="language-tsx">Animated.sequence([
+    Animated.decay()
+    Animated.timing(anim, {
+        toValue: 1,
+        duration: 1000,
+        easing: Easing.bounce,
+        useNativeDriver: true
+    }),
+    Animated.decay()
+    Animated.decay(anim, {
+        velocity: 0.5,
+        deceleration: 0.997,
+        useNativeDriver: true
+    })
+]).start();
 </code></pre>
 </li>
 <li>
-<p>Selengkapnya dapat dilihat pada <a href="https://reactnative.dev/docs/animated">laman resmi</a></p>
+<p><code>Animated.parallel()</code>: Menjalankan beberapa animasi secara bersamaan.</p>
+<pre><code class="language-tsx">Animated.parallel([
+    Animated.timing(anim, {
+        toValue: 1,
+        duration: 1000,
+        easing: Easing.bounce,
+        useNativeDriver: true
+    }),
+    Animated.decay(anim, {
+        velocity: 0.5,
+        deceleration: 0.997,
+        useNativeDriver: true
+    })
+]).start();
+</code></pre>
+</li>
+<li>
+<p><code>Animated.stagger()</code>: Menjalankan rangkaian animasi dengan durasi jeda yang sama.</p>
+<pre><code class="language-tsx">Animated.stagger(
+    200, // delay antar animasi
+    [
+        Animated.timing(anim, {
+            toValue: 1,
+            duration: 1000,
+            easing: Easing.bounce,
+            useNativeDriver: true
+        }),
+        Animated.decay(anim, {
+            velocity: 0.5,
+            deceleration: 0.997,
+            useNativeDriver: true
+        })
+    ]
+).start();
+</code></pre>
+</li>
+<li>
+<p><code>Animated.loop()</code>: Mengulangi animasi secara terus menerus.</p>
+<pre><code class="language-tsx">Animated.loop([
+    Animated.timing(anim, {
+        toValue: 1,
+        duration: 1000,
+        easing: Easing.bounce,
+        useNativeDriver: true
+    }),
+    Animated.decay(anim, {
+        velocity: 0.5,
+        deceleration: 0.997,
+        useNativeDriver: true
+    })
+]).start();
+</code></pre>
 </li>
 </ul>
 <h2 id="contoh-animasi"><a class="header" href="#contoh-animasi">Contoh: Animasi</a></h2>
@@ -3900,14 +3989,18 @@ export default function FadeBox() {
 }
 </code></pre>
 <p><em><strong>Penjelasan</strong></em></p>
-<p><code>const fadeAnim = useRef(new Animated.Value(0)).current;</code> membuat nilai animasi awal dengan nilai 0. Nilai tersebut disimpan dalam <code>fadeAnim</code>, dan nantinya akan diubah oleh fungsi <code>fadeIn()</code> dan <code>fadeOut()</code>.
-- <code>useRef()</code> digunakan agar nilai fadeAnim tidak di-reset setiap kali komponen di-render ulang.
-- <code>Animated.Value(0)</code> berarti nilai awal untuk properti animasi (dalam hal ini opacity) adalah 0, artinya komponen dimulai dalam keadaan transparan.</p>
-<p><code>fadeIn()</code> memiliki beberapa property, yaitu:
-- <code>Animated.timing()</code> mengatur perubahan nilai animasi secara bertahap.
-- <code>toValue: 1</code> artinya fadeAnim akan meningkat dari 0 → 1, membuat komponen semakin terlihat.
-- <code>duration: 1000</code> menunjukkan animasi berlangsung selama 1 detik (1000 ms).
-- <code>useNativeDriver: true</code> membuat animasi dijalankan di native thread, sehingga lebih halus dan efisien.</p>
+<p><code>const fadeAnim = useRef(new Animated.Value(0)).current;</code> membuat nilai animasi awal dengan nilai 0. Nilai tersebut disimpan dalam <code>fadeAnim</code>, dan nantinya akan diubah oleh fungsi <code>fadeIn()</code> dan <code>fadeOut()</code>.</p>
+<ul>
+<li><code>useRef()</code> digunakan agar nilai fadeAnim tidak di-reset setiap kali komponen di-render ulang.</li>
+<li><code>Animated.Value(0)</code> berarti nilai awal untuk properti animasi (dalam hal ini opacity) adalah 0, artinya komponen dimulai dalam keadaan transparan.</li>
+</ul>
+<p><code>fadeIn()</code> memiliki beberapa property, yaitu:</p>
+<ul>
+<li><code>Animated.timing()</code> mengatur perubahan nilai animasi secara bertahap.</li>
+<li><code>toValue: 1</code> artinya fadeAnim akan meningkat dari 0 → 1, membuat komponen semakin terlihat.</li>
+<li><code>duration: 1000</code> menunjukkan animasi berlangsung selama 1 detik (1000 ms).</li>
+<li><code>useNativeDriver: true</code> membuat animasi dijalankan di native thread, sehingga lebih halus dan efisien.</li>
+</ul>
 <p><code>fadeOut()</code> memiliki beberapa property yang serupa dengan fungsi fadeIn(). Perbedaan terletak pada nilai dari property <code>toValue: 1</code> yang menunjukkan <code>opacity</code> akan turun dari 1 → 0.</p>
 <p><code>Animated.View</code> digunakan agar properti style bisa dianimasikan. Properti <code>opacity</code> dihubungkan langsung ke <code>fadeAnim</code>. Saat <code>fadeAnim</code> berubah, React Native akan otomatis menyesuaikan opacity komponen atau membuat efek fade in dan fade out.</p>
 <p><strong>ScaleBox.tsx</strong></p>
