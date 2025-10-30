@@ -15,14 +15,14 @@ npm install react-native-reanimated react-native-worklets
 
 
 ## Rebuild
-**Expo**
+### Expo
 
 Jalankan perintah berikut pada terminal
 ```bash
 npx expo prebuild
 ```
 
-**React Native CLI**
+### React Native CLI
 
 Tambahkan plugin `react-native-worklets/plugin` secara manual pada file `babel.config.js`. Pastikan `react-native-worklets/` berada di baris paling akhir.
 ```js
@@ -55,7 +55,10 @@ module.exports = {
     ],
 };
 ```
-`Reanimated` memiliki beberapa konsep dasar yang perlu diketahui:
+
+
+### `Reanimated` memiliki beberapa konsep dasar yang perlu diketahui:
+
 ### `useSharedValue`
 Digunakan untuk menginisialisasi nilai numerik yang bisa berubah tanpa menyebabkan re-*render* React. Mirip seperti `Animated.Value()`, tapi lebih efisien karena berjalan di native thread. Untuk mengakses data pada *shared value*, kita dapat menggunakan property `value`.
 ```tsx
@@ -69,27 +72,97 @@ const animation_value = useSharedValue([1, 2, 3]);  // inisialisasi shared value
 animation_value.value.push(4);
 animation_value.value = [...animation_value.value, 1000]
 ```
+Kemudian dapat digunakan untuk mengubah nilai animasi:
+```tsx
+const scale = useSharedValue(0);
+
+const startScaleAnimation = () => {
+    scale.value = withTiming(scale.value === 1 ? 1.5 : 1, { duration: 500 });
+}
+```
 
 ### `useAnimatedStyle`
 Digunakan untuk membuat `object style` animasi. Mirip seperti `StyleSheet` namun, nilainya diambil dari *shared value*. Setiap kali nilai berubah, style akan diperbarui otomatis di native layer.
 ```tsx
-const animatedStyle = useAnimatedStyle(() => {
-  return { opacity: opacity.value };
-});
-```
+const opacity = useSharedValue(0);
+const scale = useSharedValue(0.5);
 
-### `useAnimatedProps`
-Memiliki fungsi yang mirip seperti `useAnimatedStyle`, tetapi bukan untuk style melainkan untuk `props` dari komponen yang dapat dianimasikan seperti `progress` pada `Animated.ProgressBar`, `strokeDashoffset` pada `SVG`, atau `text` pada `Animated.TextInput`. Artinya, kita dapat memberikan animasi pada suatu komponen jika property yang ingin dianimasikan bukan bagian dari style. Reanimated akan mengupdate props tersebut secara langsung dari native thread sehingga komponen react tidak mengalami re-*render*.
-```tsx
-const animatedProps = useAnimatedProps(() => {
-  return {
-    propertyName: someSharedValue.value,
+const animatedStyle = useAnimatedStyle(() => {
+  return { 
+    opacity: opacity.value,
+    transform: [{ scale: scale.value }],
   };
 });
 ```
+
 Kemudian digunakan di komponen Animated.<Component> seperti ini (misalnya pada komponen View):
 ```tsx
-<Animated.View animatedProps={animatedProps} />
+const opacity = useSharedValue(0);
+const scale = useSharedValue(0.5);
+
+const animatedStyle = useAnimatedStyle(() => {
+  return { 
+    opacity: opacity.value,
+    transform: [{ scale: scale.value }],
+  };
+});
+
+<Animated.View style={[
+    {
+        width: 120,
+        height: 120,
+        backgroundColor: 'skyblue',
+        borderRadius: 10,
+    },
+    animatedStyle,
+    ]}
+/>
+```
+
+
+### `useAnimatedProps`
+Digunakan untuk memberikan animasi pada properti (props) komponen yang bukan bagian dari style. Berbeda dengan `useAnimatedStyle` yang hanya bisa digunakan untuk properti style, `useAnimatedProps` memungkinkan kita menganimasikan atribut seperti:
+- `progress` pada `Animated.ProgressBar`
+- `strokeDashoffset` pada elemen `SVG`
+- `text` pada `Animated.TextInput`
+- `value` atau `scrollOffset` pada beberapa komponen bawaan
+Animasi dijalankan langsung di native thread, sehingga komponen tidak mengalami re-render di sisi JavaScript — hasilnya, animasi menjadi lebih halus dan efisien.
+```tsx
+const textValue = useSharedValue('Hello');
+
+const animatedProps = useAnimatedProps(() => {
+  return {
+    text: textValue.value,
+  };
+});
+
+const changeText = () => {
+    textValue.value = withTiming(
+        textValue.value === 'Hello' ? 'Reanimated' : 'Hello',
+        {duration: 600}
+    )
+}
+```
+Kemudian digunakan di komponen Animated.<Component> seperti ini (misalnya pada komponen View):
+```tsx
+const AnimatedTextInput = Animated.createAnimatedComponent(TextInput);
+
+<View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+    <AnimatedTextInput
+        style={{
+            fontSize: 24,
+            color: 'black',
+            borderWidth: 1,
+            borderColor: '#aaa',
+            padding: 10,
+            textAlign: 'center',
+            width: 200,
+        }}
+        editable={false}
+        animatedProps={animatedProps}
+    />
+    <Button title="Ubah Teks" onPress={changeText} />
+</View>
 ```
 
 ### `withTiming`
@@ -163,8 +236,6 @@ translateX.value = withSequence(
 );
 ```
 
-
-
 ### `withRepeat`
 Digunakan untuk menjalankan animasi secara berulang, baik dalam jumlah tertentu maupun tanpa batas (infinite loop). Biasanya digunakan untuk membuat animasi loading atau spinner.
 ```tsx
@@ -200,6 +271,92 @@ opacity.value = withDelay(
     1000, // tunggu 1 detik
     withTiming(1, { duration: 1000 })
 );
+```
+
+### Animated Component
+`Reanimated` memiliki beberapa komponen yang dapat diberikan animasi adalah: `Animated.View`, `Animated.Text`, `Animated.Image`, `Animated.ScrollView`, `Animated.FlatList`, `Animated.SectionList`.
+
+```tsx
+const opacityAnim = useSharedValue(0);
+
+const animatedStyle = useAnimatedStyle(() => ({
+    opacity: opacityAnim.value,
+}));
+
+const toggleOpacity = () => {
+    opacityAnim.value = withTiming(opacityAnim.value === 1 ? 0 : 1, {
+      duration: 800,
+    });
+};
+
+return (
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <Animated.View
+        style={[
+          {
+            width: 150,
+            height: 150,
+            backgroundColor: 'skyblue',
+            borderRadius: 10,
+            justifyContent: 'center',
+            alignItems: 'center',
+          },
+          animatedStyle,
+        ]}
+      />
+      <Button title="Toggle Fade" onPress={toggleOpacity} />
+    </View>
+);
+```
+
+Selain komponen di atas, kita juga dapat membuat komponen kustom *animatable* menggunakan `Animated.createAnimatedComponent()`.
+
+```tsx
+import React from 'react';
+import { View, Text } from 'react-native';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+} from 'react-native-reanimated';
+
+// Komponen kustom biasa
+const Box = ({ color }: { color: string }) => (
+  <View
+    style={{
+      width: 100,
+      height: 100,
+      borderRadius: 10,
+      backgroundColor: color,
+      justifyContent: 'center',
+      alignItems: 'center',
+    }}
+  >
+    <Text style={{ color: 'white', fontWeight: 'bold' }}>BOX</Text>
+  </View>
+);
+
+// Ubah menjadi komponen animatable
+const AnimatedBox = Animated.createAnimatedComponent(Box);
+
+export default function CustomAnimatedComponentExample() {
+  const scale = useSharedValue(1);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+  }));
+
+  const animateBox = () => {
+    scale.value = withSpring(scale.value === 1 ? 1.5 : 1);
+  };
+
+  return (
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <AnimatedBox color="tomato" style={animatedStyle} />
+      <Button title="Animate Box" onPress={animateBox} />
+    </View>
+  );
+}
 ```
 
 
