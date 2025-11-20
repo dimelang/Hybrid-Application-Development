@@ -4171,12 +4171,147 @@ const animation_value = useSharedValue([1, 2, 3]);  // inisialisasi shared value
 animation_value.value.push(4);
 animation_value.value = [...animation_value.value, 1000]
 </code></pre>
-<p>Kemudian dapat digunakan untuk mengubah nilai animasi:</p>
-<pre><code class="language-tsx">const scale = useSharedValue(0);
+<h3 id="withtiming"><a class="header" href="#withtiming"><code>withTiming</code></a></h3>
+<p>Merupakan fungsi animasi yang dimiliki oleh Reanimated dan berfungsi untuk membuat nilai <code>shared value</code> berubah secara bertahap dari nilai awal ke nilai target selama periode tertentu. Selain itu, kita juga dapat mengatur kecepatan animasi melalui <code>Easing</code>.</p>
+<pre><code class="language-tsx">import { Easing, ReduceMotion } from 'react-native-reanimated';
+
+withTiming(shared_value.value, {
+    duration: 1000,  // dalam milisecond
+    easing: Easing.inOut(Easing.quad),  
+    reduceMotion: ReduceMotion.System,
+})
+</code></pre>
+<p><strong>Contoh:</strong></p>
+<pre><code class="language-tsx">const scale_animation = useSharedValue(0);
 
 const startScaleAnimation = () =&gt; {
-    scale.value = withTiming(scale.value === 1 ? 1.5 : 1, { duration: 500 });
+    scale_animation.value = withTiming(scale_animation.value === 1 ? 1.5 : 1, { 
+        duration: 500,
+        easing: Easing.inOut(Easing.quad),  
+        reduceMotion: ReduceMotion.System,
+    });
 }
+</code></pre>
+<h3 id="withspring"><a class="header" href="#withspring"><code>withSpring</code></a></h3>
+<p>Merupakan fungsi yang digunakan untuk membuat animasi yang meniru gerakan pegas. Artinya, nilai akan bergerak menuju target (toValue), namun dengan sedikit pantulan (overshoot) dan perlambatan alami di akhir.</p>
+<pre><code class="language-tsx">withSpring(shared_value.value, {
+    stiffness: 900,
+    damping: 120,
+    mass: 4,
+    overshootClamping: false,
+    reduceMotion: ReduceMotion.System,
+})
+</code></pre>
+<p><em>Penjelasan</em></p>
+<ul>
+<li><code>stiffness</code>: Kekuatan pegas (semakin besar = gerakan lebih cepat dan kuat) (default = 900)</li>
+<li><code>damping</code>: Mengatur seberapa cepat gerakan melambat (semakin besar = lebih cepat berhenti) (default = 120)</li>
+<li><code>mass</code>: Berat objek (semakin besar = gerakan lebih lambat) (default = 4)</li>
+<li><code>overshootClamping</code>: Jika true, tidak akan memantul melewati target (default = false)</li>
+</ul>
+<p>Konfigurasi lainnya dari fungsi <code>withSpring</code> dapat dilihat pada <a href="https://docs.swmansion.com/react-native-reanimated/docs/animations/withSpring">laman resmi</a></p>
+<p><strong>Contoh:</strong></p>
+<pre><code class="language-tsx">const scale_animation = useSharedValue(0);
+
+const startScaleAnimation = () =&gt; {
+    scale_animation.value = withSpring(scale_animation.value === 1 ? 1.5 : 1, { 
+        stiffness: 900,
+        damping: 120,
+        mass: 4,
+        overshootClamping: false,
+        reduceMotion: ReduceMotion.System,
+    });
+}
+</code></pre>
+<h3 id="withdecay"><a class="header" href="#withdecay"><code>withDecay</code></a></h3>
+<p>Digunakan untuk membuat animasi yang terus bergerak ke arah tertentu dengan kecepatan awal, lalu melambat hingga berhenti secara alami.</p>
+<pre><code class="language-tsx">withDecay({
+    velocity: event.velocityX,
+    deceleration: 0.998,
+    clamp: [-300, 300],
+    velocityFactor: 1,
+    rubberBandEffect: true,
+    rubberBandFactor: 0.6,
+    reduceMotion: ReduceMotion.System,
+})
+</code></pre>
+<p><em>Penjelasan</em></p>
+<ul>
+<li><code>velocity</code>: kecepatan awal gerakan (default = 0).</li>
+<li><code>deceleration</code>: Nilai mendekati 1 membuat animasi melambat dengan lembut dan berjalan lebih lama, sedangkan nilai kecil (misal 0.95) membuat animasi cepat berhenti (default = 0.998).</li>
+<li><code>clamp</code>: Batas minimum dan maksimum posisi. Ketika posisi hasil decay melewati nilai ini, maka animasi akan berhenti di batas tersebut. Contoh [-300, 300] artinya posisi hanya boleh di antara -300 hingga 300.</li>
+<li><code>velocityFactor</code>: Faktor pengali untuk kecepatan awal (<code>velocity</code>). Gunanya untuk mengatur seberapa jauh atau seberapa cepat gerakan decay dimulai tanpa harus mengubah velocity langsung (default = 1).</li>
+<li><code>rubberBandEffect</code>: menambahkan efek pantulan yang lembut seperti "karet" (default = false)</li>
+<li><code>rubberBandFactor</code>: Mengatur seberapa kuat efek pantulan pada <code>rubberBandEffect</code>. Semakin kecil maka pantulan lebih kuat sedangkan semakin besar (lebih elastis) maka pantulan lebih kaku (cepat berhenti) (default = 0.6).</li>
+</ul>
+<p><strong>Contoh:</strong></p>
+<pre><code class="language-tsx">const scale_animation = useSharedValue(0);
+
+const startScaleAnimation = () =&gt; {
+    scale_animation.value = withDecay({ 
+        velocity: event.velocityX,
+        deceleration: 0.998,
+        clamp: [0, 300],
+        velocityFactor: 1,
+        rubberBandEffect: true,
+        rubberBandFactor: 0.6,
+        reduceMotion: ReduceMotion.System,
+    });
+}
+</code></pre>
+<h3 id="withsequence"><a class="header" href="#withsequence"><code>withSequence</code></a></h3>
+<p>Digunakan untuk menjalankan beberapa animasi satu per satu (secara berurutan) bukan bersamaan. Umumnya digunakan bersama <code>withTiming()</code>, <code>withSpring()</code>, dan <code>withDecay()</code> untuk membentuk efek kompleks.</p>
+<pre><code class="language-tsx">withSequence(animation1, animation2, animation3, ...)
+</code></pre>
+<p><em>Penjelasan</em>
+Setiap <code>animation</code> bisa berupa <code>withTiming()</code>, <code>withSpring()</code>, <code>withDecay()</code> atau bahkan <code>withDelay()</code> jika ingin memiliki jeda waktu di antaranya.</p>
+<pre><code class="language-tsx">translateX.value = withSequence(
+  withTiming(100, { duration: 500 }),
+  withTiming(-100, { duration: 500 }),
+  withTiming(0, { duration: 500 })
+);
+</code></pre>
+<p><strong>Contoh:</strong></p>
+<pre><code class="language-tsx">const scale_animation = useSharedValue(0);
+const startScaleAnimation = () =&gt; {
+    scale_animation.value = withSequence(
+        withTiming(1.5, { duration: 300 }),
+        withSpring(1, { damping: 5 }
+    ;)
+}
+</code></pre>
+<h3 id="withrepeat"><a class="header" href="#withrepeat"><code>withRepeat</code></a></h3>
+<p>Digunakan untuk menjalankan animasi secara berulang, baik dalam jumlah tertentu maupun tanpa batas (infinite loop). Biasanya digunakan untuk membuat animasi loading atau spinner.</p>
+<pre><code class="language-tsx">withRepeat(animation, numberOfReps?, reverse?, callback?)
+</code></pre>
+<p><em>Penjelasan</em></p>
+<ul>
+<li>animation: animasi yang akan diulang (biasanya menggunakan <code>withTiming</code> atau <code>withSpring</code>)</li>
+<li>numberOfReps: jumlah pengulangan animasi. Gunakan -1 untuk infinite loop. (default = 2)</li>
+<li>reverse: jika <code>true</code>, animasi akan membalik arah setiap kali mengulang. (default = <code>false</code>)</li>
+<li>callback: fungsi yang dipanggil ketika animasi selesai (jika finite)</li>
+</ul>
+<pre><code class="language-tsx">withRepeat(
+    withTiming(200, { duration: 1000 }),
+    2,
+    false,
+    () =&gt; {},
+    ReduceMotion.System,
+)
+</code></pre>
+<h3 id="withdelay"><a class="header" href="#withdelay"><code>withDelay</code></a></h3>
+<p>Digunakan untuk memberikan penundaan (delay) pada animasi sebelum dijalankan. Bisanya dipakai untuk menjalankan animasi yang berurutan atau bisa juga digunakan untuk memberi jeda antar efek.</p>
+<pre><code class="language-tsx">withDelay(delay, animation)
+</code></pre>
+<p><em>Penjelasan</em></p>
+<ul>
+<li>delay: durasi penundaan dalam milidetik sebelum animasi dimulai</li>
+<li>animation: animasi yang ingin dijalankan setelah delay (biasanya <code>withTiming</code>, <code>withSpring</code>, dll)</li>
+</ul>
+<pre><code class="language-tsx">opacity.value = withDelay(
+    1000, // tunggu 1 detik
+    withTiming(1, { duration: 1000 })
+);
 </code></pre>
 <h3 id="useanimatedstyle"><a class="header" href="#useanimatedstyle"><code>useAnimatedStyle</code></a></h3>
 <p>Digunakan untuk membuat <code>object style</code> animasi. Mirip seperti <code>StyleSheet</code> namun, nilainya diambil dari <em>shared value</em>. Setiap kali nilai berubah, style akan diperbarui otomatis di native layer.</p>
@@ -4255,100 +4390,6 @@ const changeText = () =&gt; {
     /&gt;
     &lt;Button title="Ubah Teks" onPress={changeText} /&gt;
 &lt;/View&gt;
-</code></pre>
-<h3 id="withtiming"><a class="header" href="#withtiming"><code>withTiming</code></a></h3>
-<p>Merupakan fungsi animasi yang dimiliki oleh Reanimated dan berfungsi untuk membuat nilai <code>shared value</code> berubah secara bertahap dari nilai awal ke nilai target selama periode tertentu. Selain itu, kita juga dapat mengatur kecepatan animasi melalui <code>Easing</code>.</p>
-<pre><code class="language-tsx">import { Easing, ReduceMotion } from 'react-native-reanimated';
-
-withTiming(shared_value.value, {
-    duration: 1000,  // dalam milisecond
-    easing: Easing.inOut(Easing.quad),  
-    reduceMotion: ReduceMotion.System,
-})
-</code></pre>
-<h3 id="withspring"><a class="header" href="#withspring"><code>withSpring</code></a></h3>
-<p>Merupakan fungsi yang digunakan untuk membuat animasi yang meniru gerakan pegas. Artinya, nilai akan bergerak menuju target (toValue), namun dengan sedikit pantulan (overshoot) dan perlambatan alami di akhir.</p>
-<pre><code class="language-tsx">withSpring(sv.value, {
-    stiffness: 900,
-    damping: 120,
-    mass: 4,
-    overshootClamping: false,
-    reduceMotion: ReduceMotion.System,
-})
-</code></pre>
-<p><em>Penjelasan</em></p>
-<ul>
-<li><code>stiffness</code>: Kekuatan pegas (semakin besar = gerakan lebih cepat dan kuat) (default = 900)</li>
-<li><code>damping</code>: Mengatur seberapa cepat gerakan melambat (semakin besar = lebih cepat berhenti) (default = 120)</li>
-<li><code>mass</code>: Berat objek (semakin besar = gerakan lebih lambat) (default = 4)</li>
-<li><code>overshootClamping</code>: Jika true, tidak akan memantul melewati target (default = false)</li>
-</ul>
-<p>Konfigurasi lainnya dari fungsi <code>withSpring</code> dapat dilihat pada <a href="https://docs.swmansion.com/react-native-reanimated/docs/animations/withSpring">laman resmi</a></p>
-<h3 id="withdecay"><a class="header" href="#withdecay"><code>withDecay</code></a></h3>
-<p>Digunakan untuk membuat animasi yang terus bergerak ke arah tertentu dengan kecepatan awal, lalu melambat hingga berhenti secara alami.</p>
-<pre><code class="language-tsx">withDecay({
-    velocity: event.velocityX,
-    deceleration: 0.998,
-    clamp: [-300, 300],
-    velocityFactor: 1,
-    rubberBandEffect: true,
-    rubberBandFactor: 0.6,
-    reduceMotion: ReduceMotion.System,
-})
-</code></pre>
-<p><em>Penjelasan</em></p>
-<ul>
-<li><code>velocity</code>: kecepatan awal gerakan (default = 0).</li>
-<li><code>deceleration</code>: Nilai mendekati 1 membuat animasi melambat dengan lembut dan berjalan lebih lama, sedangkan nilai kecil (misal 0.95) membuat animasi cepat berhenti (default = 0.998).</li>
-<li><code>clamp</code>: Batas minimum dan maksimum posisi. Ketika posisi hasil decay melewati nilai ini, maka animasi akan berhenti di batas tersebut. Contoh [-300, 300] artinya posisi hanya boleh di antara -300 hingga 300.</li>
-<li><code>velocityFactor</code>: Faktor pengali untuk kecepatan awal (<code>velocity</code>). Gunanya untuk mengatur seberapa jauh atau seberapa cepat gerakan decay dimulai tanpa harus mengubah velocity langsung (default = 1).</li>
-<li><code>rubberBandEffect</code>: menambahkan efek pantulan yang lembut seperti "karet" (default = false)</li>
-<li><code>rubberBandFactor</code>: Mengatur seberapa kuat efek pantulan pada <code>rubberBandEffect</code>. Semakin kecil maka pantulan lebih kuat sedangkan semakin besar (lebih elastis) maka pantulan lebih kaku (cepat berhenti) (default = 0.6).</li>
-</ul>
-<h3 id="withsequence"><a class="header" href="#withsequence"><code>withSequence</code></a></h3>
-<p>Digunakan untuk menjalankan beberapa animasi satu per satu (secara berurutan) bukan bersamaan. Umumnya digunakan bersama <code>withTiming()</code>, <code>withSpring()</code>, dan <code>withDecay()</code> untuk membentuk efek kompleks.</p>
-<pre><code class="language-tsx">withSequence(animation1, animation2, animation3, ...)
-</code></pre>
-<p><em>Penjelasan</em>
-Setiap <code>animation</code> bisa berupa <code>withTiming()</code>, <code>withSpring()</code>, <code>withDecay()</code> atau bahkan <code>withDelay()</code> jika ingin memiliki jeda waktu di antaranya.</p>
-<pre><code class="language-tsx">translateX.value = withSequence(
-  withTiming(100, { duration: 500 }),
-  withTiming(-100, { duration: 500 }),
-  withTiming(0, { duration: 500 })
-);
-</code></pre>
-<h3 id="withrepeat"><a class="header" href="#withrepeat"><code>withRepeat</code></a></h3>
-<p>Digunakan untuk menjalankan animasi secara berulang, baik dalam jumlah tertentu maupun tanpa batas (infinite loop). Biasanya digunakan untuk membuat animasi loading atau spinner.</p>
-<pre><code class="language-tsx">withRepeat(animation, numberOfReps?, reverse?, callback?)
-</code></pre>
-<p><em>Penjelasan</em></p>
-<ul>
-<li>animation: animasi yang akan diulang (biasanya menggunakan <code>withTiming</code> atau <code>withSpring</code>)</li>
-<li>numberOfReps: jumlah pengulangan animasi. Gunakan -1 untuk infinite loop. (default = 2)</li>
-<li>reverse: jika <code>true</code>, animasi akan membalik arah setiap kali mengulang. (default = <code>false</code>)</li>
-<li>callback: fungsi yang dipanggil ketika animasi selesai (jika finite)</li>
-</ul>
-<pre><code class="language-tsx">withRepeat(
-    withTiming(200, { duration: 1000 }),
-    2,
-    false,
-    () =&gt; {},
-    ReduceMotion.System,
-)
-</code></pre>
-<h3 id="withdelay"><a class="header" href="#withdelay"><code>withDelay</code></a></h3>
-<p>Digunakan untuk memberikan penundaan (delay) pada animasi sebelum dijalankan. Bisanya dipakai untuk menjalankan animasi yang berurutan atau bisa juga digunakan untuk memberi jeda antar efek.</p>
-<pre><code class="language-tsx">withDelay(delay, animation)
-</code></pre>
-<p><em>Penjelasan</em></p>
-<ul>
-<li>delay: durasi penundaan dalam milidetik sebelum animasi dimulai</li>
-<li>animation: animasi yang ingin dijalankan setelah delay (biasanya <code>withTiming</code>, <code>withSpring</code>, dll)</li>
-</ul>
-<pre><code class="language-tsx">opacity.value = withDelay(
-    1000, // tunggu 1 detik
-    withTiming(1, { duration: 1000 })
-);
 </code></pre>
 <h3 id="animated-component"><a class="header" href="#animated-component">Animated Component</a></h3>
 <p><code>Reanimated</code> memiliki beberapa komponen yang dapat diberikan animasi adalah: <code>Animated.View</code>, <code>Animated.Text</code>, <code>Animated.Image</code>, <code>Animated.ScrollView</code>, <code>Animated.FlatList</code>, <code>Animated.SectionList</code>.</p>
@@ -4431,7 +4472,427 @@ export default function CustomAnimatedComponentExample() {
 }
 </code></pre>
 <p>Konsep penting lainnya dari Reanimated dapat diakses pada <a href="https://docs.swmansion.com/react-native-reanimated">laman resmi</a></p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="local-storage"><a class="header" href="#local-storage">Local Storage</a></h1>
+<p>Banyak aplikasi membutuhkan mekanisme untuk menyimpan data pada perangkat pengguna bahkan setelah aplikasi ditutup atau perangkat di-<em>restart</em>. Tidak seperti <code>state</code> atau <code>context</code> yang hanya bertahan selama aplikasi berjalan, local storage memungkinkan data disimpan secara persisten.</p>
+<p>Contoh penggunaan local storage dalam aplikasi mobile diantaranya:</p>
+<ul>
+<li>menyimpan status login pengguna (misalnya token atau flag "sudah login"),</li>
+<li>menyimpan preferensi atau pengaturan aplikasi (seperti tema dan bahasa),</li>
+<li>menyimpan draft data atau cache,</li>
+<li>menyimpan daftar item sederhana seperti riwayat pencarian, keranjang belanja, atau tema aplikasi.</li>
+</ul>
+<p>React Native menyediakan beberapa library untuk penyimpanan data lokal, di antaranya:</p>
+<ol>
+<li><a href="async-storage.html"><strong>AsyncStorage (built-in via community library)</strong></a>: penyimpanan key-value sederhana, cocok untuk data kecil seperti token, settings, atau flag boolean.</li>
+<li><strong>SecureStore (Expo)</strong>: menyimpan data sensitif seperti token atau password dengan enkripsi.</li>
+<li><strong>MMKV (eksternal, sangat cepat)</strong>: solusi key-value storage modern yang sangat cepat dengan performa tinggi.</li>
+<li><strong>SQLite (database lokal)</strong>: cocok untuk penyimpanan data kompleks seperti tabel, relasi, atau jumlah data besar.</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="asynchronous-storage"><a class="header" href="#asynchronous-storage">Asynchronous Storage</a></h1>
+<p>Menyimpan data secara lokal di perangkat pengguna menggunakan format key–value. Berbeda dengan <code>localStorage</code> pada web yang bersifat <strong>sinkron</strong>, <code>AsyncStorage</code> bersifat <strong>asinkron</strong> dan berjalan secara efisien di perangkat mobile. Data yang disimpan menggunakan <code>AsyncStorage</code> akan tetap ada meskipun aplikasi ditutup atau perangkat direstart.</p>
+<p><code>AsyncStorage</code> sangat cocok digunakan untuk:</p>
+<ul>
+<li>Menyimpan token autentikasi (login session)</li>
+<li>Menyimpan preferensi aplikasi (tema, bahasa, settings)</li>
+<li>Cache ringan (misalnya data hasil fetch)</li>
+<li>Menyimpan daftar recent items atau history</li>
+</ul>
+<p>Sebelum menggunakan <a href="https://react-native-async-storage.github.io/2.0/"><code>AsyncStorage</code></a>, terdapat beberapa hal yang perlu dilakukan yaitu instalasi dependency dan melakukan rebuild plugin.</p>
+<h2 id="instalasi-7"><a class="header" href="#instalasi-7">Instalasi</a></h2>
+<p>Expo:</p>
+<pre><code class="language-bash">npx expo install @react-native-async-storage/async-storage
+</code></pre>
+<p>React Native CLI:</p>
+<pre><code class="language-bash">npm install @react-native-async-storage/async-storage
+cd android &amp;&amp; ./gradlew clean &amp;&amp; cd ..
+</code></pre>
+<h3 id="api-dasar-asyncstorage"><a class="header" href="#api-dasar-asyncstorage">API Dasar AsyncStorage</a></h3>
+<p>AsyncStorage menyediakan beberapa API utama:</p>
+<div class="table-wrapper"><table><thead><tr><th>Kebutuhan</th><th>Fungsi</th></tr></thead><tbody>
+<tr><td>Menyimpan data</td><td><code>setItem(key: string, value: string)</code></td></tr>
+<tr><td>Mengambil data</td><td><code>getItem(key:string)</code></td></tr>
+<tr><td>Menghapus data</td><td><code>removeItem(key:string)</code></td></tr>
+<tr><td>Menghapus semua data</td><td><code>clear()</code></td></tr>
+<tr><td>Menyimpan banyak data sekaligus</td><td><code>multiSet(keyValuePairs: Array&lt;Array&lt;string&gt;&gt;)</code></td></tr>
+<tr><td>Mengambil banyak data sekaligus</td><td><code>multiGet(keys: Array&lt;string&gt;)</code></td></tr>
+<tr><td>Menghapus beberapa data sekaligus</td><td><code>multiRemove(keys: Array&lt;string&gt;)</code></td></tr>
+</tbody></table>
+</div>
+<p>Semua data harus berupa string. Untuk object gunakan:</p>
+<pre><code class="language-js">JSON.stringify() // saat menyimpan
+JSON.parse()      // saat membaca
+</code></pre>
+<h3 id="setitem---menyimpan-data"><a class="header" href="#setitem---menyimpan-data"><code>setItem</code> - Menyimpan Data</a></h3>
+<pre><code class="language-tsx">import AsyncStorage from '@react-native-async-storage/async-storage';
 
+const saveUser = async () =&gt; {
+  const user = { name: 'John Doe', age: 27 };
+  await AsyncStorage.setItem('user', JSON.stringify(user));
+};
+</code></pre>
+<h3 id="getitem---mengambil-data"><a class="header" href="#getitem---mengambil-data"><code>getItem</code> - Mengambil Data</a></h3>
+<pre><code class="language-tsx">const loadUser = async () =&gt; {
+  const jsonValue = await AsyncStorage.getItem('user');
+  return jsonValue != null ? JSON.parse(jsonValue) : null;
+};
+</code></pre>
+<h3 id="removeitem---menghapus-data"><a class="header" href="#removeitem---menghapus-data"><code>removeItem</code> - Menghapus Data</a></h3>
+<pre><code class="language-tsx">const deleteUser = async () =&gt; {
+  await AsyncStorage.removeItem('user');
+};
+</code></pre>
+<h3 id="clear---menghapus-data"><a class="header" href="#clear---menghapus-data"><code>clear</code> - Menghapus Data</a></h3>
+<pre><code class="language-tsx">const clearUser = async () =&gt; {
+  await AsyncStorage.clear();
+};
+</code></pre>
+<h3 id="multiset---menyimpan-banyak-data"><a class="header" href="#multiset---menyimpan-banyak-data"><code>multiSet</code> - Menyimpan Banyak Data</a></h3>
+<pre><code class="language-tsx">import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const saveMultiUser = async () =&gt; {
+  await AsyncStorage.multiSet([
+    ['user:1', JSON.stringify({ name: 'John', age: 27 })],
+    ['user:2', JSON.stringify({ name: 'Doe', age: 30 })],
+  ]);
+};
+</code></pre>
+<h3 id="multiget---mengambil-mutli-data"><a class="header" href="#multiget---mengambil-mutli-data"><code>multiGet</code> - Mengambil Mutli Data</a></h3>
+<pre><code class="language-tsx">import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const getMultiUser = async () =&gt; {
+  const values = await AsyncStorage.multiGet(['user:1', 'user:2']);
+
+  const users = values.map(([key, value]) =&gt; JSON.parse(value));
+  return users;
+};
+</code></pre>
+<h3 id="multiremove---menghapus-mutli-data"><a class="header" href="#multiremove---menghapus-mutli-data"><code>multiRemove</code> - Menghapus Mutli Data</a></h3>
+<pre><code class="language-tsx">import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const removeMultiUser = async () =&gt; {
+  const keys = ['user:1', 'user:2'];
+  await AsyncStorage.multiRemove(keys);
+};
+</code></pre>
+<h3 id="contoh-1-theme-manager"><a class="header" href="#contoh-1-theme-manager">Contoh 1: Theme Manager</a></h3>
+<p>Menggunakan AsyncStorage untuk menyimpan pilihan tema (light/dark) sehingga tema tetap tersimpan meskipun aplikasi ditutup. Agar lebih rapi dan scalable, kita menggunakan:</p>
+<ul>
+<li><strong>Context API</strong> → menyimpan state tema</li>
+<li><strong>AsyncStorage</strong> → menyimpan tema secara persistent</li>
+<li><strong>ThemeStyle generator</strong> → menghasilkan style sesuai tema</li>
+<li><strong>GlobalThemeStyle</strong> → definisi warna untuk light/dark</li>
+</ul>
+<p>Struktur folder:</p>
+<pre><code class="language-bash">/src
+  ├── context
+  |      └── ThemeContext.tsx
+  ├── screens
+  |      └── HomeScreen.tsx
+  ├── styles
+  |      └── GlobalThemeStyle.ts
+  └── utils
+         └── ThemeStyle.tsx
+App.tsx
+</code></pre>
+<p><strong>ThemeContext.tsx</strong></p>
+<pre><code class="language-tsx">import AsyncStorage from "@react-native-async-storage/async-storage";
+import React, { createContext, useContext, useEffect, useState } from "react";
+
+type ThemeType = 'light' | 'dark';
+interface ThemeContextProps {
+    theme: ThemeType,
+    toggleTheme: () =&gt; void;
+};
+
+const ThemeContext = createContext&lt;ThemeContextProps | undefined&gt;(undefined);
+
+export const ThemeProvider = ({ children }: { children: React.ReactNode }) =&gt; {
+    const [theme, setTheme] = useState&lt;ThemeType&gt;('light');
+
+    useEffect(() =&gt; {
+        const loadTheme = async () =&gt; {
+            const stored = await AsyncStorage.getItem('app_theme');
+            if (stored === 'light' || stored === 'dark') {
+                setTheme(stored);
+            }
+        };
+
+        loadTheme();
+    }, []);
+
+    const toggleTheme = async () =&gt; {
+        const newTheme = theme === 'light' ? 'dark' : 'light';
+
+        setTheme(newTheme);
+        await AsyncStorage.setItem('app_theme', newTheme);
+    };
+
+    return (
+        &lt;ThemeContext.Provider value={{ theme, toggleTheme }}&gt;
+            {children}
+        &lt;/ThemeContext.Provider&gt;
+    );
+}
+
+
+export const useTheme = () =&gt; {
+    const ctx = useContext(ThemeContext);
+    if (!ctx) throw new Error("useTheme must be used within ThemeProvider");
+    return ctx;
+};
+</code></pre>
+<p><strong>HomeScreen.tsx</strong></p>
+<pre><code class="language-tsx">import { Text, View, TouchableOpacity } from "react-native";
+import { useTheme } from "../context/ThemeContext";
+import { DarkTheme, LightTheme } from "../styles/GlobalThemeStyle";
+import { createThemeStyle } from "../utils/ThemeStyle";
+
+export default function HomeScreen() {
+    const { theme, toggleTheme } = useTheme();
+    const colors = theme === "light" ? LightTheme.colors : DarkTheme.colors;
+    const styles = createThemeStyle(colors);
+
+
+    return (
+        &lt;View style={styles.container}&gt;
+            &lt;Text style={styles.text}&gt;Tema saat ini: {theme.toUpperCase()}&lt;/Text&gt;
+
+            &lt;View style={styles.card}&gt;
+                &lt;Text style={styles.text}&gt;Card ini berubah sesuai tema 🎨&lt;/Text&gt;
+            &lt;/View&gt;
+
+            &lt;TouchableOpacity style={styles.button} onPress={toggleTheme}&gt;
+                &lt;Text style={styles.buttonText}&gt;Ganti Tema&lt;/Text&gt;
+            &lt;/TouchableOpacity&gt;
+        &lt;/View&gt;
+    );
+}
+</code></pre>
+<p><strong>GlobalThemeStyle.ts</strong></p>
+<pre><code class="language-tsx">export const LightTheme = {
+    colors: {
+        background: '#ffffff',
+        text: '#000000',
+        card: '#f0f0f0',
+        button: '#8CA9FF'
+    },
+};
+
+export const DarkTheme = {
+    colors: {
+        background: '#000000',
+        text: '#ffffff',
+        card: '#222222',
+        button: '#16476A'
+    },
+};
+</code></pre>
+<p><strong>ThemeStyle.tsx</strong></p>
+<pre><code class="language-tsx">import { StyleSheet } from "react-native"
+
+
+export const createThemeStyle = (colors: any) =&gt; {
+    return StyleSheet.create({
+        container: {
+            flex: 1,
+            backgroundColor: colors.background,
+            padding: 20,
+        },
+        text: {
+            color: colors.text,
+            fontSize: 18,
+        },
+        card: {
+            backgroundColor: colors.card,
+            padding: 16,
+            borderRadius: 12,
+            marginTop: 20,
+        },
+        button: {
+            padding: 12,
+            marginTop: 20,
+            borderRadius: 10,
+            backgroundColor: colors.button,
+            alignItems: "center",
+        },
+        buttonText: {
+            color: colors.text,
+            fontWeight: "600",
+        },
+    });
+}
+</code></pre>
+<p><strong>App.tsx</strong></p>
+<pre><code class="language-tsx">import AsyncStorage from '@react-native-async-storage/async-storage';
+import { StatusBar } from 'expo-status-bar';
+import { StyleSheet, Text, View } from 'react-native';
+import { ThemeProvider } from './src/context/ThemeContext';
+import HomeScreen from './src/screens/HomeScreen';
+
+export default function App() {
+  return (
+    &lt;ThemeProvider&gt;
+      &lt;HomeScreen /&gt;
+    &lt;/ThemeProvider&gt;
+  );
+}
+</code></pre>
+<!-- ### Contoh 2: Simulasi Login dan Simpan Token
+Menggunakan AsyncStorage untuk menyimpan token autentikasi token tetap tersimpan meskipun aplikasi ditutup. Agar lebih rapi dan scalable, kita menggunakan: 
+
+- **Context API** → menyimpan state token
+- **AsyncStorage** → menyimpan token secara persistent
+- **Navigation** → mengatur route secara dinamis
+
+Struktur folder:
+```bash
+/src
+  ├── context
+  |      └── AuthContext.tsx
+  ├── navigation
+  |      └── AppNavigator.tsx
+  └── screens
+         ├── HomeScreen.tsx
+         └── LoginScreen.tsx
+App.tsx
+```
+
+**AuthContext.tsx**
+```tsx
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { createContext, useContext, useEffect, useState } from "react";
+
+
+interface AuthContextProps {
+    token: string | undefined,
+    login: () => void,
+    logout: () => void
+}
+
+export const AuthContext = createContext<AuthContextProps | undefined>(undefined);
+
+export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+    const [token, setToken] = useState<string | undefined>(undefined);
+
+    useEffect(() => {
+        const loadToken = async () => {
+            const storedToken = await AsyncStorage.getItem('token');
+            if (storedToken) {
+                setToken(storedToken);
+            }
+        };
+        loadToken();
+    }, []);
+
+    const login = async () => {
+        const fakeToken = 'dNxH8zZ9xfMFzSswaNhoBCS1SQznZjkUhsuHO8u8yhuU190NhbshdbkjBM08';
+        await AsyncStorage.setItem('token', fakeToken);
+        setToken(fakeToken);
+    }
+
+    const logout = async () => {
+        await AsyncStorage.removeItem('token');
+        setToken(undefined);
+    }
+
+    return (
+        <AuthContext.Provider value={{ token, login, logout }}>
+            {children}
+        </AuthContext.Provider>
+    )
+}
+
+export const useAuth = () => {
+    const ctx = useContext(AuthContext);
+    if (!ctx) throw new Error("useAuth must be used within ThemeProvider");
+    return ctx;
+}
+```
+
+**AppNavigator.tsx**
+```tsx
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { useAuth } from "../context/AuthContext";
+import { NavigationContainer } from "@react-navigation/native";
+import HomeScreen from "../screens/HomeScreen";
+import LoginScreen from "../screens/LoginScreen";
+
+const Stack = createNativeStackNavigator();
+export default function AppNavigator() {
+    const { token } = useAuth();
+    return (
+        <NavigationContainer>
+            <Stack.Navigator screenOptions={{ headerShown: false }}>
+                {token ? (
+                    <Stack.Screen name="Home" component={HomeScreen} />
+                ) : (
+                    <Stack.Screen name="Login" component={LoginScreen} />
+                )}
+            </Stack.Navigator>
+        </NavigationContainer>
+    )
+}
+```
+
+Pastikan telah me-*install* depedency routing
+
+**HomeScreen.tsx**
+```tsx
+import { Text, View, TouchableOpacity } from "react-native";
+import { useAuth } from "../context/AuthContext";
+
+export default function HomeScreen() {
+    const { logout } = useAuth();
+
+    return (
+        <View style={{flex: 1, backgroundColor: '#ffffff'}}>
+            <TouchableOpacity style={{padding: 12, marginTop:20, borderRadius:10, backgroundColor:'#16476A', alignItems: 'center' }} onPress={logout}>
+                <Text style={{color: '#ffffff'}}>Logout</Text>
+            </TouchableOpacity>
+        </View>
+    );
+}
+```
+
+**LoginScreen.tsx**
+```tsx
+import { Text, TouchableOpacity, View } from "react-native";
+import { useAuth } from "../context/AuthContext";
+
+export default function LoginScreen() {
+    const { login } = useAuth();
+
+    const loginHandler = () => {
+        login();
+    }
+
+    return (
+        <View style={{ justifyContent: 'center', flex: 1, padding: 20, backgroundColor: '#ffff' }}>
+            <TouchableOpacity style={{ padding: 10, borderRadius: 10, backgroundColor: '#F875AA' }} onPress={loginHandler}>
+                <Text style={{ color: "#EDFFF0", fontSize: 18, alignSelf: 'center' }}>Login</Text>
+            </TouchableOpacity>
+        </View>
+    );
+}
+```
+
+**App.tsx**
+```tsx
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { StyleSheet, Text, View } from 'react-native';
+import { AuthProvider } from './src/context/AuthContext';
+import AppNavigator from './src/navigation/AppNavigator';
+
+export default function App() {
+  return (
+    <AuthProvider>
+      <ThemeProvider>
+        <AppNavigator />
+      </ThemeProvider>
+    </AuthProvider>
+  );
+}
+``` -->
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
