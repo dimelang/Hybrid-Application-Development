@@ -51,3 +51,6 @@
     - [Animated API](animated-api.md)
     - [Reanimated API](reanimated-api.md)
     <!-- - [Reanimated & Gesture Handler](reanimated-gesture-handler.md) -->
+  - [Local Storage](local-storage.md)
+    - [Asynchronous Storage](asynchronous-storage.md)
+    <!-- - [SecureStore](secure-store.md) -->
