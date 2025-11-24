@@ -4483,8 +4483,8 @@ export default function CustomAnimatedComponentExample() {
 </ul>
 <p>React Native menyediakan beberapa library untuk penyimpanan data lokal, di antaranya:</p>
 <ol>
-<li><a href="async-storage.html"><strong>AsyncStorage (built-in via community library)</strong></a>: penyimpanan key-value sederhana, cocok untuk data kecil seperti token, settings, atau flag boolean.</li>
-<li><strong>SecureStore (Expo)</strong>: menyimpan data sensitif seperti token atau password dengan enkripsi.</li>
+<li><a href="asynchronous-storage.html"><strong>AsyncStorage</strong></a>: penyimpanan key-value sederhana, cocok untuk data kecil seperti token, settings, atau flag boolean.</li>
+<li><strong><a href="secure-store.html">SecureStore (Expo)</a></strong>: menyimpan data sensitif seperti token atau password dengan enkripsi.</li>
 <li><strong>MMKV (eksternal, sangat cepat)</strong>: solusi key-value storage modern yang sangat cepat dengan performa tinggi.</li>
 <li><strong>SQLite (database lokal)</strong>: cocok untuk penyimpanan data kompleks seperti tabel, relasi, atau jumlah data besar.</li>
 </ol>
@@ -4892,7 +4892,77 @@ export default function App() {
     </AuthProvider>
   );
 }
-``` -->
+``` --><div style="break-before: page; page-break-before: always;"></div><h1 id="securestore"><a class="header" href="#securestore">SecureStore</a></h1>
+<p>Merupakan penyimpanan lokal <strong>terenkripsi</strong> yang disediakan oleh <code>expo-secure-store</code>. Semua data disimpan secara aman menggunakan:</p>
+<ul>
+<li><strong>iOS</strong> → Keychain Services</li>
+<li><strong>Android</strong> → Encrypted Shared Preferences</li>
+</ul>
+<p>Berbeda dengan <a href="asynchronous-storage.html"><code>AsyncStorage</code></a> yang cocok untuk data umum (tema, settings, cache), <code>SecureStore</code> dirancang untuk menyimpan data sensitif, seperti:</p>
+<ul>
+<li>Token autentikasi (JWT access token / refresh token)</li>
+<li>Password atau credential</li>
+<li>Private keys</li>
+<li>Session</li>
+</ul>
+<p>Artinya data terenkripsi di level OS, tidak mudah dibaca meskipun device di-root/jailbreak.</p>
+<p>Walaupun demikian, <code>SecureStore</code> dapat digunakan bersamaan dengan <code>AsyncStorage</code>:</p>
+<ul>
+<li><code>SecureStore</code> untuk data sensitif</li>
+<li><code>AsyncStorage</code> untuk preferensi umum</li>
+</ul>
+<p>Sebelum menggunakan <code>SecureStore</code>, terdapat beberapa hal yang perlu dilakukan yaitu instalasi dependency dan melakukan rebuild plugin.</p>
+<h2 id="instalasi-8"><a class="header" href="#instalasi-8">Instalasi</a></h2>
+<p>Expo:</p>
+<pre><code class="language-bash">npx expo install expo-secure-store
+</code></pre>
+<p>React Native CLI:</p>
+<pre><code class="language-bash">npm install expo-secure-store
+npx pod-install
+</code></pre>
+<h3 id="api-dasar-securestore"><a class="header" href="#api-dasar-securestore">API Dasar SecureStore</a></h3>
+<p><code>SecureStore</code> menyediakan beberapa API utama:</p>
+<div class="table-wrapper"><table><thead><tr><th>Kebutuhan</th><th>Fungsi</th></tr></thead><tbody>
+<tr><td>Cek ketersediaan</td><td><code>isAvailableAsync()</code></td></tr>
+<tr><td>Menyimpan data</td><td><code>setItemAsync(key: string, value: string, option: )</code></td></tr>
+<tr><td>Mengambil data</td><td><code>getItemAsync(key: string, option)</code></td></tr>
+<tr><td>Menghapus data</td><td><code>deleteItemAsync(key: string)</code></td></tr>
+</tbody></table>
+</div>
+<p>Sama seperti <code>AsyncStorage</code>, semua data harus berupa string.
+Gunakan <code>JSON.stringify()</code> dan <code>JSON.parse()</code> bila menyimpan object.</p>
+<h3 id="isavailableasync---cek-ketersediaan"><a class="header" href="#isavailableasync---cek-ketersediaan"><code>isAvailableAsync</code> - Cek ketersediaan</a></h3>
+<pre><code class="language-tsx">import * as SecureStore from 'expo-secure-store';
+
+const checkAvailability = async () =&gt; {
+  const isAvailable = await SecureStore.isAvailableAsync();
+  console.log("SecureStore Available:", isAvailable);
+};
+</code></pre>
+<h3 id="setitemasync--menyimpan-data"><a class="header" href="#setitemasync--menyimpan-data"><code>setItemAsync</code> – Menyimpan data</a></h3>
+<pre><code class="language-tsx">import * as SecureStore from 'expo-secure-store';
+
+const saveToken = async () =&gt; {
+  const token = 'abc123.jwt.token';
+  await SecureStore.setItemAsync('auth_token', token);
+};
+</code></pre>
+<h3 id="getitemasync---mengambilmendapatkan-data"><a class="header" href="#getitemasync---mengambilmendapatkan-data"><code>getItemAsync</code> - Mengambil/Mendapatkan data</a></h3>
+<pre><code class="language-tsx">import * as SecureStore from 'expo-secure-store';
+
+const loadToken = async () =&gt; {
+  const token = await SecureStore.getItemAsync('auth_token');
+  console.log("Stored Token:", token);
+};
+</code></pre>
+<h3 id="deleteitemasync---menghapus-data"><a class="header" href="#deleteitemasync---menghapus-data"><code>deleteItemAsync</code> - Menghapus data</a></h3>
+<pre><code class="language-tsx">import * as SecureStore from 'expo-secure-store';
+
+const removeToken = async () =&gt; {
+  await SecureStore.deleteItemAsync('auth_token');
+};
+</code></pre>
+
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
