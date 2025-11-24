@@ -4,7 +4,7 @@ Merupakan penyimpanan lokal **terenkripsi** yang disediakan oleh `expo-secure-st
 - **iOS** → Keychain Services
 - **Android** → Encrypted Shared Preferences
 
-Berbeda dengan [`AsyncStorage`](asynchronous-storage.md) yang cocok untuk data umum (tema, settings, cache), SecureStore dirancang untuk menyimpan data sensitif, seperti:
+Berbeda dengan [`AsyncStorage`](asynchronous-storage.md) yang cocok untuk data umum (tema, settings, cache), `SecureStore` dirancang untuk menyimpan data sensitif, seperti:
 - Token autentikasi (JWT access token / refresh token)
 - Password atau credential
 - Private keys
@@ -34,17 +34,28 @@ npx pod-install
 
 ### API Dasar SecureStore
 `SecureStore` menyediakan beberapa API utama:
-| Kebutuhan             | Fungsi                                     |
-| --------------------- | ------------------------------------------ |
-| Menyimpan data        | `setItemAsync(key: string, value: string)` |
-| Mengambil data        | `getItemAsync(key: string)`                |
-| Menghapus data        | `deleteItemAsync(key: string)`             |
-| Menyimpan dengan opsi | `setItemAsync(key, value, options)`        |
+| Kebutuhan             | Fungsi                                              |
+| --------------------- | --------------------------------------------------- |
+| Cek ketersediaan      | `isAvailableAsync()`                                |
+| Menyimpan data        | `setItemAsync(key: string, value: string, option: )`|
+| Mengambil data        | `getItemAsync(key: string, option)`                 |
+| Menghapus data        | `deleteItemAsync(key: string)`                      |
+
 
 Sama seperti `AsyncStorage`, semua data harus berupa string.
 Gunakan `JSON.stringify()` dan `JSON.parse()` bila menyimpan object.
 
-### `setItemAsync` – Menyimpan Data Sensitif
+### `isAvailableAsync` - Cek ketersediaan
+```tsx
+import * as SecureStore from 'expo-secure-store';
+
+const checkAvailability = async () => {
+  const isAvailable = await SecureStore.isAvailableAsync();
+  console.log("SecureStore Available:", isAvailable);
+};
+```
+
+### `setItemAsync` – Menyimpan data
 ```tsx
 import * as SecureStore from 'expo-secure-store';
 
@@ -54,4 +65,21 @@ const saveToken = async () => {
 };
 ```
 
+### `getItemAsync` - Mengambil/Mendapatkan data
+```tsx
+import * as SecureStore from 'expo-secure-store';
 
+const loadToken = async () => {
+  const token = await SecureStore.getItemAsync('auth_token');
+  console.log("Stored Token:", token);
+};
+```
+
+### `deleteItemAsync` - Menghapus data
+```tsx
+import * as SecureStore from 'expo-secure-store';
+
+const removeToken = async () => {
+  await SecureStore.deleteItemAsync('auth_token');
+};
+```
