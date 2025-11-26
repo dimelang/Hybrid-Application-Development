@@ -13,7 +13,7 @@ React Native menyediakan beberapa library untuk penyimpanan data lokal, di antar
 
 1. [**AsyncStorage**](asynchronous-storage.md): penyimpanan key-value sederhana, cocok untuk data kecil seperti token, settings, atau flag boolean.
 2. **[SecureStore (Expo)](secure-store.md)**: menyimpan data sensitif seperti token atau password dengan enkripsi.
-3. **MMKV (eksternal, sangat cepat)**: solusi key-value storage modern yang sangat cepat dengan performa tinggi.
+3. **[MMKV](mmkv.md)**: solusi key-value storage modern yang sangat cepat dengan performa tinggi.
 4. **SQLite (database lokal)**: cocok untuk penyimpanan data kompleks seperti tabel, relasi, atau jumlah data besar.
 
 

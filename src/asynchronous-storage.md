@@ -112,7 +112,7 @@ const removeMultiUser = async () => {
 ```
 
 
-### Contoh 1: Theme Manager
+### Contoh: Theme Manager
 Menggunakan AsyncStorage untuk menyimpan pilihan tema (light/dark) sehingga tema tetap tersimpan meskipun aplikasi ditutup. Agar lebih rapi dan scalable, kita menggunakan: 
 
 - **Context API** → menyimpan state tema

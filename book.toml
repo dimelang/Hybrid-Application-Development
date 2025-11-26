@@ -1,5 +1,14 @@
 [book]
-authors = ["Dimas"]
+authors = ["Dimas Elang Setyoko"]
 language = "en"
 src = "src"
 title = "Hybrid Application Development"
+
+[output.html]
+default-theme = "light"
+preferred-dark-theme = "navy"
+smart-punctuation = true
+definition-lists = true
+admonitions = true
+mathjax-support = false
+no-section-label = false
