@@ -343,7 +343,7 @@ if (typeof input === "string") {
 <ol>
 <li>
 <p><strong>Array</strong></p>
-<p>TypeScript juga memiliki beberapa struktur data yang juga terdapat dalam JavaScript. Array digunakan untuk menyimpan sekumpulan nilai dengan urutan tertentu. Bedanya, di TypeScript kita bisa menentukan tipe data yang boleh ada di dalam array. Hal ini membuat array kita lebih konsisten, karena semua elemennya punya tipe yang sama."</p>
+<p>TypeScript juga memiliki beberapa struktur data yang juga terdapat dalam JavaScript. Array digunakan untuk menyimpan sekumpulan nilai dengan urutan tertentu. Bedanya, di TypeScript kita bisa menentukan tipe data yang boleh ada di dalam array. Hal ini membuat array kita lebih konsisten, karena semua elemennya punya tipe yang sama.“</p>
 <pre><code class="language-ts">let numbers: number[] = [1, 2, 3, 4];
 let names: string[] = ["Ani", "Budi", "Citra"];
 </code></pre>
@@ -1069,7 +1069,7 @@ java -version
 <ul>
 <li>Buka <strong>Window Control Panel</strong></li>
 <li>Klik <strong>User Accounts</strong>, lalu pilih <strong>Change my environment variables</strong></li>
-<li>Klik <strong>New...</strong> untuk membuat user variable baru. Masukkan Variable name <strong>ANDROID_HOME</strong> dan Variable value <strong>Lokasi SDK Android</strong></li>
+<li>Klik <strong>New…</strong> untuk membuat user variable baru. Masukkan Variable name <strong>ANDROID_HOME</strong> dan Variable value <strong>Lokasi SDK Android</strong></li>
 </ul>
 <p><img src="./assets/env%20variable%20windows.png" alt="Ilustrasi menambahkan environment variable" title="Ilustrasi menambahkan environment variable" /></p>
 <p>Untuk menemukan lokasi SDK dapat dilakukan melalui <strong>Android Studio</strong>. Pilih <strong>Settings</strong> → <strong>Languages &amp; Frameworks</strong> → <strong>Android SDK</strong></p>
@@ -1212,7 +1212,7 @@ brew install watchman
 </li>
 <li>Install <a href="https://apps.apple.com/us/app/xcode/id497799835?mt=12"><strong>Xcode</strong></a></li>
 <li>Install Xcode Command Line Tools
-Buka Xcode lalu pilih <strong>Settings... (atau Preferences...)</strong> pada menu Xcode.
+Buka Xcode lalu pilih <strong>Settings… (atau Preferences…)</strong> pada menu Xcode.
 Pilih panel <strong>Locations</strong> lalu pilih versi Command line tools terbaru
 <img src="./assets/install%20command%20line%20tools.png" alt="Ilustrasi install command line tool Xcode" title="Ilustrasi install command line tool Xcode" /></li>
 </ul>
@@ -1220,8 +1220,8 @@ Pilih panel <strong>Locations</strong> lalu pilih versi Command line tools terba
 <li>
 <p>Install iOS simulator</p>
 <ul>
-<li>Buka Xcode → Settings... → tab Platforms.</li>
-<li>Pilih "+" dan pilih opsi iOS…</li>
+<li>Buka Xcode → Settings… → tab Platforms.</li>
+<li>Pilih “+” dan pilih opsi iOS…</li>
 <li>Jalankan emulator</li>
 </ul>
 </li>
@@ -1326,7 +1326,7 @@ Jalankan terminal command berikut pada directory project.</p>
 </li>
 </ol>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="komponen-react-native"><a class="header" href="#komponen-react-native">Komponen React Native</a></h1>
-<p>Ketika kita membuat sebuah aplikasi, sebenarnya kita sedang menyusun potongan-potongan kecil yang bersama-sama membentuk satu kesatuan tampilan. Potongan kecil ini dalam React Native disebut komponen. Bisa dibilang, komponen adalah "building blocks" dari aplikasi mobile.</p>
+<p>Ketika kita membuat sebuah aplikasi, sebenarnya kita sedang menyusun potongan-potongan kecil yang bersama-sama membentuk satu kesatuan tampilan. Potongan kecil ini dalam React Native disebut komponen. Bisa dibilang, komponen adalah “building blocks” dari aplikasi mobile.</p>
 <p>Hal menarik lainnya, React Native tidak hanya menyediakan komponen bawaan, tapi kita juga dapat membuat komponen buatan sendiri (custom component). Ini membuat kode kita lebih terstruktur, lebih mudah digunakan ulang, dan tentu saja lebih rapi.</p>
 <p>Dalam <strong>React Native</strong>, <code>App.tsx</code> merupakan file utama yang pertama kali dijalankan ketika aplikasi dibuka. Kalau di web, mirip seperti <code>index.html</code> + <code>index.js</code>.</p>
 <h3 id="struktur-dasar-apptsx-react-native-cli"><a class="header" href="#struktur-dasar-apptsx-react-native-cli">Struktur dasar <code>App.tsx</code> (React Native CLI)</a></h3>
@@ -2273,7 +2273,7 @@ Prinsipnya mirip dengan CSS di web.</p>
 
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="props"><a class="header" href="#props">Props</a></h1>
-<p>Dalam React Native, terdapat salah satu konsep penting yang perlu dipahami yaitu <code>props</code>. <code>Props</code>, singkatan dari <strong>properties</strong>, merupakan cara untuk mengirimkan data dari satu komponen ke komponen lain. Bayangkan <code>props</code> seperti sebuah "paket data" yang diberikan oleh komponen induk (<em>parent</em>) kepada komponen anak (<em>child</em>). Dengan cara ini, beberapa komponen dapat berinteraksi atau berkomunikasi dengan baik tanpa harus mengubah struktur dasarnya.</p>
+<p>Dalam React Native, terdapat salah satu konsep penting yang perlu dipahami yaitu <code>props</code>. <code>Props</code>, singkatan dari <strong>properties</strong>, merupakan cara untuk mengirimkan data dari satu komponen ke komponen lain. Bayangkan <code>props</code> seperti sebuah “paket data” yang diberikan oleh komponen induk (<em>parent</em>) kepada komponen anak (<em>child</em>). Dengan cara ini, beberapa komponen dapat berinteraksi atau berkomunikasi dengan baik tanpa harus mengubah struktur dasarnya.</p>
 <p><code>Props</code> bersifat read-only, artinya data yang dikirim melalui props hanya bisa dibaca oleh komponen penerima, tetapi tidak bisa diubah secara langsung dari dalam komponen tersebut. Hal ini menjadikan <code>props</code> sebagai fondasi utama dalam membangun komponen yang dapat digunakan kembali (<em>reusable components</em>).</p>
 <p>Misalkan kita memiliki sebuah komponen bernama <code>Card</code>. Komponen ini dirancang untuk menampilkan nama dan pekerjaan seseorang. Menggunakan <code>props</code>, kita cukup membuat satu komponen <code>Card</code> lalu mengirimkan data yang berbeda melalui <code>props</code>.</p>
 <pre><code class="language-jsx">// App.tsx
@@ -2401,7 +2401,7 @@ const styles = StyleSheet.create({
 <li><code>useState</code>: hook <strong>React Native</strong>.</li>
 </ul>
 <h2 id="contoh-state-1-counter-sederhana"><a class="header" href="#contoh-state-1-counter-sederhana">Contoh State 1: Counter Sederhana</a></h2>
-<p>Sebagai contoh, kita ingin menampilkan angka yang bertambah setiap kali pengguna menekan tombol "+" dan begitupun sebaliknya untuk tombol "-". Untuk menyimpan angka tersebut, kita menggunakan <code>state</code>. Setiap kali tombol ditekan, <code>state</code> diperbarui, dan tampilan angka pada layar pun langsung ikut berubah.</p>
+<p>Sebagai contoh, kita ingin menampilkan angka yang bertambah setiap kali pengguna menekan tombol “+” dan begitupun sebaliknya untuk tombol “-”. Untuk menyimpan angka tersebut, kita menggunakan <code>state</code>. Setiap kali tombol ditekan, <code>state</code> diperbarui, dan tampilan angka pada layar pun langsung ikut berubah.</p>
 <pre><code class="language-typescript">// App.tsx
 import React, { useState } from "react";
 import { View, Text, Button, StyleSheet } from "react-native";
@@ -3292,7 +3292,7 @@ export default function HomeScreen({ navigation }: Props) {
 <ul>
 <li><code>Props = NativeStackScreenProps&lt;RootStackParamList, 'Home'&gt;</code>: mendefinisikan props khusus untuk halaman Home. Strukturnya dapat dilihat pada <a href="stack-navigation.html#TabNavigator.tsx">bagian ini</a>.</li>
 <li><code>navigation</code>: digunakan untuk berpindah ke halaman lain.</li>
-<li><code>navigation.navigate('Detail', { id: 101, barang: "Laptop" })</code>: pindah ke halaman Detail, sekaligus mengirim data id = 101 dan barang = "Laptop".</li>
+<li><code>navigation.navigate('Detail', { id: 101, barang: "Laptop" })</code>: pindah ke halaman Detail, sekaligus mengirim data id = 101 dan barang = “Laptop”.</li>
 </ul>
 <p>Jadi, <code>HomeScreen.tsx</code> adalah halaman awal aplikasi yang dapat mengarahkan user ke halaman detail dengan parameter.</p>
 <h3 id="screensdetailscreentsx"><a class="header" href="#screensdetailscreentsx">screens/DetailScreen.tsx</a></h3>
@@ -3642,7 +3642,7 @@ export default function HomeScreen({ navigation }: Props) {
 <ul>
 <li><code>Props = DrawerScreenProps&lt;RootParamList, 'Home'&gt;</code>: mendefinisikan props khusus untuk halaman Home.</li>
 <li><code>navigation</code>: digunakan untuk berpindah ke halaman lain.</li>
-<li><code>navigation.navigate('Profile')</code>: pindah ke halaman Profile sekaligus mengirim data id = 666 dan barang = "John Doe".</li>
+<li><code>navigation.navigate('Profile')</code>: pindah ke halaman Profile sekaligus mengirim data id = 666 dan barang = “John Doe”.</li>
 </ul>
 <p>Jadi, <code>HomeScreen.tsx</code> adalah halaman awal aplikasi yang dapat mengarahkan user ke halaman Profile dengan parameter.</p>
 <h3 id="screensprofilescreentsx-1"><a class="header" href="#screensprofilescreentsx-1">screens/ProfileScreen.tsx</a></h3>
@@ -4241,7 +4241,7 @@ const startScaleAnimation = () =&gt; {
 <li><code>deceleration</code>: Nilai mendekati 1 membuat animasi melambat dengan lembut dan berjalan lebih lama, sedangkan nilai kecil (misal 0.95) membuat animasi cepat berhenti (default = 0.998).</li>
 <li><code>clamp</code>: Batas minimum dan maksimum posisi. Ketika posisi hasil decay melewati nilai ini, maka animasi akan berhenti di batas tersebut. Contoh [-300, 300] artinya posisi hanya boleh di antara -300 hingga 300.</li>
 <li><code>velocityFactor</code>: Faktor pengali untuk kecepatan awal (<code>velocity</code>). Gunanya untuk mengatur seberapa jauh atau seberapa cepat gerakan decay dimulai tanpa harus mengubah velocity langsung (default = 1).</li>
-<li><code>rubberBandEffect</code>: menambahkan efek pantulan yang lembut seperti "karet" (default = false)</li>
+<li><code>rubberBandEffect</code>: menambahkan efek pantulan yang lembut seperti “karet” (default = false)</li>
 <li><code>rubberBandFactor</code>: Mengatur seberapa kuat efek pantulan pada <code>rubberBandEffect</code>. Semakin kecil maka pantulan lebih kuat sedangkan semakin besar (lebih elastis) maka pantulan lebih kaku (cepat berhenti) (default = 0.6).</li>
 </ul>
 <p><strong>Contoh:</strong></p>
@@ -4476,7 +4476,7 @@ export default function CustomAnimatedComponentExample() {
 <p>Banyak aplikasi membutuhkan mekanisme untuk menyimpan data pada perangkat pengguna bahkan setelah aplikasi ditutup atau perangkat di-<em>restart</em>. Tidak seperti <code>state</code> atau <code>context</code> yang hanya bertahan selama aplikasi berjalan, local storage memungkinkan data disimpan secara persisten.</p>
 <p>Contoh penggunaan local storage dalam aplikasi mobile diantaranya:</p>
 <ul>
-<li>menyimpan status login pengguna (misalnya token atau flag "sudah login"),</li>
+<li>menyimpan status login pengguna (misalnya token atau flag “sudah login”),</li>
 <li>menyimpan preferensi atau pengaturan aplikasi (seperti tema dan bahasa),</li>
 <li>menyimpan draft data atau cache,</li>
 <li>menyimpan daftar item sederhana seperti riwayat pencarian, keranjang belanja, atau tema aplikasi.</li>
@@ -4485,7 +4485,7 @@ export default function CustomAnimatedComponentExample() {
 <ol>
 <li><a href="asynchronous-storage.html"><strong>AsyncStorage</strong></a>: penyimpanan key-value sederhana, cocok untuk data kecil seperti token, settings, atau flag boolean.</li>
 <li><strong><a href="secure-store.html">SecureStore (Expo)</a></strong>: menyimpan data sensitif seperti token atau password dengan enkripsi.</li>
-<li><strong>MMKV (eksternal, sangat cepat)</strong>: solusi key-value storage modern yang sangat cepat dengan performa tinggi.</li>
+<li><strong><a href="mmkv.html">MMKV</a></strong>: solusi key-value storage modern yang sangat cepat dengan performa tinggi.</li>
 <li><strong>SQLite (database lokal)</strong>: cocok untuk penyimpanan data kompleks seperti tabel, relasi, atau jumlah data besar.</li>
 </ol>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="asynchronous-storage"><a class="header" href="#asynchronous-storage">Asynchronous Storage</a></h1>
@@ -4574,7 +4574,7 @@ const removeMultiUser = async () =&gt; {
   await AsyncStorage.multiRemove(keys);
 };
 </code></pre>
-<h3 id="contoh-1-theme-manager"><a class="header" href="#contoh-1-theme-manager">Contoh 1: Theme Manager</a></h3>
+<h3 id="contoh-theme-manager"><a class="header" href="#contoh-theme-manager">Contoh: Theme Manager</a></h3>
 <p>Menggunakan AsyncStorage untuk menyimpan pilihan tema (light/dark) sehingga tema tetap tersimpan meskipun aplikasi ditutup. Agar lebih rapi dan scalable, kita menggunakan:</p>
 <ul>
 <li><strong>Context API</strong> → menyimpan state tema</li>
@@ -4907,10 +4907,11 @@ export default function App() {
 </ul>
 <p>Artinya data terenkripsi di level OS, tidak mudah dibaca meskipun device di-root/jailbreak.</p>
 <p>Walaupun demikian, <code>SecureStore</code> dapat digunakan bersamaan dengan <code>AsyncStorage</code>:</p>
-<ul>
-<li><code>SecureStore</code> untuk data sensitif</li>
-<li><code>AsyncStorage</code> untuk preferensi umum</li>
-</ul>
+<div class="table-wrapper"><table><thead><tr><th>Jenis Data</th><th>Penyimpanan</th></tr></thead><tbody>
+<tr><td><strong>Sensitif</strong> (token, password, keys)</td><td><strong>SecureStore</strong></td></tr>
+<tr><td><strong>Umum</strong> (tema, bahasa, pengaturan, cache)</td><td><strong>AsyncStorage</strong></td></tr>
+</tbody></table>
+</div>
 <p>Sebelum menggunakan <code>SecureStore</code>, terdapat beberapa hal yang perlu dilakukan yaitu instalasi dependency dan melakukan rebuild plugin.</p>
 <h2 id="instalasi-8"><a class="header" href="#instalasi-8">Instalasi</a></h2>
 <p>Expo:</p>
@@ -4924,14 +4925,18 @@ npx pod-install
 <p><code>SecureStore</code> menyediakan beberapa API utama:</p>
 <div class="table-wrapper"><table><thead><tr><th>Kebutuhan</th><th>Fungsi</th></tr></thead><tbody>
 <tr><td>Cek ketersediaan</td><td><code>isAvailableAsync()</code></td></tr>
-<tr><td>Menyimpan data</td><td><code>setItemAsync(key: string, value: string, option: )</code></td></tr>
-<tr><td>Mengambil data</td><td><code>getItemAsync(key: string, option)</code></td></tr>
+<tr><td>Cek perlunya autentikasi biometrik</td><td><code>requireAuthentication()</code></td></tr>
+<tr><td>Menyimpan data</td><td><code>setItemAsync(key: string, value: string, option? )</code></td></tr>
+<tr><td>Mengambil data</td><td><code>getItemAsync(key: string, option?)</code></td></tr>
 <tr><td>Menghapus data</td><td><code>deleteItemAsync(key: string)</code></td></tr>
 </tbody></table>
 </div>
-<p>Sama seperti <code>AsyncStorage</code>, semua data harus berupa string.
-Gunakan <code>JSON.stringify()</code> dan <code>JSON.parse()</code> bila menyimpan object.</p>
+<blockquote>
+<p>⚠️ Semua data harus berupa string</p>
+<p>Gunakan <code>JSON.stringify()</code> untuk menyimpan object dan <code>JSON.parse()</code> saat membaca.</p>
+</blockquote>
 <h3 id="isavailableasync---cek-ketersediaan"><a class="header" href="#isavailableasync---cek-ketersediaan"><code>isAvailableAsync</code> - Cek ketersediaan</a></h3>
+<p>Tidak semua device mendukung SecureStore. Karena itu Anda disarankan mengecek terlebih dahulu:</p>
 <pre><code class="language-tsx">import * as SecureStore from 'expo-secure-store';
 
 const checkAvailability = async () =&gt; {
@@ -4955,12 +4960,554 @@ const loadToken = async () =&gt; {
   console.log("Stored Token:", token);
 };
 </code></pre>
+<p>Jika key tidak ditemukan, return value = <code>null</code>.</p>
 <h3 id="deleteitemasync---menghapus-data"><a class="header" href="#deleteitemasync---menghapus-data"><code>deleteItemAsync</code> - Menghapus data</a></h3>
 <pre><code class="language-tsx">import * as SecureStore from 'expo-secure-store';
 
 const removeToken = async () =&gt; {
   await SecureStore.deleteItemAsync('auth_token');
 };
+</code></pre>
+<h3 id="contoh-simulasi-login-dan-simpan-token"><a class="header" href="#contoh-simulasi-login-dan-simpan-token">Contoh: Simulasi Login dan Simpan Token</a></h3>
+<p>Menggunakan <code>SecureStore</code> untuk menyimpan token autentikasi. Token tetap tersimpan meskipun aplikasi ditutup dan agar lebih rapi dan scalable, gunakan:</p>
+<p>Struktur folder:</p>
+<pre><code class="language-bash">/src
+  ├── context
+  |      └── AuthContext.tsx
+  ├── navigation
+  |      └── AppNavigator.tsx
+  └── screens
+         ├── HomeScreen.tsx
+         └── LoginScreen.tsx
+App.tsx
+</code></pre>
+<p>Pastikan plugin <a href="navigation.html">navigasi</a> sudah ter-<em>install</em> pada project.</p>
+<p><strong>AuthContext.tsx</strong></p>
+<pre><code class="language-tsx">import { createContext, useContext, useEffect, useState } from "react"
+import * as SecureStore from 'expo-secure-store';
+
+interface AuthContextProps {
+    token: string | undefined,
+    login: () =&gt; Promise&lt;void&gt;,
+    logout: () =&gt; Promise&lt;void&gt;
+}
+
+export const AuthContext = createContext&lt;AuthContextProps | undefined&gt;(undefined);
+
+export const AuthProvider = ({ children }: { children: React.ReactNode }) =&gt; {
+    const [token, setToken] = useState&lt;string | undefined&gt;(undefined);
+
+    useEffect(() =&gt; {
+        const initAuth = async () =&gt; {
+            const available = await SecureStore.isAvailableAsync();
+            if (!available) return;
+
+            const storedToken = await SecureStore.getItemAsync('token');
+            if (storedToken) setToken(storedToken);
+        };
+
+        initAuth();
+    }, []);
+
+    const login = async () =&gt; {
+        const fakeToken = 'dNxH8zZ9xfMFzSswaNhoBCS1SQznZjkUhsuHO8u8yhuU190NhbshdbkjBM08';
+        await SecureStore.setItemAsync('token', fakeToken);
+        setToken(fakeToken);
+    }
+
+    const logout = async () =&gt; {
+        await SecureStore.deleteItemAsync('token');
+        setToken(undefined);
+    }
+
+    return (
+        &lt;AuthContext.Provider value={{ token, login, logout }}&gt;
+            {children}
+        &lt;/AuthContext.Provider&gt;
+    )
+}
+
+export const useAuth = () =&gt; {
+    const ctx = useContext(AuthContext);
+    if (!ctx) throw new Error("useAuth must be used within AuthProvider");
+    return ctx;
+}
+</code></pre>
+<p>Pada real project, token akan diperoleh dari server melalui API login.</p>
+<p><strong>LoginScreen.tsx</strong></p>
+<pre><code class="language-tsx">import { View, Text, TouchableOpacity } from "react-native";
+import { useAuth } from "../context/AuthContext";
+
+export default function LoginScreen() {
+    const { login } = useAuth();
+    return (
+        &lt;View style={{ justifyContent: 'center', flex: 1, padding: 20, backgroundColor: '#ffff' }}&gt;
+            &lt;TouchableOpacity style={{ padding: 10, borderRadius: 10, backgroundColor: '#F875AA' }} onPress={login}&gt;
+                &lt;Text style={{ color: "#EDFFF0", fontSize: 18, alignSelf: 'center' }}&gt;Login&lt;/Text&gt;
+            &lt;/TouchableOpacity&gt;
+        &lt;/View&gt;
+    );
+}
+</code></pre>
+<p><strong>HomeScreen.tsx</strong></p>
+<pre><code class="language-tsx">import { View, TouchableOpacity, Text } from "react-native";
+import { useAuth } from "../context/AuthContext";
+
+export default function HomeScreen() {
+    const { logout } = useAuth();
+
+    return (
+        &lt;View style={{ flex: 1, backgroundColor: '#ffffff' }}&gt;
+            &lt;TouchableOpacity style={{ padding: 12, marginTop: 20, borderRadius: 10, backgroundColor: '#16476A', alignItems: 'center' }} onPress={logout}&gt;
+                &lt;Text style={{ color: '#ffffff' }}&gt;Logout&lt;/Text&gt;
+            &lt;/TouchableOpacity&gt;
+        &lt;/View&gt;
+    );
+}
+</code></pre>
+<p><strong>AppNavigator.tsx</strong></p>
+<pre><code class="language-tsx">import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { useAuth } from "../context/AuthContext";
+import { NavigationContainer } from "@react-navigation/native";
+import HomeScreen from "../screens/HomeScreen";
+import LoginScreen from "../screens/LoginScreen";
+
+const Stack = createNativeStackNavigator();
+export default function AppNavigator() {
+    const { token } = useAuth();
+    return (
+        &lt;NavigationContainer&gt;
+            &lt;Stack.Navigator screenOptions={{ headerShown: false }}&gt;
+                {token ? (
+                    &lt;Stack.Screen name="Home" component={HomeScreen} /&gt;
+                ) : (
+                    &lt;Stack.Screen name="Login" component={LoginScreen} /&gt;
+                )}
+            &lt;/Stack.Navigator&gt;
+        &lt;/NavigationContainer&gt;
+    )
+}
+</code></pre>
+<p><strong>App.tsx</strong></p>
+<pre><code class="language-tsx">import { AuthProvider } from './src/context/AuthContext';
+import AppNavigator from './src/navigation/AppNavigator';
+
+export default function App() {
+  return (
+    &lt;AuthProvider&gt;
+      &lt;AppNavigator /&gt;
+    &lt;/AuthProvider&gt;
+  );
+}
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="mmkv"><a class="header" href="#mmkv">MMKV</a></h1>
+<p><code>MMKV</code> adalah <em>key-value</em> storage yang sangat cepat untuk React Native, dengan performa jauh lebih baik daripada <a href="asynchronous-storage.html"><code>AsyncStorage</code></a>. Library paling populer adalah <a href="https://github.com/mrousavy/react-native-mmkv">react-native-mmkv</a>. <code>MMKV</code> cocok untuk data yang perlu akses cepat &amp; sering seperti token, preferensi, cache, dsb karena sepenuhnya bekerja secara <em>synchronous</em>.</p>
+<h2 id="fitur-utama"><a class="header" href="#fitur-utama">Fitur Utama</a></h2>
+<ul>
+<li>Mendukung penyimpanan string, boolean, number, ArrayBuffer</li>
+<li>Operasi <em>synchronous</em>, tanpa <em>async</em>/<em>await</em>, tanpa <em>Promise</em> dan <em>Bridge</em></li>
+<li>Mendukung enkripsi</li>
+<li>Mendukung multiple instances (misalnya memisahkan data user vs settings)</li>
+<li>Mendukung iOS, Android, dan Web</li>
+</ul>
+<h2 id="instalasi-9"><a class="header" href="#instalasi-9">Instalasi</a></h2>
+<p>React Native CLI:</p>
+<pre><code class="language-bash">npm install react-native-mmkv react-native-nitro-modules
+</code></pre>
+<p>Jika menggunakan iOS:</p>
+<pre><code class="language-bash">cd ios &amp;&amp; pod install
+</code></pre>
+<p>Expo:</p>
+<pre><code class="language-bash">npx expo install react-native-mmkv react-native-nitro-modules
+npx expo prebuild
+</code></pre>
+<h3 id="api-dasar-mmkv"><a class="header" href="#api-dasar-mmkv">API Dasar MMKV</a></h3>
+<div class="table-wrapper"><table><thead><tr><th>Kebutuhan</th><th>Fungsi</th></tr></thead><tbody>
+<tr><td>Menyimpan data</td><td><code>set(key, value)</code></td></tr>
+<tr><td>Mengambil string</td><td><code>getString(key)</code></td></tr>
+<tr><td>Mengambil angka</td><td><code>getNumber(key)</code></td></tr>
+<tr><td>Mengambil boolean</td><td><code>getBoolean(key)</code></td></tr>
+<tr><td>Hook React untuk data otomatis sinkron</td><td><code>useMMKVString(key)</code><br><code>useMMKVNumber(key)</code><br><code>useMMKVBoolean(key)</code></td></tr>
+<tr><td>Mengecek apakah key tersedia</td><td><code>contains(key)</code></td></tr>
+<tr><td>Mendapatkan semua key</td><td><code>getAllKeys()</code></td></tr>
+<tr><td>Hapus data</td><td><code>remove(key)</code></td></tr>
+<tr><td>Hapus seluruh data</td><td><code>clearAll()</code></td></tr>
+<tr><td>Enkripsi ulang data</td><td><code>recrypt(newKey)</code></td></tr>
+<tr><td>Menghapus enkripsi</td><td><code>recrypt(undefined)</code></td></tr>
+</tbody></table>
+</div>
+<p><code>MMKV</code> menyediakan beberapa API utama, namun sebelum menggunakan API MMKV, sebuah <code>instance</code> dengan konstruktor <code>MMKV</code> wajib dibuat. <code>Instance</code> ini akan digunakan di seluruh aplikasi, sehingga tidak perlu membuat <code>instance</code> baru untuk setiap fungsi.</p>
+<h3 id="membuat-instance-mmkv"><a class="header" href="#membuat-instance-mmkv">Membuat instance MMKV</a></h3>
+<pre><code class="language-tsx">import { createMMKV } from 'react-native-mmkv'
+
+export const storage = createMMKV()
+</code></pre>
+<p>Atau jika ingin enkripsi</p>
+<pre><code class="language-tsx">import { createMMKV } from 'react-native-mmkv'
+
+export const secureStorage = createMMKV({
+  id: "secure",
+  encryptionKey: "my-secret-key"
+});
+</code></pre>
+<p><strong>Penjelasan</strong></p>
+<ul>
+<li><code>id</code>: digunakan sebagai nama file penyimpanan di perangkat, sekaligus sebagai pembeda antar-<code>instance</code>.</li>
+<li><code>encryptionKey</code>: digunakan sebagai kunci enkripsi/dekripsi, jika option ini tidak dikonfigurasi, maka seluruh data akan disimpan seperti aslinya tanpa di enkripsi.</li>
+</ul>
+<h3 id="set---menyimpan-data"><a class="header" href="#set---menyimpan-data"><code>set</code> - Menyimpan data</a></h3>
+<pre><code class="language-tsx">storage.set("user.token", "abc123.jwt");
+storage.set("user.age", 25);
+storage.set("darkMode", true);
+</code></pre>
+<h3 id="get---mengambil-data"><a class="header" href="#get---mengambil-data"><code>get</code> - Mengambil data</a></h3>
+<pre><code class="language-tsx">const token = storage.getString("user.token");
+const age = storage.getNumber("user.age");
+const dark = storage.getBoolean("darkMode");
+</code></pre>
+<h3 id="jika-ingin-menyimpan-dan-mendapatkan-data-object"><a class="header" href="#jika-ingin-menyimpan-dan-mendapatkan-data-object">Jika ingin menyimpan dan mendapatkan data object</a></h3>
+<pre><code class="language-tsx">const user = {
+  token: 'abc123.jwt',
+  age: 25,
+}
+
+storage.set('user', JSON.stringify(user))
+
+const jsonUser = storage.getString('user') // { 'token': 'abc123.jwt', 'age': 25 }
+const userObject = JSON.parse(jsonUser)
+</code></pre>
+<h3 id="jika-ingin-menyimpan-dan-mendapatkan-buffer"><a class="header" href="#jika-ingin-menyimpan-dan-mendapatkan-buffer">Jika ingin menyimpan dan mendapatkan buffer</a></h3>
+<pre><code class="language-tsx">const buffer = new ArrayBuffer(3)
+const dataWriter = new Uint8Array(buffer)
+dataWriter[0] = 1
+dataWriter[1] = 100
+dataWriter[2] = 255
+storage.set('someToken', buffer)
+
+const buffer = storage.getBuffer('someToken')
+console.log(buffer) // [1, 100, 255]
+</code></pre>
+<h3 id="usemmkvstring---hooks"><a class="header" href="#usemmkvstring---hooks"><code>useMMKVString</code> - Hooks</a></h3>
+<pre><code class="language-tsx">const [usertoken, setUsertoken] = useMMKVString('user.token');
+const [age, setAge] = useMMKVNumber('user.age');
+const [darkmode, setDarkMode] = useMMKVBoolean('darkMode');
+</code></pre>
+<h3 id="contains---cek-ketersediaan-key"><a class="header" href="#contains---cek-ketersediaan-key"><code>contains</code> - Cek ketersediaan key</a></h3>
+<pre><code class="language-tsx">const hasUsername = storage.contains('user.name')  // false
+const hasToken = storage.contains('user.token')  // true
+</code></pre>
+<h3 id="getallkeys---mengambil-seluruh-key"><a class="header" href="#getallkeys---mengambil-seluruh-key"><code>getAllKeys</code> - Mengambil seluruh key</a></h3>
+<pre><code class="language-tsx">const keys = storage.getAllKeys() // ['user.token', 'user.age', 'darkMode']
+</code></pre>
+<h3 id="remove---menghapus-key-tertentu"><a class="header" href="#remove---menghapus-key-tertentu"><code>remove</code> - Menghapus key tertentu</a></h3>
+<pre><code class="language-tsx">const wasRemoved = storage.remove('user.token');
+</code></pre>
+<h3 id="clearall---menghapus-seluruh-key"><a class="header" href="#clearall---menghapus-seluruh-key"><code>clearAll</code> - Menghapus seluruh key</a></h3>
+<pre><code class="language-tsx">storage.clearAll();
+</code></pre>
+<h3 id="recrypt---enkripsi-menggunakan-private-key-atau-menghapus-enkripsi"><a class="header" href="#recrypt---enkripsi-menggunakan-private-key-atau-menghapus-enkripsi"><code>recrypt</code> - Enkripsi menggunakan private key atau menghapus enkripsi</a></h3>
+<p>Gunakan fungsi ini jika pada saat membuat <code>instance</code> MMKV tidak menambahkan opsi <code>encryptionKey</code> atau jika ingin menggunakan private key baru</p>
+<pre><code class="language-tsx">storage.recrypt('my-private-key');
+</code></pre>
+<p>Dapat digunakan untuk menghapus enkripsi</p>
+<pre><code class="language-tsx">storage.recrypt(undefined);
+</code></pre>
+<h3 id="contoh-simulasi-login-dan-simpan-token-1"><a class="header" href="#contoh-simulasi-login-dan-simpan-token-1">Contoh: Simulasi Login dan Simpan Token</a></h3>
+<p>Struktur folder:</p>
+<pre><code class="language-bash">/src
+  ├── context
+  |      └── AuthContext.tsx
+  ├── navigation
+  |      └── AppNavigator.tsx
+  └── screens
+  |      ├── HomeScreen.tsx
+  |      ├── LoginScreen.tsx
+  |      └── RegisterScreen.tsx
+  └── storage
+         └── MMKVStorage.ts
+App.tsx
+</code></pre>
+<p>Pastikan plugin <a href="navigation.html">navigasi</a> sudah ter-<em>install</em> pada project.</p>
+<p><strong>MMKVStorage.ts</strong></p>
+<pre><code class="language-tsx">import { createMMKV } from "react-native-mmkv"
+
+export interface User {
+    name: string,
+    email: string,
+    isAuthenticated: boolean,
+    token: string
+};
+
+export const storage = createMMKV({
+    'id': 'app-storage',
+    'encryptionKey': 'my-app-private-key'
+})
+
+export const MMKVStorage = {
+    setUser: (user: User | null) =&gt; {
+        if (user) {
+            storage.set('user', JSON.stringify(user));
+        }
+        return
+    },
+
+    getUser: (): User | null =&gt; {
+        const data = storage.getString('user');
+        return data ? JSON.parse(data) : null;
+    },
+
+    removeUser: () =&gt; {
+        storage.remove('user');
+    },
+}
+</code></pre>
+<p><strong>AuthContext.tsx</strong></p>
+<pre><code class="language-tsx">import { createContext, useContext, useEffect, useState } from "react";
+import { useMMKVString } from "react-native-mmkv";
+import { MMKVStorage, User } from "../storage/MMKVStorage";
+
+
+interface AuthContextProps {
+    user: User | null,
+    register: (name: string, email: string) =&gt; void,
+    login: () =&gt; void,
+    logout: () =&gt; void
+};
+
+const AuthContext = createContext&lt;AuthContextProps | null&gt;(null);
+
+export const AuthProvider = ({ children }: { children: React.ReactNode }) =&gt; {
+    const [user, SetUser] = useState&lt;User | null&gt;(null);
+
+    useEffect(() =&gt; {
+        const savedUser = MMKVStorage.getUser();
+        console.log(savedUser);
+
+        SetUser(savedUser);
+    }, []);
+
+    useEffect(() =&gt; {
+        MMKVStorage.setUser(user);
+    }, [user])
+
+    const register = (name: string, email: string) =&gt; {
+        const newUser: User = {
+            name,
+            email,
+            isAuthenticated: false,
+            token: ""
+        }
+        SetUser(newUser);
+    }
+
+    const login = () =&gt; {
+        if (!user) return;
+
+        const loggedUser: User = {
+            name: user['name'],
+            email: user['email'],
+            isAuthenticated: true,
+            token: "TOKEN_" + Math.random().toString(36).substring(2, 12),
+        };
+        SetUser(loggedUser)
+
+    }
+
+    const logout = () =&gt; {
+        if (user) {
+            const loggedUser: User = {
+                name: user['name'],
+                email: user['email'],
+                isAuthenticated: false,
+                token: ""
+            };
+            SetUser(loggedUser)
+        } else {
+            return;
+        }
+    }
+
+    return (
+        &lt;AuthContext.Provider value={{ user, register, login, logout }}&gt;
+            {children}
+        &lt;/AuthContext.Provider&gt;
+    )
+}
+
+export const useAuth = () =&gt; {
+    const ctx = useContext(AuthContext);
+    if (!ctx) throw new Error("useAuth must be used within AuthProvider");
+    return ctx;
+}
+</code></pre>
+<p><strong>HomeScreen.tsx</strong></p>
+<pre><code class="language-tsx">import { Text, TouchableOpacity, View } from "react-native";
+import { useAuth } from "../context/AuthContext";
+
+export default function HomeScreen() {
+    const { user, logout } = useAuth();
+    return (
+        &lt;View style={{
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center'
+        }}&gt;
+            &lt;Text style={{
+                fontSize: 32,
+            }}&gt;
+                Selamat datang, {user?.name}
+            &lt;/Text&gt;
+
+            &lt;TouchableOpacity style={{ padding: 12, marginTop: 20, borderRadius: 10, backgroundColor: '#16476A', alignItems: 'center' }} onPress={logout}&gt;
+                &lt;Text style={{ color: '#ffffff' }}&gt;Logout&lt;/Text&gt;
+            &lt;/TouchableOpacity&gt;
+        &lt;/View&gt;
+    )
+}
+</code></pre>
+<p><strong>LoginScreen.tsx</strong></p>
+<pre><code class="language-tsx">import { View, Text, TouchableOpacity } from "react-native";
+import { useAuth } from "../context/AuthContext";
+
+export default function LoginScreen() {
+    const { login } = useAuth();
+
+    return (
+        &lt;View style={{ justifyContent: 'center', flex: 1, padding: 20, backgroundColor: '#ffff' }}&gt;
+            &lt;TouchableOpacity style={{ padding: 10, borderRadius: 10, backgroundColor: '#F875AA' }} onPress={login}&gt;
+                &lt;Text style={{ color: "#EDFFF0", fontSize: 18, alignSelf: 'center' }}&gt;Login&lt;/Text&gt;
+            &lt;/TouchableOpacity&gt;
+        &lt;/View&gt;
+    );
+}
+</code></pre>
+<p><strong>RegisterScreen.tsx</strong></p>
+<pre><code class="language-tsx">import { View, Text, TouchableOpacity, TextInput } from "react-native";
+import { MMKV } from "react-native-mmkv";
+import { useAuth } from "../context/AuthContext";
+import { useState } from "react";
+
+export default function RegisterScreen({ navigation }: any) {
+    const { user, register } = useAuth();
+    const [name, setName] = useState("");
+    const [mail, setMail] = useState("");
+
+    const registerHandler = () =&gt; {
+        register(name, mail);
+    }
+
+    return (
+        &lt;View style={{ flex: 1, padding: 20, justifyContent: "center" }}&gt;
+            &lt;Text style={{ fontSize: 26, fontWeight: "bold", marginBottom: 20 }}&gt;
+                Register
+            &lt;/Text&gt;
+
+            &lt;TextInput
+                placeholder="Nama"
+                value={name}
+                onChangeText={setName}
+                style={{
+                    borderWidth: 1,
+                    borderRadius: 10,
+                    padding: 12,
+                    marginBottom: 10,
+                }}
+            /&gt;
+
+            &lt;TextInput
+                placeholder="Email"
+                value={mail}
+                onChangeText={setMail}
+                style={{
+                    borderWidth: 1,
+                    borderRadius: 10,
+                    padding: 12,
+                    marginBottom: 10,
+                }}
+            /&gt;
+            &lt;TouchableOpacity
+                onPress={registerHandler}
+                style={{
+                    backgroundColor: "#0066ff",
+                    padding: 15,
+                    borderRadius: 10,
+                    alignItems: "center",
+                }}
+            &gt;
+                &lt;Text style={{ color: "white", fontSize: 18 }}&gt;
+                    Register
+                &lt;/Text&gt;
+            &lt;/TouchableOpacity&gt;
+            {user ? (
+                &lt;TouchableOpacity
+                    onPress={() =&gt; navigation.navigate("Login")}
+                    style={{ marginTop: 20 }}
+                &gt;
+                    &lt;Text style={{ color: "#0066ff", textAlign: "center" }}&gt;
+                        Sudah punya akun? Login
+                    &lt;/Text&gt;
+                &lt;/TouchableOpacity&gt;
+            ) : (&lt;View&gt;&lt;/View&gt;)}
+        &lt;/View&gt;
+    );
+}
+</code></pre>
+<p><strong>AppNavigator.tsx</strong></p>
+<pre><code class="language-tsx">import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { useAuth } from "../context/AuthContext";
+import { NavigationContainer } from "@react-navigation/native";
+import HomeScreen from "../screens/HomeScreen";
+import RegisterScreen from "../screens/RegisterScreen";
+import { useEffect, useState } from "react";
+import LoginScreen from "../screens/LoginScreen";
+
+const Stack = createNativeStackNavigator();
+export default function AppNavigator() {
+    const { user } = useAuth();
+    let initialPage = 'Register';
+
+    if (user) {
+        if (user.isAuthenticated) {
+            initialPage = 'Home';
+        } else {
+            initialPage = 'Login';
+        }
+    } else {
+        initialPage = 'Register';
+    }
+
+
+    return (
+        &lt;NavigationContainer&gt;
+            &lt;Stack.Navigator screenOptions={{ headerShown: false }} &gt;
+                {!user &amp;&amp; (
+                    &lt;Stack.Screen name="Register" component={RegisterScreen} /&gt;
+                )}
+
+                {user &amp;&amp; !user.isAuthenticated &amp;&amp; (
+                    &lt;Stack.Screen name="Login" component={LoginScreen} /&gt;
+                )}
+
+                {user &amp;&amp; user.isAuthenticated &amp;&amp; (
+                    &lt;Stack.Screen name="Home" component={HomeScreen} /&gt;
+                )}
+            &lt;/Stack.Navigator &gt;
+        &lt;/NavigationContainer&gt;
+    );
+}
+</code></pre>
+<p><strong>App.tsx</strong></p>
+<pre><code class="language-tsx">import { AuthProvider } from './src/context/AuthContext';
+import { NavigationContainer } from '@react-navigation/native';
+import AppNavigator from './src/navigation/AppNavigator';
+
+export default function App() {
+  return (
+    &lt;AuthProvider&gt;
+      &lt;AppNavigator /&gt;
+    &lt;/AuthProvider&gt;
+  );
+}
 </code></pre>
 
                     </main>

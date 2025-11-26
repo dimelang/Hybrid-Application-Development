@@ -190,10 +190,11 @@
 </ul>
 <p>Artinya data terenkripsi di level OS, tidak mudah dibaca meskipun device di-root/jailbreak.</p>
 <p>Walaupun demikian, <code>SecureStore</code> dapat digunakan bersamaan dengan <code>AsyncStorage</code>:</p>
-<ul>
-<li><code>SecureStore</code> untuk data sensitif</li>
-<li><code>AsyncStorage</code> untuk preferensi umum</li>
-</ul>
+<div class="table-wrapper"><table><thead><tr><th>Jenis Data</th><th>Penyimpanan</th></tr></thead><tbody>
+<tr><td><strong>Sensitif</strong> (token, password, keys)</td><td><strong>SecureStore</strong></td></tr>
+<tr><td><strong>Umum</strong> (tema, bahasa, pengaturan, cache)</td><td><strong>AsyncStorage</strong></td></tr>
+</tbody></table>
+</div>
 <p>Sebelum menggunakan <code>SecureStore</code>, terdapat beberapa hal yang perlu dilakukan yaitu instalasi dependency dan melakukan rebuild plugin.</p>
 <h2 id="instalasi"><a class="header" href="#instalasi">Instalasi</a></h2>
 <p>Expo:</p>
@@ -207,14 +208,18 @@ npx pod-install
 <p><code>SecureStore</code> menyediakan beberapa API utama:</p>
 <div class="table-wrapper"><table><thead><tr><th>Kebutuhan</th><th>Fungsi</th></tr></thead><tbody>
 <tr><td>Cek ketersediaan</td><td><code>isAvailableAsync()</code></td></tr>
-<tr><td>Menyimpan data</td><td><code>setItemAsync(key: string, value: string, option: )</code></td></tr>
-<tr><td>Mengambil data</td><td><code>getItemAsync(key: string, option)</code></td></tr>
+<tr><td>Cek perlunya autentikasi biometrik</td><td><code>requireAuthentication()</code></td></tr>
+<tr><td>Menyimpan data</td><td><code>setItemAsync(key: string, value: string, option? )</code></td></tr>
+<tr><td>Mengambil data</td><td><code>getItemAsync(key: string, option?)</code></td></tr>
 <tr><td>Menghapus data</td><td><code>deleteItemAsync(key: string)</code></td></tr>
 </tbody></table>
 </div>
-<p>Sama seperti <code>AsyncStorage</code>, semua data harus berupa string.
-Gunakan <code>JSON.stringify()</code> dan <code>JSON.parse()</code> bila menyimpan object.</p>
+<blockquote>
+<p>⚠️ Semua data harus berupa string</p>
+<p>Gunakan <code>JSON.stringify()</code> untuk menyimpan object dan <code>JSON.parse()</code> saat membaca.</p>
+</blockquote>
 <h3 id="isavailableasync---cek-ketersediaan"><a class="header" href="#isavailableasync---cek-ketersediaan"><code>isAvailableAsync</code> - Cek ketersediaan</a></h3>
+<p>Tidak semua device mendukung SecureStore. Karena itu Anda disarankan mengecek terlebih dahulu:</p>
 <pre><code class="language-tsx">import * as SecureStore from 'expo-secure-store';
 
 const checkAvailability = async () =&gt; {
@@ -238,12 +243,145 @@ const loadToken = async () =&gt; {
   console.log("Stored Token:", token);
 };
 </code></pre>
+<p>Jika key tidak ditemukan, return value = <code>null</code>.</p>
 <h3 id="deleteitemasync---menghapus-data"><a class="header" href="#deleteitemasync---menghapus-data"><code>deleteItemAsync</code> - Menghapus data</a></h3>
 <pre><code class="language-tsx">import * as SecureStore from 'expo-secure-store';
 
 const removeToken = async () =&gt; {
   await SecureStore.deleteItemAsync('auth_token');
 };
+</code></pre>
+<h3 id="contoh-simulasi-login-dan-simpan-token"><a class="header" href="#contoh-simulasi-login-dan-simpan-token">Contoh: Simulasi Login dan Simpan Token</a></h3>
+<p>Menggunakan <code>SecureStore</code> untuk menyimpan token autentikasi. Token tetap tersimpan meskipun aplikasi ditutup dan agar lebih rapi dan scalable, gunakan:</p>
+<p>Struktur folder:</p>
+<pre><code class="language-bash">/src
+  ├── context
+  |      └── AuthContext.tsx
+  ├── navigation
+  |      └── AppNavigator.tsx
+  └── screens
+         ├── HomeScreen.tsx
+         └── LoginScreen.tsx
+App.tsx
+</code></pre>
+<p>Pastikan plugin <a href="navigation.html">navigasi</a> sudah ter-<em>install</em> pada project.</p>
+<p><strong>AuthContext.tsx</strong></p>
+<pre><code class="language-tsx">import { createContext, useContext, useEffect, useState } from "react"
+import * as SecureStore from 'expo-secure-store';
+
+interface AuthContextProps {
+    token: string | undefined,
+    login: () =&gt; Promise&lt;void&gt;,
+    logout: () =&gt; Promise&lt;void&gt;
+}
+
+export const AuthContext = createContext&lt;AuthContextProps | undefined&gt;(undefined);
+
+export const AuthProvider = ({ children }: { children: React.ReactNode }) =&gt; {
+    const [token, setToken] = useState&lt;string | undefined&gt;(undefined);
+
+    useEffect(() =&gt; {
+        const initAuth = async () =&gt; {
+            const available = await SecureStore.isAvailableAsync();
+            if (!available) return;
+
+            const storedToken = await SecureStore.getItemAsync('token');
+            if (storedToken) setToken(storedToken);
+        };
+
+        initAuth();
+    }, []);
+
+    const login = async () =&gt; {
+        const fakeToken = 'dNxH8zZ9xfMFzSswaNhoBCS1SQznZjkUhsuHO8u8yhuU190NhbshdbkjBM08';
+        await SecureStore.setItemAsync('token', fakeToken);
+        setToken(fakeToken);
+    }
+
+    const logout = async () =&gt; {
+        await SecureStore.deleteItemAsync('token');
+        setToken(undefined);
+    }
+
+    return (
+        &lt;AuthContext.Provider value={{ token, login, logout }}&gt;
+            {children}
+        &lt;/AuthContext.Provider&gt;
+    )
+}
+
+export const useAuth = () =&gt; {
+    const ctx = useContext(AuthContext);
+    if (!ctx) throw new Error("useAuth must be used within AuthProvider");
+    return ctx;
+}
+</code></pre>
+<p>Pada real project, token akan diperoleh dari server melalui API login.</p>
+<p><strong>LoginScreen.tsx</strong></p>
+<pre><code class="language-tsx">import { View, Text, TouchableOpacity } from "react-native";
+import { useAuth } from "../context/AuthContext";
+
+export default function LoginScreen() {
+    const { login } = useAuth();
+    return (
+        &lt;View style={{ justifyContent: 'center', flex: 1, padding: 20, backgroundColor: '#ffff' }}&gt;
+            &lt;TouchableOpacity style={{ padding: 10, borderRadius: 10, backgroundColor: '#F875AA' }} onPress={login}&gt;
+                &lt;Text style={{ color: "#EDFFF0", fontSize: 18, alignSelf: 'center' }}&gt;Login&lt;/Text&gt;
+            &lt;/TouchableOpacity&gt;
+        &lt;/View&gt;
+    );
+}
+</code></pre>
+<p><strong>HomeScreen.tsx</strong></p>
+<pre><code class="language-tsx">import { View, TouchableOpacity, Text } from "react-native";
+import { useAuth } from "../context/AuthContext";
+
+export default function HomeScreen() {
+    const { logout } = useAuth();
+
+    return (
+        &lt;View style={{ flex: 1, backgroundColor: '#ffffff' }}&gt;
+            &lt;TouchableOpacity style={{ padding: 12, marginTop: 20, borderRadius: 10, backgroundColor: '#16476A', alignItems: 'center' }} onPress={logout}&gt;
+                &lt;Text style={{ color: '#ffffff' }}&gt;Logout&lt;/Text&gt;
+            &lt;/TouchableOpacity&gt;
+        &lt;/View&gt;
+    );
+}
+</code></pre>
+<p><strong>AppNavigator.tsx</strong></p>
+<pre><code class="language-tsx">import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { useAuth } from "../context/AuthContext";
+import { NavigationContainer } from "@react-navigation/native";
+import HomeScreen from "../screens/HomeScreen";
+import LoginScreen from "../screens/LoginScreen";
+
+const Stack = createNativeStackNavigator();
+export default function AppNavigator() {
+    const { token } = useAuth();
+    return (
+        &lt;NavigationContainer&gt;
+            &lt;Stack.Navigator screenOptions={{ headerShown: false }}&gt;
+                {token ? (
+                    &lt;Stack.Screen name="Home" component={HomeScreen} /&gt;
+                ) : (
+                    &lt;Stack.Screen name="Login" component={LoginScreen} /&gt;
+                )}
+            &lt;/Stack.Navigator&gt;
+        &lt;/NavigationContainer&gt;
+    )
+}
+</code></pre>
+<p><strong>App.tsx</strong></p>
+<pre><code class="language-tsx">import { AuthProvider } from './src/context/AuthContext';
+import AppNavigator from './src/navigation/AppNavigator';
+
+export default function App() {
+  return (
+    &lt;AuthProvider&gt;
+      &lt;AppNavigator /&gt;
+    &lt;/AuthProvider&gt;
+  );
+}
 </code></pre>
 
                     </main>
@@ -254,6 +392,9 @@ const removeToken = async () =&gt; {
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
+                            <a rel="next prefetch" href="mmkv.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
 
                         <div style="clear: both"></div>
                     </nav>
@@ -265,6 +406,9 @@ const removeToken = async () =&gt; {
                         <i class="fa fa-angle-left"></i>
                     </a>
 
+                    <a rel="next prefetch" href="mmkv.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
             </nav>
 
         </div>

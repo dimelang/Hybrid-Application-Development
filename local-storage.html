@@ -179,7 +179,7 @@
 <p>Banyak aplikasi membutuhkan mekanisme untuk menyimpan data pada perangkat pengguna bahkan setelah aplikasi ditutup atau perangkat di-<em>restart</em>. Tidak seperti <code>state</code> atau <code>context</code> yang hanya bertahan selama aplikasi berjalan, local storage memungkinkan data disimpan secara persisten.</p>
 <p>Contoh penggunaan local storage dalam aplikasi mobile diantaranya:</p>
 <ul>
-<li>menyimpan status login pengguna (misalnya token atau flag "sudah login"),</li>
+<li>menyimpan status login pengguna (misalnya token atau flag “sudah login”),</li>
 <li>menyimpan preferensi atau pengaturan aplikasi (seperti tema dan bahasa),</li>
 <li>menyimpan draft data atau cache,</li>
 <li>menyimpan daftar item sederhana seperti riwayat pencarian, keranjang belanja, atau tema aplikasi.</li>
@@ -188,7 +188,7 @@
 <ol>
 <li><a href="asynchronous-storage.html"><strong>AsyncStorage</strong></a>: penyimpanan key-value sederhana, cocok untuk data kecil seperti token, settings, atau flag boolean.</li>
 <li><strong><a href="secure-store.html">SecureStore (Expo)</a></strong>: menyimpan data sensitif seperti token atau password dengan enkripsi.</li>
-<li><strong>MMKV (eksternal, sangat cepat)</strong>: solusi key-value storage modern yang sangat cepat dengan performa tinggi.</li>
+<li><strong><a href="mmkv.html">MMKV</a></strong>: solusi key-value storage modern yang sangat cepat dengan performa tinggi.</li>
 <li><strong>SQLite (database lokal)</strong>: cocok untuk penyimpanan data kompleks seperti tabel, relasi, atau jumlah data besar.</li>
 </ol>
 
