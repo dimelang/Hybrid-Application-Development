@@ -141,8 +141,8 @@ export default function GyroscopeContainer() {
 
 ## Alur Penggunaan API
 
-- Panggil Gyroscope.isAvailableAsync() untuk memastikan sensor tersedia.
-- (Jika diperlukan) panggil Gyroscope.requestPermissionsAsync() untuk mendapatkan izin.
-- Atur interval update menggunakan Gyroscope.setUpdateInterval(...).
-- Daftarkan listener menggunakan Gyroscope.addListener(...).
-- Ketika komponen di-unmount atau sensor tidak diperlukan, panggil .remove() atau Gyroscope.removeAllListeners().
+- Panggil `Gyroscope.isAvailableAsync()` untuk memastikan sensor tersedia.
+- (Jika diperlukan) panggil `Gyroscope.requestPermissionsAsync()` untuk mendapatkan izin.
+- Atur interval update menggunakan `Gyroscope.setUpdateInterval(...)`.
+- Daftarkan listener menggunakan `Gyroscope.addListener(...)`.
+- Ketika komponen di-unmount atau sensor tidak diperlukan, panggil `.remove()` atau `Gyroscope.removeAllListeners()`.

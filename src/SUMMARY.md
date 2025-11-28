@@ -60,6 +60,6 @@
     - [Accelerometer](accelerometer.md)
     - [Gyroscope](gyroscope.md)
     - [Barometer](barometer.md)
-    - [Camera](camera.md)
-    - [Location](location.md)
     - [Pedometer](pedometer.md)
+    <!-- - [Camera](camera.md)
+    - [Location](location.md) -->
