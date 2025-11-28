@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Local Storage - Hybrid Application Development</title>
+        <title>Barometer - Hybrid Application Development</title>
 
 
         <!-- Custom HTML head -->
@@ -175,32 +175,121 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="local-storage"><a class="header" href="#local-storage">Local Storage</a></h1>
-<p>Banyak aplikasi membutuhkan mekanisme untuk menyimpan data pada perangkat pengguna bahkan setelah aplikasi ditutup atau perangkat di-<em>restart</em>. Tidak seperti <code>state</code> atau <code>context</code> yang hanya bertahan selama aplikasi berjalan, local storage memungkinkan data disimpan secara persisten.</p>
-<p>Contoh penggunaan local storage dalam aplikasi mobile diantaranya:</p>
-<ul>
-<li>menyimpan status login pengguna (misalnya token atau flag “sudah login”),</li>
-<li>menyimpan preferensi atau pengaturan aplikasi (seperti tema dan bahasa),</li>
-<li>menyimpan draft data atau cache,</li>
-<li>menyimpan daftar item sederhana seperti riwayat pencarian, keranjang belanja, atau tema aplikasi.</li>
-</ul>
-<p>React Native menyediakan beberapa library untuk penyimpanan data lokal, di antaranya:</p>
-<ol>
-<li><a href="asynchronous-storage.html"><strong>AsyncStorage</strong></a>: penyimpanan key-value sederhana, cocok untuk data kecil seperti token, settings, atau flag boolean.</li>
-<li><strong><a href="secure-store.html">SecureStore</a></strong>: menyimpan data sensitif seperti token atau password dengan enkripsi.</li>
-<li><strong><a href="mmkv.html">MMKV</a></strong>: solusi key-value storage modern yang sangat cepat dengan performa tinggi.</li>
-<li><strong><a href="sqlite.html">SQLite</a></strong>: cocok untuk penyimpanan data kompleks seperti tabel, relasi, atau jumlah data besar.</li>
-</ol>
+                        <h1 id="barometer"><a class="header" href="#barometer">Barometer</a></h1>
+<p>Merupakan sensor yang mampu mengukur tekanan udara (air pressure) di sekitar perangkat. Sensor ini berguna untuk mendeteksi perubahan cuaca, altitud relatif (terutama di iOS), atau konteks lingkungan (misalnya aplikasi cuaca, altimeter, atau log tekanan udara).</p>
+<h2 id="instalasi"><a class="header" href="#instalasi">Instalasi</a></h2>
+<p>Expo:</p>
+<pre><code class="language-bash">npx expo install expo-sensors
+</code></pre>
+<p>React Native CLI:</p>
+<pre><code class="language-bash">npm install expo-sensors
+cd ios &amp;&amp; pod install &amp;&amp; cd ..
+</code></pre>
+<h2 id="api-dasar-barometer"><a class="header" href="#api-dasar-barometer">API Dasar Barometer</a></h2>
+<div class="table-wrapper"><table><thead><tr><th>Method</th><th>Deskripsi</th></tr></thead><tbody>
+<tr><td><code>addListener(listener)</code></td><td>Daftarkan <strong>listener</strong> untuk menerima pembaruan data dari barometer. Listener menerima argumen berupa objek <code>BarometerMeasurement</code>. Mengembalikan objek <code>Subscription</code> dengan metode <code>.remove()</code> untuk menghentikan listener.</td></tr>
+<tr><td><code>removeSubscription(subscription)</code></td><td>Hentikan listener tertentu agar tidak menerima update lagi.</td></tr>
+<tr><td><code>removeAllListeners()</code></td><td>Hapus semua listener barometer yang aktif.</td></tr>
+<tr><td><code>setUpdateInterval(intervalMs: number)</code></td><td>Atur interval pembaruan data sensor (dalam milidetik). Perhatikan bahwa pada Android 12+ (API 31), ada batas minimal frekuensi sensor.</td></tr>
+<tr><td><code>isAvailableAsync()</code></td><td>Mengecek apakah perangkat mendukung sensor barometer. Mengembalikan <code>Promise&lt;boolean&gt;</code>. Disarankan memanggil ini dulu sebelum men-subscribe.</td></tr>
+<tr><td><code>getPermissionsAsync()</code> &amp; <code>requestPermissionsAsync()</code></td><td>(Jika diperlukan) memeriksa atau meminta izin akses sensor.</td></tr>
+<tr><td><code>getListenerCount()</code></td><td>Mendapatkan jumlah listener aktif saat ini (angka).</td></tr>
+<tr><td><code>hasListeners()</code></td><td>Cek apakah ada listener yang terdaftar (boolean).</td></tr>
+</tbody></table>
+</div>
+<hr />
+<h2 id="contoh-penggunaan-barometer"><a class="header" href="#contoh-penggunaan-barometer">Contoh Penggunaan Barometer</a></h2>
+<pre><code class="language-tsx">import { useEffect, useState } from "react";
+import { View, Text, Button, Platform, Alert, TouchableOpacity } from "react-native";
+import { Barometer } from "expo-sensors";
+
+export default function BarometerContainer() {
+    const [{ pressure, relativeAltitude }, setData] = useState&lt;{ pressure: number; relativeAltitude?: number }&gt;({
+        pressure: 0,
+        relativeAltitude: undefined
+    });
+    const [subscription, setSubscription] = useState&lt;any&gt;(null);
+    const [available, setAvailable] = useState&lt;boolean | null&gt;(null);
+
+    useEffect(() =&gt; {
+        const checkAvailability = async () =&gt; {
+            const isAvail = await Barometer.isAvailableAsync();
+            setAvailable(isAvail);
+        };
+        checkAvailability();
+
+        return () =&gt; {
+            subscription?.remove();
+        };
+    }, [subscription]);
+
+    const setSlowInterval = () =&gt; Barometer.setUpdateInterval(1000);
+    const setFastInterval = () =&gt; Barometer.setUpdateInterval(500);
+
+    const startBarometer = () =&gt; {
+        if (!available) {
+            Alert.alert("Sensor Barometer tidak tersedia di perangkat ini");
+            return;
+        }
+
+        const sub = Barometer.addListener(data =&gt; {
+            setData(data);
+        });
+        setSubscription(sub);
+    };
+
+    const stopBarometer = () =&gt; {
+        subscription?.remove();
+        setSubscription(null);
+    };
+
+    return (
+        &lt;View style={{ flex: 1, justifyContent: "center", alignItems: "center", padding: 20 }}&gt;
+            &lt;Text style={{ fontSize: 18, marginBottom: 10 }}&gt;Barometer Example&lt;/Text&gt;
+
+            &lt;Text&gt;Pressure: {pressure.toFixed(2)} hPa&lt;/Text&gt;
+            {Platform.OS === "ios" &amp;&amp; relativeAltitude != null &amp;&amp; (
+                &lt;Text&gt;Relative Altitude: {relativeAltitude.toFixed(2)} m&lt;/Text&gt;
+            )}
+
+            &lt;View style={{ flexDirection: "row", marginTop: 20 }}&gt;
+                &lt;Button title="Start" onPress={startBarometer} /&gt;
+                &lt;View style={{ width: 20 }} /&gt;
+                &lt;Button title="Stop" onPress={stopBarometer} /&gt;
+            &lt;/View&gt;
+
+            &lt;Text style={{ marginTop: 20 }}&gt;
+                Sensor tersedia: {available === null ? "Memeriksa..." : available ? "Ya" : "Tidak"}
+            &lt;/Text&gt;
+
+            &lt;View style={{ flexDirection: "row", gap: 10, marginTop: 14 }}&gt;
+                &lt;TouchableOpacity
+                    onPress={setSlowInterval}
+                    style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "#eee", padding: 10 }}
+                &gt;
+                    &lt;Text&gt;Slow&lt;/Text&gt;
+                &lt;/TouchableOpacity&gt;
+                &lt;TouchableOpacity
+                    onPress={setFastInterval}
+                    style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "#eee", padding: 10 }}
+                &gt;
+                    &lt;Text&gt;Fast&lt;/Text&gt;
+                &lt;/TouchableOpacity&gt;
+            &lt;/View&gt;
+        &lt;/View&gt;
+    );
+}
+</code></pre>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="reanimated-api.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="gyroscope.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next prefetch" href="asynchronous-storage.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="pedometer.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -210,11 +299,11 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="reanimated-api.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="gyroscope.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next prefetch" href="asynchronous-storage.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="pedometer.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>

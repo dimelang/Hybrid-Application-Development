@@ -4484,9 +4484,9 @@ export default function CustomAnimatedComponentExample() {
 <p>React Native menyediakan beberapa library untuk penyimpanan data lokal, di antaranya:</p>
 <ol>
 <li><a href="asynchronous-storage.html"><strong>AsyncStorage</strong></a>: penyimpanan key-value sederhana, cocok untuk data kecil seperti token, settings, atau flag boolean.</li>
-<li><strong><a href="secure-store.html">SecureStore (Expo)</a></strong>: menyimpan data sensitif seperti token atau password dengan enkripsi.</li>
+<li><strong><a href="secure-store.html">SecureStore</a></strong>: menyimpan data sensitif seperti token atau password dengan enkripsi.</li>
 <li><strong><a href="mmkv.html">MMKV</a></strong>: solusi key-value storage modern yang sangat cepat dengan performa tinggi.</li>
-<li><strong>SQLite (database lokal)</strong>: cocok untuk penyimpanan data kompleks seperti tabel, relasi, atau jumlah data besar.</li>
+<li><strong><a href="sqlite.html">SQLite</a></strong>: cocok untuk penyimpanan data kompleks seperti tabel, relasi, atau jumlah data besar.</li>
 </ol>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="asynchronous-storage"><a class="header" href="#asynchronous-storage">Asynchronous Storage</a></h1>
 <p>Menyimpan data secara lokal di perangkat pengguna menggunakan format key–value. Berbeda dengan <code>localStorage</code> pada web yang bersifat <strong>sinkron</strong>, <code>AsyncStorage</code> bersifat <strong>asinkron</strong> dan berjalan secara efisien di perangkat mobile. Data yang disimpan menggunakan <code>AsyncStorage</code> akan tetap ada meskipun aplikasi ditutup atau perangkat direstart.</p>
@@ -5508,6 +5508,649 @@ export default function App() {
     &lt;/AuthProvider&gt;
   );
 }
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="sqlite"><a class="header" href="#sqlite">SQLite</a></h1>
+<p>Merupakan database relasional yang berjalan di dalam perangkat dan sangat cocok digunakan untuk data yang lebih komplek seperti:</p>
+<div class="table-wrapper"><table><thead><tr><th>Kebutuhan</th><th>Cocok memakai</th></tr></thead><tbody>
+<tr><td>Simpan token, flag kecil, preferensi</td><td><strong>MMKV</strong></td></tr>
+<tr><td>Simpan beberapa data ringan</td><td><strong>AsyncStorage</strong></td></tr>
+<tr><td>Simpan data banyak, tabel, relasional, CRUD kompleks</td><td><strong>SQLite</strong></td></tr>
+</tbody></table>
+</div>
+<p>Salah satu library terbaik untuk React Native adalah <code>react-native-quick-sqlite</code> karena memiliki beberapa keunggulan seperti:</p>
+<ul>
+<li>Sangat cepat</li>
+<li>Synchronous</li>
+<li>Mendukung React Native CLI maupun Expo</li>
+</ul>
+<h2 id="instalasi-10"><a class="header" href="#instalasi-10">Instalasi</a></h2>
+<p>React Native CLI:</p>
+<pre><code class="language-bash">npm install react-native-nitro-sqlite react-native-nitro-modules
+</code></pre>
+<p>Expo:</p>
+<pre><code class="language-bash">npx expo install react-native-nitro-sqlite react-native-nitro-modules
+npx expo prebuild
+</code></pre>
+<h3 id="api"><a class="header" href="#api">API</a></h3>
+<div class="table-wrapper"><table><thead><tr><th>Metode / Properti</th><th>Deskripsi / Kegunaan</th></tr></thead><tbody>
+<tr><td><strong><code>close()</code></strong></td><td>Menutup koneksi database. setelah ini operasi pada <code>db</code> tidak dapat dilakukan lagi.</td></tr>
+<tr><td><strong><code>delete()</code></strong></td><td>Menghapus file database (menghapus keseluruhan database). Berguna untuk reset/clear data seluruh database.</td></tr>
+<tr><td><strong><code>attach(dbNameToAttach, alias, location?)</code></strong></td><td>Melampirkan (attach) database lain ke koneksi saat ini — artinya dua database yang berbeda dapat digunakan dalam satu connection (misalnya untuk join antar-database). <code>&lt;dbNameToAttach&gt;</code>: nama database file, <code>&lt;alias&gt;</code>: alias yang akan digunakan, <code>location</code> (opsional) lokasi file.</td></tr>
+<tr><td><strong><code>detach(alias)</code></strong></td><td>Melepaskan (detach) database yang sebelumnya diter-attach dengan alias tertentu. Setelah detach, tidak dapat mengakses lagi schema dari database terlampir itu.</td></tr>
+<tr><td><strong><code>transaction(fn: (tx: Transaction) =&gt; void): Promise&lt;void&gt;</code></strong></td><td>Membuka transaksi. Fungsi <code>fn</code> menerima objek <code>tx</code> (Transaction). Semua operasi di dalam transaction akan dieksekusi sebagai satu unit — jika terjadi error maka akan di-<em>ROLLBACK</em>. Berguna untuk menjaga konsistensi data dalam serangkaian query.</td></tr>
+<tr><td><strong><code>execute(query: string, params?: any[]): QueryResult</code></strong></td><td>Menjalankan single SQL query <strong>secara <em>sinkron</em></strong>. Mengembalikan hasil <code>QueryResult</code> (berisi misalnya <code>rows</code>, <code>rowsAffected</code>, dsb). Karena berjalan secara sinkron, perlu hati-hati jika query berat agar tidak memblok UI.</td></tr>
+<tr><td><strong><code>executeAsync(query: string, params?: any[]): Promise&lt;QueryResult&gt;</code></strong></td><td>Versi <em>asynchronous</em> dari <code>execute</code>. Operasinya berlangsung di thread native dan tidak memblok UI. Kembalian via <code>Promise</code>. Cocok untuk query yang berat atau banyak data.</td></tr>
+<tr><td><strong><code>executeBatch(commands: BatchQueryCommand[]): BatchQueryResult</code></strong></td><td>Menjalankan sekumpulan query dalam satu batch (transaksi tunggal) <strong>secara sinkron</strong>. <code>commands</code> adalah array objek yang berisi <code>query</code> dan <code>params</code> (opsional). Cocok untuk operasi massal (insert/update/delete banyak data) dengan efisiensi.</td></tr>
+<tr><td><strong><code>executeBatchAsync(commands: BatchQueryCommand[]): Promise&lt;BatchQueryResult&gt;</code></strong></td><td>Versi asynchronous dari batch: menjalankan banyak query dalam satu transaksi, tetapi tanpa memblok UI. Mengembalikan hasil melalui <code>Promise</code>.</td></tr>
+<tr><td><strong><code>loadFile(location: string): FileLoadResult</code></strong></td><td>Memuat file SQL (dump, skrip) ke database — sinkron. Berguna jika Anda ingin inisialisasi database dari file <code>.sql</code>. <code>location</code> adalah path ke file SQL.</td></tr>
+<tr><td><strong><code>loadFileAsync(location: string): Promise&lt;FileLoadResult&gt;</code></strong></td><td>Versi asynchronous dari <code>loadFile</code>, cocok untuk file besar agar tidak memblok UI.</td></tr>
+</tbody></table>
+</div>
+<p>Sebelum menggunakan API di atas, buka (atau membuat baru jika belum ada) sebuah file database SQLite menggunakan perintah berikut:</p>
+<pre><code class="language-tsx">import { open } from 'react-native-nitro-sqlite'
+const db = open({ name: 'myDb.sqlite' })
+</code></pre>
+<p>Ketika dijalankan program akan:</p>
+<ul>
+<li>Membuat koneksi database</li>
+<li>Mengembalikan objek DB</li>
+</ul>
+<p>Cukup inisialisasi sekali dan gunakan diseluruh aplikasi</p>
+<h3 id="execute---menjalankan-single-sql-query-sinkron"><a class="header" href="#execute---menjalankan-single-sql-query-sinkron"><code>execute</code> - Menjalankan single SQL query (sinkron)</a></h3>
+<p>Contoh: membuat table + insert + select</p>
+<pre><code class="language-tsx">db.execute(`
+  CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT
+  )
+`)
+
+db.execute(`INSERT INTO users (name) VALUES (?)`, ["Ben Duerr"])
+
+const result = db.execute(`SELECT * FROM users`)
+console.log("Rows:", result.rows)
+</code></pre>
+<h3 id="execute---menjalankan-single-sql-query-asinkron"><a class="header" href="#execute---menjalankan-single-sql-query-asinkron"><code>execute</code> - Menjalankan single SQL query (asinkron)</a></h3>
+<p>contoh: select data besar</p>
+<pre><code class="language-tsx">const result = await db.executeAsync(`SELECT * FROM big_table`)
+console.log("Total rows:", result.rows.length)
+rows.forEach((row) =&gt; {
+    console.log(row);
+});
+</code></pre>
+<h3 id="executebatch---multiple-sql-query-dalam-satu-batch-sinkron"><a class="header" href="#executebatch---multiple-sql-query-dalam-satu-batch-sinkron"><code>executeBatch</code> - Multiple SQL query dalam satu batch (sinkron)</a></h3>
+<p>Contoh: insert banyak data sekaligus</p>
+<pre><code class="language-tsx">db.executeBatch([
+  { query: `INSERT INTO items (name) VALUES (?)`, params: ["Apple"] },
+  { query: `INSERT INTO items (name) VALUES (?)`, params: ["Orange"] },
+  { query: `INSERT INTO items (name) VALUES (?)`, params: ["Banana"] },
+])
+</code></pre>
+<h3 id="executebatchasync---multiple-sql-query-dalam-satu-batch-asinkron"><a class="header" href="#executebatchasync---multiple-sql-query-dalam-satu-batch-asinkron"><code>executeBatchAsync</code> - Multiple SQL query dalam satu batch (asinkron)</a></h3>
+<pre><code class="language-tsx">await db.executeBatchAsync([
+  { query: `INSERT INTO logs (message) VALUES (?)`, params: ["Started"] },
+  { query: `INSERT INTO logs (message) VALUES (?)`, params: ["Processing"] },
+  { query: `INSERT INTO logs (message) VALUES (?)`, params: ["Done"] },
+])
+</code></pre>
+<h3 id="transaction---transaksi-atomic"><a class="header" href="#transaction---transaksi-atomic"><code>transaction</code> - Transaksi atomic</a></h3>
+<p>Contoh: insert 2 data. Jika satu gagal → rollback</p>
+<pre><code class="language-tsx">await db.transaction(tx =&gt; {
+  tx.execute(`INSERT INTO orders (item, price) VALUES (?, ?)`, ["A", 100])
+  tx.execute(`INSERT INTO orders (item, price) VALUES (?, ?)`, ["B", 200])
+})
+</code></pre>
+<h3 id="attach---melampirkan-database-lain"><a class="header" href="#attach---melampirkan-database-lain"><code>attach</code> - Melampirkan database lain</a></h3>
+<p>Contoh: memakai 2 database sekaligus</p>
+<pre><code class="language-tsx">db.attach("analytics.sqlite", "analytics")
+
+const result = db.execute(`
+  SELECT u.name, a.visit_count
+  FROM users u
+  JOIN analytics.stats a ON u.id = a.user_id
+`)
+</code></pre>
+<h3 id="detach---melepaskan-database-terlampir"><a class="header" href="#detach---melepaskan-database-terlampir"><code>detach</code> - Melepaskan database terlampir</a></h3>
+<pre><code class="language-tsx">db.detach("analytics")
+</code></pre>
+<h3 id="loadfile---memuat-skrip-sql-sinkron"><a class="header" href="#loadfile---memuat-skrip-sql-sinkron"><code>loadFile</code> - Memuat skrip SQL (sinkron)</a></h3>
+<p>Contoh: load file schema awal</p>
+<pre><code class="language-tsx">db.loadFile("assets/schema.sql")
+</code></pre>
+<h3 id="loadfileasync---memuat-skrip-sql-asinkron"><a class="header" href="#loadfileasync---memuat-skrip-sql-asinkron"><code>loadFileAsync</code> - Memuat skrip SQL (asinkron)</a></h3>
+<pre><code class="language-tsx">await db.loadFileAsync("assets/seed.sql")
+</code></pre>
+<h3 id="close---menutup-koneksi"><a class="header" href="#close---menutup-koneksi"><code>close</code> - Menutup koneksi</a></h3>
+<pre><code class="language-tsx">db.close()
+</code></pre>
+<h3 id="delete---mengahus-database"><a class="header" href="#delete---mengahus-database">delete - Mengahus database</a></h3>
+<pre><code class="language-tsx">db.delete()
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="sensor"><a class="header" href="#sensor">Sensor</a></h1>
+<p>Banyak aplikasi mobile modern memanfaatkan sensor perangkat untuk menghadirkan pengalaman yang lebih interaktif, kontekstual, dan personal. Sensor dapat memberikan informasi tentang gerakan, lokasi, tekanan udara, atau aktivitas fisik pengguna. Beberapa penggunaan sensor dalam aplikasi:</p>
+<ul>
+<li><strong>Accelerometer</strong> &amp; <strong>Gyroscope</strong>: mendeteksi orientasi perangkat atau gerakan pengguna, misalnya untuk fitness tracker atau game.</li>
+<li><strong>Barometer</strong>: mendeteksi ketinggian atau perubahan tekanan udara, berguna untuk aplikasi cuaca atau olahraga outdoor.</li>
+<li><strong>Camera</strong>: mengambil foto atau video, mendukung scanning QR/barcode, augmented reality (AR), atau pengenalan objek.</li>
+<li><strong>Location</strong> / <strong>GPS</strong>: menentukan lokasi pengguna, digunakan untuk peta, navigasi, atau fitur berbasis lokasi.</li>
+<li><strong>Pedometer</strong>: menghitung langkah atau aktivitas fisik pengguna, sering digunakan dalam aplikasi kesehatan atau kebugaran</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="accelerometer"><a class="header" href="#accelerometer">Accelerometer</a></h1>
+<p>Merupakan sensor yang mengukur percepatan perangkat pada tiga sumbu (x, y, z). Sensor ini sering digunakan untuk:</p>
+<ul>
+<li>Mendeteksi orientasi perangkat (portrait/landscape)</li>
+<li>Membuat fitur shake atau tilt</li>
+<li>Game yang memanfaatkan gerakan perangkat</li>
+<li>Fitness tracker (menghitung gerakan tubuh)</li>
+</ul>
+<h2 id="instalasi-11"><a class="header" href="#instalasi-11">Instalasi</a></h2>
+<p>Expo:</p>
+<pre><code class="language-bash">npx expo install expo-sensors
+</code></pre>
+<p>React Native CLI:</p>
+<pre><code class="language-bash">npm install expo-sensors
+cd ios &amp;&amp; pod install &amp;&amp; cd ..
+</code></pre>
+<h2 id="api-dasar-accelerometer"><a class="header" href="#api-dasar-accelerometer">API Dasar Accelerometer</a></h2>
+<div class="table-wrapper"><table><thead><tr><th>Method</th><th>Deskripsi</th></tr></thead><tbody>
+<tr><td><code>addListener(listener)</code></td><td>Daftarkan <strong>listener</strong> untuk menerima update percepatan perangkat. <code>listener</code> menerima objek <code>AccelerometerMeasurement</code> setiap kali ada pembaruan sensor, metode ini mengembalikan <code>Subscription</code> yang memiliki metode <code>.remove()</code> untuk berhenti mendengarkan.</td></tr>
+<tr><td><code>removeSubscription(subscription)</code></td><td>Menghentikan subscription yang spesifik — artinya listener tidak akan menerima update lagi.</td></tr>
+<tr><td><code>removeAllListeners()</code></td><td>Menghapus semua listener yang terdaftar sekaligus.</td></tr>
+<tr><td><code>setUpdateInterval(intervalMs: number)</code></td><td>Mengatur interval atau kecepatan (dalam milidetik) pembacaan data sensor.</td></tr>
+<tr><td><code>isAvailableAsync()</code></td><td>Mengecek apakah sensor accelerometer tersedia pada perangkat. Mengembalikan <code>Promise&lt;boolean&gt;</code>. Disarankan untuk dipanggil sebelum mencoba menggunakan sensor, terutama untuk mendukung berbagai platform (Android / iOS / Web).</td></tr>
+<tr><td><code>requestPermissionsAsync()</code> &amp; <code>getPermissionsAsync()</code></td><td>Untuk platform/web yang membutuhkan izin akses sensor: <code>requestPermissionsAsync()</code> meminta izin ke pengguna, sedangkan <code>getPermissionsAsync()</code> memeriksa status izin. Keduanya mengembalikan <code>Promise&lt;PermissionResponse&gt;</code>.</td></tr>
+<tr><td><code>getListenerCount()</code></td><td>Mengembalikan jumlah listener saat ini yang aktif. Berguna untuk debugging atau manajemen listener.</td></tr>
+<tr><td><code>hasListeners()</code></td><td>Mengembalikan boolean: apakah ada listener yang terdaftar saat ini.</td></tr>
+</tbody></table>
+</div>
+<hr />
+<h2 id="tipe-data--accelerometermeasurement"><a class="header" href="#tipe-data--accelerometermeasurement">Tipe Data — <code>AccelerometerMeasurement</code></a></h2>
+<p>Ketika listener dipanggil, ia menerima objek <code>AccelerometerMeasurement</code> dengan properti:</p>
+<ul>
+<li><code>x: number</code> — percepatan sepanjang sumbu X, dalam satuan “g” (di mana 1g ≈ gravitasi bumi ≈ 9.81 m/s²)</li>
+<li><code>y: number</code> — percepatan sepanjang sumbu Y</li>
+<li><code>z: number</code> — percepatan sepanjang sumbu Z</li>
+<li><code>timestamp: number</code> — waktu pengukuran (dalam detik, relatif) saat pembacaan terjadi.</li>
+</ul>
+<hr />
+<h2 id="contoh-penggunaan-accelerometer"><a class="header" href="#contoh-penggunaan-accelerometer">Contoh Penggunaan Accelerometer</a></h2>
+<pre><code class="language-tsx">import { useEffect, useState } from "react";
+import { View, Text, Button, Alert, TouchableOpacity } from 'react-native';
+import { Accelerometer } from "expo-sensors";
+
+export default function AccelerometerContainer() {
+    const [{ x, y, z }, setData] = useState({
+        x: 0,
+        y: 0,
+        z: 0
+    });
+    const [subscription, setSubscription] = useState&lt;any&gt;(null);
+    const [available, setAvailable] = useState&lt;boolean | null&gt;(null);
+
+    useEffect(() =&gt; {
+        const checkAvailability = async () =&gt; {
+            const isAvailable = await Accelerometer.isAvailableAsync();
+            setAvailable(isAvailable);
+        };
+
+        checkAvailability();
+    }, []);
+
+    const _slow = () =&gt; Accelerometer.setUpdateInterval(1000);
+    const _fast = () =&gt; Accelerometer.setUpdateInterval(16);
+
+    const startAccelerometer = async () =&gt; {
+        if (!available) {
+            Alert.alert("Sensor Accelerometer tidak tersedia di perangkat ini");
+            return;
+        }
+        const sub = Accelerometer.addListener(accelData =&gt; {
+            setData(accelData);
+        });
+        setSubscription(sub);
+    }
+
+    const stopAccelerometer = () =&gt; {
+        subscription?.remove();
+        setSubscription(null);
+    }
+
+
+    return (
+        &lt;View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 }}&gt;
+            &lt;Text style={{ fontSize: 18, marginBottom: 10 }}&gt;Accelerometer Example&lt;/Text&gt;
+
+            &lt;Text style={{ marginTop: 20 }}&gt;
+                Sensor tersedia: {available === null ? 'Memeriksa...' : available ? 'Ya' : 'Tidak'}
+            &lt;/Text&gt;
+
+            &lt;Text&gt;X: {x.toFixed(2)}&lt;/Text&gt;
+            &lt;Text&gt;Y: {y.toFixed(2)}&lt;/Text&gt;
+            &lt;Text&gt;Z: {z.toFixed(2)}&lt;/Text&gt;
+
+            &lt;View style={{ flexDirection: 'row', marginTop: 20 }}&gt;
+                &lt;Button title="Start" onPress={startAccelerometer} /&gt;
+                &lt;View style={{ width: 20 }} /&gt;
+                &lt;Button title="Stop" onPress={stopAccelerometer} /&gt;
+            &lt;/View&gt;
+
+            &lt;View style={{ flexDirection: 'row', gap: 10, marginTop: 14 }}&gt;
+                &lt;TouchableOpacity onPress={_slow} style={{
+                    flex: 1,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    backgroundColor: '#eee',
+                    padding: 10,
+                }}&gt;
+                    &lt;Text&gt;Slow&lt;/Text&gt;
+                &lt;/TouchableOpacity&gt;
+                &lt;TouchableOpacity onPress={_fast} style={{
+                    flex: 1,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    backgroundColor: '#eee',
+                    padding: 10,
+                }}&gt;
+                    &lt;Text&gt;Fast&lt;/Text&gt;
+                &lt;/TouchableOpacity&gt;
+            &lt;/View&gt;
+        &lt;/View&gt;
+    );
+}
+</code></pre>
+<h2 id="alur-penggunaan-api"><a class="header" href="#alur-penggunaan-api">Alur Penggunaan API</a></h2>
+<ol>
+<li>Panggil <code>Accelerometer.isAvailableAsync()</code> dulu — untuk memastikan sensor tersedia.</li>
+<li>(Jika perlu) panggil <code>Accelerometer.requestPermissionsAsync()</code> untuk meminta akses ke sensor.</li>
+<li>Atur interval update dengan <code>Accelerometer.setUpdateInterval(...)</code>.</li>
+<li>Pasang listener dengan <code>Accelerometer.addListener(...)</code>.</li>
+<li>Ketika sudah tidak diperlukan (misalnya komponen unmount), panggil <code>subscription.remove()</code> atau <code>Accelerometer.removeAllListeners()</code>.</li>
+</ol>
+<hr />
+<div style="break-before: page; page-break-before: always;"></div><h1 id="gyroscope"><a class="header" href="#gyroscope">Gyroscope</a></h1>
+<p>Merupakan sensor yang dapat mengukur kecepatan rotasi perangkat pada tiga sumbu (x, y, z) dalam satuan radian per detik. Sensor ini berbeda dari accelerometer yang mengukur percepatan linear, gyroscope lebih fokus pada rotasi. Beberapa penggunaan umum gyroscope:</p>
+<ul>
+<li>Mengukur putaran perangkat dalam game (contoh: mengendalikan karakter atau kamera).</li>
+<li>AR/VR tracking untuk gerakan kepala</li>
+<li>Gesture berbasis rotasi (misalnya memutar ponsel untuk undo/redo)</li>
+<li>Meningkatkan akurasi orientasi perangkat saat digabungkan dengan accelerometer</li>
+</ul>
+<h2 id="instalasi-12"><a class="header" href="#instalasi-12">Instalasi</a></h2>
+<p>Expo:</p>
+<pre><code class="language-bash">npx expo install expo-sensors
+</code></pre>
+<p>React Native CLI:</p>
+<pre><code class="language-bash">npm install expo-sensors
+cd ios &amp;&amp; pod install &amp;&amp; cd ..
+</code></pre>
+<h2 id="api-dasar-gyroscope"><a class="header" href="#api-dasar-gyroscope">API Dasar Gyroscope</a></h2>
+<div class="table-wrapper"><table><thead><tr><th>Method</th><th>Deskripsi</th></tr></thead><tbody>
+<tr><td><code>addListener(listener)</code></td><td>Mendaftarkan <strong>listener</strong> untuk menerima data rotasi dari gyroscope. Listener memanggil fungsi dengan parameter <code>GyroscopeMeasurement</code>. Mengembalikan objek <code>Subscription</code> dengan metode <code>.remove()</code>.</td></tr>
+<tr><td><code>removeSubscription(subscription)</code></td><td>Menghapus listener tertentu dari gyroscope.</td></tr>
+<tr><td><code>removeAllListeners()</code></td><td>Menghapus semua listener yang aktif. Berguna saat reset sensor atau unmount.</td></tr>
+<tr><td><code>setUpdateInterval(intervalMs: number)</code></td><td>Menentukan seberapa sering data sensor diperbarui (dalam milidetik).</td></tr>
+<tr><td><code>isAvailableAsync()</code></td><td>Mengecek apakah sensor gyroscope tersedia pada perangkat. Mengembalikan <code>Promise&lt;boolean&gt;</code>.</td></tr>
+<tr><td><code>requestPermissionsAsync()</code> &amp; <code>getPermissionsAsync()</code></td><td>Memeriksa dan meminta izin akses sensor. Dibutuhkan pada platform tertentu.</td></tr>
+<tr><td><code>getListenerCount()</code></td><td>Mengembalikan jumlah listener aktif saat ini.</td></tr>
+<tr><td><code>hasListeners()</code></td><td>Menentukan apakah ada listener yang sedang aktif.</td></tr>
+</tbody></table>
+</div>
+<h2 id="tipe-data--gyroscopemeasurement"><a class="header" href="#tipe-data--gyroscopemeasurement">Tipe Data — GyroscopeMeasurement</a></h2>
+<p>Listener gyroscope menerima data berupa objek:</p>
+<ul>
+<li>x: number — kecepatan rotasi pada sumbu X (radian/detik)</li>
+<li>y: number — kecepatan rotasi pada sumbu Y (radian/detik)</li>
+<li>z: number — kecepatan rotasi pada sumbu Z (radian/detik)</li>
+<li>timestamp: number — waktu pengambilan data (detik, relatif)</li>
+</ul>
+<h2 id="contoh-penggunaan-gyroscope"><a class="header" href="#contoh-penggunaan-gyroscope">Contoh Penggunaan Gyroscope</a></h2>
+<pre><code class="language-tsx">import { useEffect, useState } from "react";
+import { View, Text, Button, Alert, TouchableOpacity } from "react-native";
+import { Gyroscope } from "expo-sensors";
+
+export default function GyroscopeContainer() {
+    const [{ x, y, z }, setData] = useState({
+        x: 0,
+        y: 0,
+        z: 0
+    });
+    const [subscription, setSubscription] = useState&lt;any&gt;(null);
+    const [available, setAvailable] = useState&lt;boolean | null&gt;(null);
+
+    useEffect(() =&gt; {
+        const checkAvailability = async () =&gt; {
+            const isAvailable = await Gyroscope.isAvailableAsync();
+            setAvailable(isAvailable);
+        };
+
+        checkAvailability();
+
+        // cleanup listener saat komponen unmount
+        return () =&gt; {
+            subscription?.remove();
+        };
+    }, [subscription]);
+
+    const setSlowInterval = () =&gt; Gyroscope.setUpdateInterval(1000);
+    const setFastInterval = () =&gt; Gyroscope.setUpdateInterval(16);
+
+    const startGyroscope = () =&gt; {
+        if (!available) {
+            Alert.alert("Sensor Gyroscope tidak tersedia di perangkat ini");
+            return;
+        }
+
+        const sub = Gyroscope.addListener(gyroData =&gt; {
+            setData(gyroData);
+        });
+
+        setSubscription(sub);
+    };
+
+    const stopGyroscope = () =&gt; {
+        subscription?.remove();
+        setSubscription(null);
+    };
+
+    return (
+        &lt;View style={{ flex: 1, justifyContent: "center", alignItems: "center", padding: 20 }}&gt;
+            &lt;Text style={{ fontSize: 18, marginBottom: 10 }}&gt;Gyroscope Example&lt;/Text&gt;
+
+            &lt;Text style={{ marginTop: 20 }}&gt;
+                Sensor tersedia: {available === null ? "Memeriksa..." : available ? "Ya" : "Tidak"}
+            &lt;/Text&gt;
+
+            &lt;Text&gt;X: {x.toFixed(2)}&lt;/Text&gt;
+            &lt;Text&gt;Y: {y.toFixed(2)}&lt;/Text&gt;
+            &lt;Text&gt;Z: {z.toFixed(2)}&lt;/Text&gt;
+
+            &lt;View style={{ flexDirection: "row", marginTop: 20 }}&gt;
+                &lt;Button title="Start" onPress={startGyroscope} /&gt;
+                &lt;View style={{ width: 20 }} /&gt;
+                &lt;Button title="Stop" onPress={stopGyroscope} /&gt;
+            &lt;/View&gt;
+
+            &lt;View style={{ flexDirection: "row", gap: 10, marginTop: 14 }}&gt;
+                &lt;TouchableOpacity
+                    onPress={setSlowInterval}
+                    style={{
+                        flex: 1,
+                        justifyContent: "center",
+                        alignItems: "center",
+                        backgroundColor: "#eee",
+                        padding: 10
+                    }}
+                &gt;
+                    &lt;Text&gt;Slow&lt;/Text&gt;
+                &lt;/TouchableOpacity&gt;
+
+                &lt;TouchableOpacity
+                    onPress={setFastInterval}
+                    style={{
+                        flex: 1,
+                        justifyContent: "center",
+                        alignItems: "center",
+                        backgroundColor: "#eee",
+                        padding: 10
+                    }}
+                &gt;
+                    &lt;Text&gt;Fast&lt;/Text&gt;
+                &lt;/TouchableOpacity&gt;
+            &lt;/View&gt;
+        &lt;/View&gt;
+    );
+}
+</code></pre>
+<h2 id="alur-penggunaan-api-1"><a class="header" href="#alur-penggunaan-api-1">Alur Penggunaan API</a></h2>
+<ul>
+<li>Panggil <code>Gyroscope.isAvailableAsync()</code> untuk memastikan sensor tersedia.</li>
+<li>(Jika diperlukan) panggil <code>Gyroscope.requestPermissionsAsync()</code> untuk mendapatkan izin.</li>
+<li>Atur interval update menggunakan <code>Gyroscope.setUpdateInterval(...)</code>.</li>
+<li>Daftarkan listener menggunakan <code>Gyroscope.addListener(...)</code>.</li>
+<li>Ketika komponen di-unmount atau sensor tidak diperlukan, panggil <code>.remove()</code> atau <code>Gyroscope.removeAllListeners()</code>.</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="barometer"><a class="header" href="#barometer">Barometer</a></h1>
+<p>Merupakan sensor yang mampu mengukur tekanan udara (air pressure) di sekitar perangkat. Sensor ini berguna untuk mendeteksi perubahan cuaca, altitud relatif (terutama di iOS), atau konteks lingkungan (misalnya aplikasi cuaca, altimeter, atau log tekanan udara).</p>
+<h2 id="instalasi-13"><a class="header" href="#instalasi-13">Instalasi</a></h2>
+<p>Expo:</p>
+<pre><code class="language-bash">npx expo install expo-sensors
+</code></pre>
+<p>React Native CLI:</p>
+<pre><code class="language-bash">npm install expo-sensors
+cd ios &amp;&amp; pod install &amp;&amp; cd ..
+</code></pre>
+<h2 id="api-dasar-barometer"><a class="header" href="#api-dasar-barometer">API Dasar Barometer</a></h2>
+<div class="table-wrapper"><table><thead><tr><th>Method</th><th>Deskripsi</th></tr></thead><tbody>
+<tr><td><code>addListener(listener)</code></td><td>Daftarkan <strong>listener</strong> untuk menerima pembaruan data dari barometer. Listener menerima argumen berupa objek <code>BarometerMeasurement</code>. Mengembalikan objek <code>Subscription</code> dengan metode <code>.remove()</code> untuk menghentikan listener.</td></tr>
+<tr><td><code>removeSubscription(subscription)</code></td><td>Hentikan listener tertentu agar tidak menerima update lagi.</td></tr>
+<tr><td><code>removeAllListeners()</code></td><td>Hapus semua listener barometer yang aktif.</td></tr>
+<tr><td><code>setUpdateInterval(intervalMs: number)</code></td><td>Atur interval pembaruan data sensor (dalam milidetik). Perhatikan bahwa pada Android 12+ (API 31), ada batas minimal frekuensi sensor.</td></tr>
+<tr><td><code>isAvailableAsync()</code></td><td>Mengecek apakah perangkat mendukung sensor barometer. Mengembalikan <code>Promise&lt;boolean&gt;</code>. Disarankan memanggil ini dulu sebelum men-subscribe.</td></tr>
+<tr><td><code>getPermissionsAsync()</code> &amp; <code>requestPermissionsAsync()</code></td><td>(Jika diperlukan) memeriksa atau meminta izin akses sensor.</td></tr>
+<tr><td><code>getListenerCount()</code></td><td>Mendapatkan jumlah listener aktif saat ini (angka).</td></tr>
+<tr><td><code>hasListeners()</code></td><td>Cek apakah ada listener yang terdaftar (boolean).</td></tr>
+</tbody></table>
+</div>
+<hr />
+<h2 id="contoh-penggunaan-barometer"><a class="header" href="#contoh-penggunaan-barometer">Contoh Penggunaan Barometer</a></h2>
+<pre><code class="language-tsx">import { useEffect, useState } from "react";
+import { View, Text, Button, Platform, Alert, TouchableOpacity } from "react-native";
+import { Barometer } from "expo-sensors";
+
+export default function BarometerContainer() {
+    const [{ pressure, relativeAltitude }, setData] = useState&lt;{ pressure: number; relativeAltitude?: number }&gt;({
+        pressure: 0,
+        relativeAltitude: undefined
+    });
+    const [subscription, setSubscription] = useState&lt;any&gt;(null);
+    const [available, setAvailable] = useState&lt;boolean | null&gt;(null);
+
+    useEffect(() =&gt; {
+        const checkAvailability = async () =&gt; {
+            const isAvail = await Barometer.isAvailableAsync();
+            setAvailable(isAvail);
+        };
+        checkAvailability();
+
+        return () =&gt; {
+            subscription?.remove();
+        };
+    }, [subscription]);
+
+    const setSlowInterval = () =&gt; Barometer.setUpdateInterval(1000);
+    const setFastInterval = () =&gt; Barometer.setUpdateInterval(500);
+
+    const startBarometer = () =&gt; {
+        if (!available) {
+            Alert.alert("Sensor Barometer tidak tersedia di perangkat ini");
+            return;
+        }
+
+        const sub = Barometer.addListener(data =&gt; {
+            setData(data);
+        });
+        setSubscription(sub);
+    };
+
+    const stopBarometer = () =&gt; {
+        subscription?.remove();
+        setSubscription(null);
+    };
+
+    return (
+        &lt;View style={{ flex: 1, justifyContent: "center", alignItems: "center", padding: 20 }}&gt;
+            &lt;Text style={{ fontSize: 18, marginBottom: 10 }}&gt;Barometer Example&lt;/Text&gt;
+
+            &lt;Text&gt;Pressure: {pressure.toFixed(2)} hPa&lt;/Text&gt;
+            {Platform.OS === "ios" &amp;&amp; relativeAltitude != null &amp;&amp; (
+                &lt;Text&gt;Relative Altitude: {relativeAltitude.toFixed(2)} m&lt;/Text&gt;
+            )}
+
+            &lt;View style={{ flexDirection: "row", marginTop: 20 }}&gt;
+                &lt;Button title="Start" onPress={startBarometer} /&gt;
+                &lt;View style={{ width: 20 }} /&gt;
+                &lt;Button title="Stop" onPress={stopBarometer} /&gt;
+            &lt;/View&gt;
+
+            &lt;Text style={{ marginTop: 20 }}&gt;
+                Sensor tersedia: {available === null ? "Memeriksa..." : available ? "Ya" : "Tidak"}
+            &lt;/Text&gt;
+
+            &lt;View style={{ flexDirection: "row", gap: 10, marginTop: 14 }}&gt;
+                &lt;TouchableOpacity
+                    onPress={setSlowInterval}
+                    style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "#eee", padding: 10 }}
+                &gt;
+                    &lt;Text&gt;Slow&lt;/Text&gt;
+                &lt;/TouchableOpacity&gt;
+                &lt;TouchableOpacity
+                    onPress={setFastInterval}
+                    style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "#eee", padding: 10 }}
+                &gt;
+                    &lt;Text&gt;Fast&lt;/Text&gt;
+                &lt;/TouchableOpacity&gt;
+            &lt;/View&gt;
+        &lt;/View&gt;
+    );
+}
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="pedometer"><a class="header" href="#pedometer">Pedometer</a></h1>
+<p>Sensor pedometer memungkinkan aplikasi untuk memantau jumlah langkah pengguna menggunakan sensor bawaan perangkat (Android) atau layanan Core Motion (iOS).</p>
+<h2 id="instalasi-14"><a class="header" href="#instalasi-14">Instalasi</a></h2>
+<p>Expo:</p>
+<pre><code class="language-bash">npx expo install expo-sensors
+</code></pre>
+<p>React Native CLI:</p>
+<pre><code class="language-bash">npm install expo-sensors
+cd ios &amp;&amp; pod install &amp;&amp; cd ..
+</code></pre>
+<h2 id="api-dasar-pedometer"><a class="header" href="#api-dasar-pedometer">API Dasar Pedometer</a></h2>
+<div class="table-wrapper"><table><thead><tr><th>Method / Fungsi</th><th>Deskripsi</th></tr></thead><tbody>
+<tr><td><code>Pedometer.isAvailableAsync()</code></td><td>Mengecek apakah pedometer tersedia di perangkat. Mengembalikan <code>Promise&lt;boolean&gt;</code>.</td></tr>
+<tr><td><code>Pedometer.getPermissionsAsync()</code> / <code>Pedometer.requestPermissionsAsync()</code></td><td>Memeriksa atau meminta izin akses pedometer (jika diperlukan).</td></tr>
+<tr><td><code>Pedometer.getStepCountAsync(start: Date, end: Date)</code></td><td>(iOS) Mengambil jumlah langkah antara dua tanggal. Mengembalikan <code>Promise&lt;PedometerResult&gt;</code> yang berisi <code>{ steps: number }</code>.</td></tr>
+<tr><td><code>Pedometer.watchStepCount(callback)</code></td><td>Berlangganan update langkah secara real-time. Callback menerima <code>PedometerResult</code>. Mengembalikan <code>Subscription</code> dengan <code>.remove()</code> untuk berhenti.</td></tr>
+</tbody></table>
+</div>
+<p>Catatan: getStepCountAsync hanya tersedia di iOS. Pada Android cukup gunakan <code>watchStepCount</code>.</p>
+<h2 id="contoh-penggunaan-pedometer"><a class="header" href="#contoh-penggunaan-pedometer">Contoh Penggunaan Pedometer</a></h2>
+<pre><code class="language-tsx">import { useEffect, useState } from "react";
+import { View, Text, Button, Alert, Platform } from "react-native";
+import { Pedometer } from "expo-sensors";
+
+export default function PedometerContainer() {
+    const [isAvailable, setIsAvailable] = useState&lt;boolean | null&gt;(null);
+    const [currentSteps, setCurrentSteps] = useState(0);
+    const [pastSteps, setPastSteps] = useState&lt;number | null&gt;(null);
+    const [subscription, setSubscription] = useState&lt;any&gt;(null);
+
+    useEffect(() =&gt; {
+        async function init() {
+            const perm = await Pedometer.getPermissionsAsync();
+            console.log("Permission status:", perm);
+
+
+            // cek ketersediaan sensor
+            const available = await Pedometer.isAvailableAsync();
+            setIsAvailable(available);
+
+            if (!available) {
+                Alert.alert("Pedometer tidak tersedia di perangkat ini");
+                return;
+            }
+
+            // cek permission
+            const { status } = await Pedometer.requestPermissionsAsync();
+
+            if (status !== "granted") {
+                Alert.alert("Izin pedometer ditolak");
+                return;
+            }
+
+            // Ambil histori langkah hanya jika iOS
+            if (Platform.OS === "ios") {
+                const end = new Date();
+                const start = new Date();
+                start.setDate(end.getDate() - 1); // 24 jam lalu
+
+                try {
+                    const result = await Pedometer.getStepCountAsync(start, end);
+                    setPastSteps(result.steps);
+                } catch (e) {
+                    console.warn("Error getStepCountAsync:", e);
+                    setPastSteps(null);
+                }
+            } else {
+                setPastSteps(null); // Android tidak mendukung
+            }
+
+            // subscribe real-time
+            const sub = Pedometer.watchStepCount((result) =&gt; {
+                setCurrentSteps(result.steps);
+            });
+
+            setSubscription(sub);
+        }
+
+        init();
+
+        return () =&gt; {
+            subscription?.remove();
+        };
+    }, []);
+
+    return (
+        &lt;View style={{ flex: 1, justifyContent: "center", alignItems: "center", padding: 20 }}&gt;
+            &lt;Text style={{ fontSize: 18, fontWeight: "bold", marginBottom: 10 }}&gt;
+                Pedometer Example
+            &lt;/Text&gt;
+
+            &lt;Text&gt;Pedometer tersedia: {isAvailable ? "Ya" : "Tidak"}&lt;/Text&gt;
+
+            &lt;Text style={{ marginTop: 20, fontSize: 16 }}&gt;
+                Langkah (real-time): {currentSteps}
+            &lt;/Text&gt;
+
+            &lt;Text style={{ marginTop: 10, fontSize: 16 }}&gt;
+                Langkah 24 jam terakhir:
+                {Platform.OS === "ios"
+                    ? pastSteps ?? "Memuat..."
+                    : "Tidak didukung di Android"}
+            &lt;/Text&gt;
+
+            &lt;Button
+                title="Reset Real-Time Counter"
+                onPress={() =&gt; setCurrentSteps(0)}
+            /&gt;
+        &lt;/View&gt;
+    );
+}
+</code></pre>
+<p>Saat mengembangkan aplikasi React Native menggunakan Expo, sensor pedometer tidak berfungsi ketika dijalankan melalui Expo Go di Android. Sedangkan pada iOS, sensor pedometer dapat berfungsi melalui Expo Go.</p>
+<p>Agar sensor pedometer berjalan di Android, aplikasi harus memiliki permission Activity Recognition dan di-build menggunakan Dev Client atau APK, bukan Expo Go.
+Tambahkan ke <code>app.json</code>:</p>
+<pre><code class="language-bash">{
+  "expo": {
+    "android": {
+      "permissions": ["android.permission.ACTIVITY_RECOGNITION"]
+    },
+    "plugins": [
+      [
+        "expo-sensors",
+        {
+          "motionPermission": "Aplikasi membutuhkan akses untuk menghitung langkah."
+        }
+      ]
+    ]
+  }
+}
+</code></pre>
+<p>Hubungkan perangkat fisik Android lalu lakukan rebuild:</p>
+<pre><code class="language-bash">npx expo run:android
+</code></pre>
+<p>Atau build menggunakan Dev Client</p>
+<pre><code class="language-bash">npx expo prebuild
+npx expo run:android
 </code></pre>
 
                     </main>

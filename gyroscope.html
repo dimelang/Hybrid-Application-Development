@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Local Storage - Hybrid Application Development</title>
+        <title>Gyroscope - Hybrid Application Development</title>
 
 
         <!-- Custom HTML head -->
@@ -175,32 +175,158 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="local-storage"><a class="header" href="#local-storage">Local Storage</a></h1>
-<p>Banyak aplikasi membutuhkan mekanisme untuk menyimpan data pada perangkat pengguna bahkan setelah aplikasi ditutup atau perangkat di-<em>restart</em>. Tidak seperti <code>state</code> atau <code>context</code> yang hanya bertahan selama aplikasi berjalan, local storage memungkinkan data disimpan secara persisten.</p>
-<p>Contoh penggunaan local storage dalam aplikasi mobile diantaranya:</p>
+                        <h1 id="gyroscope"><a class="header" href="#gyroscope">Gyroscope</a></h1>
+<p>Merupakan sensor yang dapat mengukur kecepatan rotasi perangkat pada tiga sumbu (x, y, z) dalam satuan radian per detik. Sensor ini berbeda dari accelerometer yang mengukur percepatan linear, gyroscope lebih fokus pada rotasi. Beberapa penggunaan umum gyroscope:</p>
 <ul>
-<li>menyimpan status login pengguna (misalnya token atau flag “sudah login”),</li>
-<li>menyimpan preferensi atau pengaturan aplikasi (seperti tema dan bahasa),</li>
-<li>menyimpan draft data atau cache,</li>
-<li>menyimpan daftar item sederhana seperti riwayat pencarian, keranjang belanja, atau tema aplikasi.</li>
+<li>Mengukur putaran perangkat dalam game (contoh: mengendalikan karakter atau kamera).</li>
+<li>AR/VR tracking untuk gerakan kepala</li>
+<li>Gesture berbasis rotasi (misalnya memutar ponsel untuk undo/redo)</li>
+<li>Meningkatkan akurasi orientasi perangkat saat digabungkan dengan accelerometer</li>
 </ul>
-<p>React Native menyediakan beberapa library untuk penyimpanan data lokal, di antaranya:</p>
-<ol>
-<li><a href="asynchronous-storage.html"><strong>AsyncStorage</strong></a>: penyimpanan key-value sederhana, cocok untuk data kecil seperti token, settings, atau flag boolean.</li>
-<li><strong><a href="secure-store.html">SecureStore</a></strong>: menyimpan data sensitif seperti token atau password dengan enkripsi.</li>
-<li><strong><a href="mmkv.html">MMKV</a></strong>: solusi key-value storage modern yang sangat cepat dengan performa tinggi.</li>
-<li><strong><a href="sqlite.html">SQLite</a></strong>: cocok untuk penyimpanan data kompleks seperti tabel, relasi, atau jumlah data besar.</li>
-</ol>
+<h2 id="instalasi"><a class="header" href="#instalasi">Instalasi</a></h2>
+<p>Expo:</p>
+<pre><code class="language-bash">npx expo install expo-sensors
+</code></pre>
+<p>React Native CLI:</p>
+<pre><code class="language-bash">npm install expo-sensors
+cd ios &amp;&amp; pod install &amp;&amp; cd ..
+</code></pre>
+<h2 id="api-dasar-gyroscope"><a class="header" href="#api-dasar-gyroscope">API Dasar Gyroscope</a></h2>
+<div class="table-wrapper"><table><thead><tr><th>Method</th><th>Deskripsi</th></tr></thead><tbody>
+<tr><td><code>addListener(listener)</code></td><td>Mendaftarkan <strong>listener</strong> untuk menerima data rotasi dari gyroscope. Listener memanggil fungsi dengan parameter <code>GyroscopeMeasurement</code>. Mengembalikan objek <code>Subscription</code> dengan metode <code>.remove()</code>.</td></tr>
+<tr><td><code>removeSubscription(subscription)</code></td><td>Menghapus listener tertentu dari gyroscope.</td></tr>
+<tr><td><code>removeAllListeners()</code></td><td>Menghapus semua listener yang aktif. Berguna saat reset sensor atau unmount.</td></tr>
+<tr><td><code>setUpdateInterval(intervalMs: number)</code></td><td>Menentukan seberapa sering data sensor diperbarui (dalam milidetik).</td></tr>
+<tr><td><code>isAvailableAsync()</code></td><td>Mengecek apakah sensor gyroscope tersedia pada perangkat. Mengembalikan <code>Promise&lt;boolean&gt;</code>.</td></tr>
+<tr><td><code>requestPermissionsAsync()</code> &amp; <code>getPermissionsAsync()</code></td><td>Memeriksa dan meminta izin akses sensor. Dibutuhkan pada platform tertentu.</td></tr>
+<tr><td><code>getListenerCount()</code></td><td>Mengembalikan jumlah listener aktif saat ini.</td></tr>
+<tr><td><code>hasListeners()</code></td><td>Menentukan apakah ada listener yang sedang aktif.</td></tr>
+</tbody></table>
+</div>
+<h2 id="tipe-data--gyroscopemeasurement"><a class="header" href="#tipe-data--gyroscopemeasurement">Tipe Data — GyroscopeMeasurement</a></h2>
+<p>Listener gyroscope menerima data berupa objek:</p>
+<ul>
+<li>x: number — kecepatan rotasi pada sumbu X (radian/detik)</li>
+<li>y: number — kecepatan rotasi pada sumbu Y (radian/detik)</li>
+<li>z: number — kecepatan rotasi pada sumbu Z (radian/detik)</li>
+<li>timestamp: number — waktu pengambilan data (detik, relatif)</li>
+</ul>
+<h2 id="contoh-penggunaan-gyroscope"><a class="header" href="#contoh-penggunaan-gyroscope">Contoh Penggunaan Gyroscope</a></h2>
+<pre><code class="language-tsx">import { useEffect, useState } from "react";
+import { View, Text, Button, Alert, TouchableOpacity } from "react-native";
+import { Gyroscope } from "expo-sensors";
+
+export default function GyroscopeContainer() {
+    const [{ x, y, z }, setData] = useState({
+        x: 0,
+        y: 0,
+        z: 0
+    });
+    const [subscription, setSubscription] = useState&lt;any&gt;(null);
+    const [available, setAvailable] = useState&lt;boolean | null&gt;(null);
+
+    useEffect(() =&gt; {
+        const checkAvailability = async () =&gt; {
+            const isAvailable = await Gyroscope.isAvailableAsync();
+            setAvailable(isAvailable);
+        };
+
+        checkAvailability();
+
+        // cleanup listener saat komponen unmount
+        return () =&gt; {
+            subscription?.remove();
+        };
+    }, [subscription]);
+
+    const setSlowInterval = () =&gt; Gyroscope.setUpdateInterval(1000);
+    const setFastInterval = () =&gt; Gyroscope.setUpdateInterval(16);
+
+    const startGyroscope = () =&gt; {
+        if (!available) {
+            Alert.alert("Sensor Gyroscope tidak tersedia di perangkat ini");
+            return;
+        }
+
+        const sub = Gyroscope.addListener(gyroData =&gt; {
+            setData(gyroData);
+        });
+
+        setSubscription(sub);
+    };
+
+    const stopGyroscope = () =&gt; {
+        subscription?.remove();
+        setSubscription(null);
+    };
+
+    return (
+        &lt;View style={{ flex: 1, justifyContent: "center", alignItems: "center", padding: 20 }}&gt;
+            &lt;Text style={{ fontSize: 18, marginBottom: 10 }}&gt;Gyroscope Example&lt;/Text&gt;
+
+            &lt;Text style={{ marginTop: 20 }}&gt;
+                Sensor tersedia: {available === null ? "Memeriksa..." : available ? "Ya" : "Tidak"}
+            &lt;/Text&gt;
+
+            &lt;Text&gt;X: {x.toFixed(2)}&lt;/Text&gt;
+            &lt;Text&gt;Y: {y.toFixed(2)}&lt;/Text&gt;
+            &lt;Text&gt;Z: {z.toFixed(2)}&lt;/Text&gt;
+
+            &lt;View style={{ flexDirection: "row", marginTop: 20 }}&gt;
+                &lt;Button title="Start" onPress={startGyroscope} /&gt;
+                &lt;View style={{ width: 20 }} /&gt;
+                &lt;Button title="Stop" onPress={stopGyroscope} /&gt;
+            &lt;/View&gt;
+
+            &lt;View style={{ flexDirection: "row", gap: 10, marginTop: 14 }}&gt;
+                &lt;TouchableOpacity
+                    onPress={setSlowInterval}
+                    style={{
+                        flex: 1,
+                        justifyContent: "center",
+                        alignItems: "center",
+                        backgroundColor: "#eee",
+                        padding: 10
+                    }}
+                &gt;
+                    &lt;Text&gt;Slow&lt;/Text&gt;
+                &lt;/TouchableOpacity&gt;
+
+                &lt;TouchableOpacity
+                    onPress={setFastInterval}
+                    style={{
+                        flex: 1,
+                        justifyContent: "center",
+                        alignItems: "center",
+                        backgroundColor: "#eee",
+                        padding: 10
+                    }}
+                &gt;
+                    &lt;Text&gt;Fast&lt;/Text&gt;
+                &lt;/TouchableOpacity&gt;
+            &lt;/View&gt;
+        &lt;/View&gt;
+    );
+}
+</code></pre>
+<h2 id="alur-penggunaan-api"><a class="header" href="#alur-penggunaan-api">Alur Penggunaan API</a></h2>
+<ul>
+<li>Panggil <code>Gyroscope.isAvailableAsync()</code> untuk memastikan sensor tersedia.</li>
+<li>(Jika diperlukan) panggil <code>Gyroscope.requestPermissionsAsync()</code> untuk mendapatkan izin.</li>
+<li>Atur interval update menggunakan <code>Gyroscope.setUpdateInterval(...)</code>.</li>
+<li>Daftarkan listener menggunakan <code>Gyroscope.addListener(...)</code>.</li>
+<li>Ketika komponen di-unmount atau sensor tidak diperlukan, panggil <code>.remove()</code> atau <code>Gyroscope.removeAllListeners()</code>.</li>
+</ul>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="reanimated-api.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="accelerometer.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next prefetch" href="asynchronous-storage.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="barometer.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -210,11 +336,11 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="reanimated-api.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="accelerometer.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next prefetch" href="asynchronous-storage.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="barometer.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>
