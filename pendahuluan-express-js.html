@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Pedometer - Hybrid Application Development</title>
+        <title>ExpressJs - Hybrid Application Development</title>
 
 
         <!-- Custom HTML head -->
@@ -175,154 +175,40 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="pedometer"><a class="header" href="#pedometer">Pedometer</a></h1>
-<p>Sensor pedometer memungkinkan aplikasi untuk memantau jumlah langkah pengguna menggunakan sensor bawaan perangkat (Android) atau layanan Core Motion (iOS).</p>
-<h2 id="instalasi"><a class="header" href="#instalasi">Instalasi</a></h2>
-<p>Expo:</p>
-<pre><code class="language-bash">npx expo install expo-sensors
-</code></pre>
-<p>React Native CLI:</p>
-<pre><code class="language-bash">npm install expo-sensors
-cd ios &amp;&amp; pod install &amp;&amp; cd ..
-</code></pre>
-<h2 id="api-dasar-pedometer"><a class="header" href="#api-dasar-pedometer">API Dasar Pedometer</a></h2>
-<div class="table-wrapper"><table><thead><tr><th>Method / Fungsi</th><th>Deskripsi</th></tr></thead><tbody>
-<tr><td><code>Pedometer.isAvailableAsync()</code></td><td>Mengecek apakah pedometer tersedia di perangkat. Mengembalikan <code>Promise&lt;boolean&gt;</code>.</td></tr>
-<tr><td><code>Pedometer.getPermissionsAsync()</code> / <code>Pedometer.requestPermissionsAsync()</code></td><td>Memeriksa atau meminta izin akses pedometer (jika diperlukan).</td></tr>
-<tr><td><code>Pedometer.getStepCountAsync(start: Date, end: Date)</code></td><td>(iOS) Mengambil jumlah langkah antara dua tanggal. Mengembalikan <code>Promise&lt;PedometerResult&gt;</code> yang berisi <code>{ steps: number }</code>.</td></tr>
-<tr><td><code>Pedometer.watchStepCount(callback)</code></td><td>Berlangganan update langkah secara real-time. Callback menerima <code>PedometerResult</code>. Mengembalikan <code>Subscription</code> dengan <code>.remove()</code> untuk berhenti.</td></tr>
-</tbody></table>
-</div>
-<p>Catatan: getStepCountAsync hanya tersedia di iOS. Pada Android cukup gunakan <code>watchStepCount</code>.</p>
-<h2 id="contoh-penggunaan-pedometer"><a class="header" href="#contoh-penggunaan-pedometer">Contoh Penggunaan Pedometer</a></h2>
-<pre><code class="language-tsx">import { useEffect, useState } from "react";
-import { View, Text, Button, Alert, Platform } from "react-native";
-import { Pedometer } from "expo-sensors";
-
-export default function PedometerContainer() {
-    const [isAvailable, setIsAvailable] = useState&lt;boolean | null&gt;(null);
-    const [currentSteps, setCurrentSteps] = useState(0);
-    const [pastSteps, setPastSteps] = useState&lt;number | null&gt;(null);
-    const [subscription, setSubscription] = useState&lt;any&gt;(null);
-
-    useEffect(() =&gt; {
-        async function init() {
-            const perm = await Pedometer.getPermissionsAsync();
-            console.log("Permission status:", perm);
-
-
-            // cek ketersediaan sensor
-            const available = await Pedometer.isAvailableAsync();
-            setIsAvailable(available);
-
-            if (!available) {
-                Alert.alert("Pedometer tidak tersedia di perangkat ini");
-                return;
-            }
-
-            // cek permission
-            const { status } = await Pedometer.requestPermissionsAsync();
-
-            if (status !== "granted") {
-                Alert.alert("Izin pedometer ditolak");
-                return;
-            }
-
-            // Ambil histori langkah hanya jika iOS
-            if (Platform.OS === "ios") {
-                const end = new Date();
-                const start = new Date();
-                start.setDate(end.getDate() - 1); // 24 jam lalu
-
-                try {
-                    const result = await Pedometer.getStepCountAsync(start, end);
-                    setPastSteps(result.steps);
-                } catch (e) {
-                    console.warn("Error getStepCountAsync:", e);
-                    setPastSteps(null);
-                }
-            } else {
-                setPastSteps(null); // Android tidak mendukung
-            }
-
-            // subscribe real-time
-            const sub = Pedometer.watchStepCount((result) =&gt; {
-                setCurrentSteps(result.steps);
-            });
-
-            setSubscription(sub);
-        }
-
-        init();
-
-        return () =&gt; {
-            subscription?.remove();
-        };
-    }, []);
-
-    return (
-        &lt;View style={{ flex: 1, justifyContent: "center", alignItems: "center", padding: 20 }}&gt;
-            &lt;Text style={{ fontSize: 18, fontWeight: "bold", marginBottom: 10 }}&gt;
-                Pedometer Example
-            &lt;/Text&gt;
-
-            &lt;Text&gt;Pedometer tersedia: {isAvailable ? "Ya" : "Tidak"}&lt;/Text&gt;
-
-            &lt;Text style={{ marginTop: 20, fontSize: 16 }}&gt;
-                Langkah (real-time): {currentSteps}
-            &lt;/Text&gt;
-
-            &lt;Text style={{ marginTop: 10, fontSize: 16 }}&gt;
-                Langkah 24 jam terakhir:
-                {Platform.OS === "ios"
-                    ? pastSteps ?? "Memuat..."
-                    : "Tidak didukung di Android"}
-            &lt;/Text&gt;
-
-            &lt;Button
-                title="Reset Real-Time Counter"
-                onPress={() =&gt; setCurrentSteps(0)}
-            /&gt;
-        &lt;/View&gt;
-    );
-}
-</code></pre>
-<p>Saat mengembangkan aplikasi React Native menggunakan Expo, sensor pedometer tidak berfungsi ketika dijalankan melalui Expo Go di Android. Sedangkan pada iOS, sensor pedometer dapat berfungsi melalui Expo Go.</p>
-<p>Agar sensor pedometer berjalan di Android, aplikasi harus memiliki permission Activity Recognition dan di-build menggunakan Dev Client atau APK, bukan Expo Go.
-Tambahkan ke <code>app.json</code>:</p>
-<pre><code class="language-bash">{
-  "expo": {
-    "android": {
-      "permissions": ["android.permission.ACTIVITY_RECOGNITION"]
-    },
-    "plugins": [
-      [
-        "expo-sensors",
-        {
-          "motionPermission": "Aplikasi membutuhkan akses untuk menghitung langkah."
-        }
-      ]
-    ]
-  }
-}
-</code></pre>
-<p>Hubungkan perangkat fisik Android lalu lakukan rebuild:</p>
-<pre><code class="language-bash">npx expo run:android
-</code></pre>
-<p>Atau build menggunakan Dev Client</p>
-<pre><code class="language-bash">npx expo prebuild
-npx expo run:android
-</code></pre>
+                        <h1 id="expressjs"><a class="header" href="#expressjs">ExpressJs</a></h1>
+<p><code>ExpressJs</code> merupakan framework backend berbasis <code>NodeJs</code> yang ringan, cepat, dan sangat populer. Beberapa alasan Express sering dipilih sebagai backend aplikasi React Native:</p>
+<ol>
+<li>
+<p><strong>Bahasa yang sama</strong></p>
+<p>Backend dan frontend sama-sama menggunakan JavaScript/TypeScript → lebih mudah dipelajari.</p>
+</li>
+<li>
+<p><strong>Ringan dan fleksibel</strong></p>
+<p>Tidak terlalu opiniated sehingga cocok untuk aplikasi kecil hingga besar.</p>
+</li>
+<li>
+<p><strong>Ekosistem luas</strong></p>
+<p>Banyak library untuk autentikasi, database, upload file, logging, dsb.</p>
+</li>
+<li>
+<p><strong>Mudah diintegrasikan dengan mobile apps</strong></p>
+<p>API yang dibangun dengan Express sangat mudah dipanggil dari React Native menggunakan <code>fetch</code> atau <code>axios</code>.</p>
+</li>
+<li>
+<p><strong>Digunakan di industri</strong></p>
+<p>Banyak perusahaan menggunakan stack React Native + Express.js + MongoDB/PostgreSQL.</p>
+</li>
+</ol>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="barometer.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="pedometer.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next prefetch" href="pendahuluan-express-js.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="express-js-setup-environment.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -332,11 +218,11 @@ npx expo run:android
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="barometer.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="pedometer.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next prefetch" href="pendahuluan-express-js.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="express-js-setup-environment.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>
