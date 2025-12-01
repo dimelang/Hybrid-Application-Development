@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Pendahuluan - Hybrid Application Development</title>
+        <title>Routing Dasar - Hybrid Application Development</title>
 
 
         <!-- Custom HTML head -->
@@ -175,86 +175,82 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="pendahuluan"><a class="header" href="#pendahuluan">Pendahuluan</a></h1>
-<h2 id="apa-itu-react-native"><a class="header" href="#apa-itu-react-native">Apa itu React Native?</a></h2>
-<p>React Native adalah <strong>framework open-source</strong> yang dikembangkan oleh <strong>Meta (Facebook)</strong> untuk membangun aplikasi mobile <strong>Android</strong> dan <strong>iOS</strong> menggunakan bahasa pemrograman <strong>JavaScript</strong> atau <strong>TypeScript</strong>.<br />
-Dengan React Native, developer dapat menulis satu basis kode dan menjalankannya di berbagai platform tanpa harus menulis kode terpisah untuk Android (Java/Kotlin) dan iOS (Objective-C/Swift).</p>
-<hr />
-<h2 id="mengapa-react-native"><a class="header" href="#mengapa-react-native">Mengapa React Native?</a></h2>
-<p>Beberapa alasan mengapa React Native populer di kalangan developer:</p>
-<ol>
-<li>
-<p><strong>Cross-Platform</strong><br />
-Satu kode bisa berjalan di Android dan iOS.</p>
-</li>
-<li>
-<p><strong>Performance Lebih Baik dibanding Hybrid Webview</strong><br />
-React Native menggunakan komponen native, bukan sekadar membungkus aplikasi web.</p>
-</li>
-<li>
-<p><strong>Hot Reloading &amp; Fast Refresh</strong><br />
-Mempercepat proses pengembangan karena perubahan kode bisa langsung dilihat tanpa build ulang penuh.</p>
-</li>
-<li>
-<p><strong>Ekosistem &amp; Komunitas Besar</strong><br />
-Banyak library, tutorial, dan komunitas aktif.</p>
-</li>
-<li>
-<p><strong>Dukungan TypeScript</strong><br />
-Menjadikan aplikasi lebih aman dan maintainable.</p>
-</li>
-</ol>
-<hr />
-<h2 id="arsitektur-dasar-react-native"><a class="header" href="#arsitektur-dasar-react-native">Arsitektur Dasar React Native</a></h2>
-<p>Secara garis besar, arsitektur React Native terdiri dari:</p>
+                        <h1 id="routing-dasar"><a class="header" href="#routing-dasar">Routing Dasar</a></h1>
+<p>Route dasar adalah titik awal untuk memahami bagaimana Express menangani sebuah request dari client. Pada route dasar, kita mendefinisikan HTTP method, path, dan handler (fungsi yang dijalankan saat route dipanggil).</p>
+<h2 id="apa-itu-route"><a class="header" href="#apa-itu-route">Apa itu Route?</a></h2>
+<p>Route adalah kombinasi dari:</p>
 <ul>
-<li><strong>JavaScript Layer</strong> → tempat kode aplikasi ditulis (JS/TS).</li>
-<li><strong>Bridge</strong> → penghubung antara JavaScript dan kode native.</li>
-<li><strong>Native Layer</strong> → komponen asli Android/iOS (misalnya <code>View</code>, <code>Text</code>, <code>Button</code>).</li>
+<li>HTTP method → GET, POST, PUT, PATCH, DELETE</li>
+<li>Path (URL) → misalnya /users, /products/:id</li>
+<li>Handler (callback) → fungsi yang menangani permintaan dan memberikan respons</li>
 </ul>
-<hr />
-<h2 id="perbedaan-react-native-dengan-framework-lain"><a class="header" href="#perbedaan-react-native-dengan-framework-lain">Perbedaan React Native dengan Framework Lain</a></h2>
-<ul>
-<li><strong>Flutter</strong> → menggunakan bahasa Dart dan rendering engine sendiri.</li>
-<li><strong>Ionic / Cordova</strong> → berbasis WebView.</li>
-<li><strong>React Native</strong> → menggunakan komponen asli (native component) sehingga performa lebih dekat ke aplikasi native.</li>
-</ul>
-<hr />
-<h2 id="kebutuhan-backend-untuk-aplikasi-mobile"><a class="header" href="#kebutuhan-backend-untuk-aplikasi-mobile">Kebutuhan Backend untuk Aplikasi Mobile</a></h2>
-<p>Aplikasi mobile modern biasanya membutuhkan backend untuk menangani:</p>
-<ol>
-<li><strong>Autentikasi pengguna</strong>
-Login, register, refresh token, otorisasi.</li>
-<li><strong>Penyimpanan data</strong>
-Menyimpan data pengguna, transaksi, preferensi, dsb.</li>
-<li><strong>Sinkronisasi antar perangkat</strong>
-Contoh: data TODO yang sama muncul di Android atau iOS.</li>
-<li><strong>Pengolahan data di server</strong>
-Validasi, filtering, aggregasi, perhitungan, dan business logic lainnya.</li>
-<li><strong>Integrasi dengan layanan eksternal</strong>
-Pembayaran, notifikasi, cloud storage, dan sebagainya.</li>
-</ol>
-<p>Untuk memenuhi kebutuhan ini, kita memerlukan backend API yang cepat, fleksibel, dan mudah dipelajari.</p>
-<p>Express.js adalah framework backend Node.js yang ringan, cepat, dan sangat populer. Beberapa alasan Express sering dipilih sebagai backend aplikasi React Native:</p>
-<ol>
-<li><strong>Bahasa yang sama</strong>
-Backend dan frontend sama-sama menggunakan JavaScript/TypeScript → lebih mudah dipelajari.</li>
-<li><strong>Ringan dan fleksibel</strong>
-Tidak terlalu opiniated sehingga cocok untuk aplikasi kecil hingga besar.</li>
-<li><strong>Ekosistem luas</strong>
-Banyak library untuk autentikasi, database, upload file, logging, dsb.</li>
-<li><strong>Mudah diintegrasikan dengan mobile apps</strong>
-API yang dibangun dengan Express sangat mudah dipanggil dari React Native menggunakan fetch atau axios.</li>
-<li><strong>Digunakan di industri</strong>
-Banyak perusahaan menggunakan stack React Native + Express.js + MongoDB/PostgreSQL.</li>
-</ol>
+<h2 id="membuat-route"><a class="header" href="#membuat-route">Membuat Route</a></h2>
+<h3 id="get"><a class="header" href="#get"><code>GET</code></a></h3>
+<p>Route GET digunakan untuk mengambil data atau menampilkan informasi.</p>
+<pre><code class="language-js">app.get('/hello', (req, res) =&gt; {
+  res.send('Ini adalah route GET!');
+});
+</code></pre>
+<p>Jika kita akses http://localhost:3000/hello, teks tersebut akan tampil di browser.</p>
+<h3 id="post"><a class="header" href="#post"><code>POST</code></a></h3>
+<p>Route POST biasanya digunakan untuk mengirimkan data dari client ke server.</p>
+<pre><code class="language-js">app.post('/submit', (req, res) =&gt; {
+  res.send('Data berhasil diterima!');
+});
+</code></pre>
+<p>Catatan:
+Jika menggunakan body JSON, pastikan app menggunakan middleware:</p>
+<pre><code class="language-js">app.use(express.json());
+</code></pre>
+<h3 id="put"><a class="header" href="#put"><code>PUT</code></a></h3>
+<p>Digunakan untuk memperbarui seluruh data.</p>
+<pre><code class="language-js">app.put('/update', (req, res) =&gt; {
+  res.send('Data berhasil diperbarui!');
+});
+</code></pre>
+<h3 id="delete"><a class="header" href="#delete"><code>DELETE</code></a></h3>
+<p>Digunakan untuk menghapus data.</p>
+<pre><code class="language-js">app.delete('/delete', (req, res) =&gt; {
+  res.send('Data berhasil dihapus!');
+});
+</code></pre>
+<h3 id="mengirim-response-json"><a class="header" href="#mengirim-response-json">Mengirim Response JSON</a></h3>
+<p>Selain <code>res.send()</code>, Express juga mendukung <code>res.json()</code> untuk mengirim data format JSON.</p>
+<pre><code class="language-js">app.get('/json', (req, res) =&gt; {
+  res.json({
+    message: 'Hello dari JSON!',
+    status: 'success'
+  });
+});
+</code></pre>
+<h3 id="route-dasar-dengan-status-code"><a class="header" href="#route-dasar-dengan-status-code">Route Dasar dengan Status Code</a></h3>
+<p>Mengirimkan response dengan status tertentu</p>
+<pre><code class="language-js">app.get('/status', (req, res) =&gt; {
+  res.status(201).json({ message: 'Created!' });
+});
+</code></pre>
+<h3 id="menangani-semua-http-method"><a class="header" href="#menangani-semua-http-method">Menangani Semua HTTP Method</a></h3>
+<p>Express dapat menerima semua HTTP method menggunakan <code>all()</code></p>
+<pre><code class="language-js">app.all('/all', (req, res) =&gt; {
+  res.send('Route ini menangani semua method');
+});
+</code></pre>
+<h3 id="menangani-semua-url-dengan"><a class="header" href="#menangani-semua-url-dengan">Menangani Semua URL dengan</a></h3>
+<p>Route wildcard (<code>*</code>) biasanya digunakan untuk 404</p>
+<pre><code class="language-js">app.all('*', (req, res) =&gt; {
+  res.status(404).send('Route tidak ditemukan');
+});
+</code></pre>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="routing-express-js.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
 
-                            <a rel="next prefetch" href="pengenalan-typescript.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="route-parameter-express-js.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -264,8 +260,11 @@ Banyak perusahaan menggunakan stack React Native + Express.js + MongoDB/PostgreS
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="routing-express-js.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
 
-                    <a rel="next prefetch" href="pengenalan-typescript.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="route-parameter-express-js.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>
