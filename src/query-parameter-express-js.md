@@ -1,79 +1,92 @@
 # Query Parameters
 
 Query Parameters adalah nilai yang dikirimkan melalui URL dengan format
-```bash
-?key=value
+
+```yaml
+url?key_1=value_1&key_2=value_2
 ```
 
 Query parameter **tidak berada di path**, melainkan berada setelah tanda tanya `?`, dan dapat memiliki banyak pasangan `key=value` yang dipisahkan oleh `&`.
 
 Contoh URL
-```bash
+
+```yaml
 /search?keyword=music&limit=10
 ```
 
 Pada `ExpressJs`, query parameters dapat diakses menggunakan `req.query`
 
 ### Contoh Query Parameters
+
 ```js
-app.get('/search', (req, res) => {
+app.get("/search", (req, res) => {
   const { keyword, limit } = req.query;
   res.send(`Mencari: ${keyword}, batas: ${limit}`);
 });
 ```
 
 Jika diakses
+
 ```yaml
 /search?keyword=express&limit=5
 ```
 
 Response
+
 ```bash
 Mencari: express, batas: 5
 ```
 
-
 ### Query Parameters untuk Filtering Data
+
 ```js
-app.get('/products', (req, res) => {
+app.get("/products", (req, res) => {
   const { category, sort, page } = req.query;
   res.json({
     message: "Filter produk",
     category,
     sort,
-    page
+    page,
   });
 });
 ```
+
 Jika diakses
+
 ```yaml
 /products?category=furniture&sort=asc&page=2
 ```
 
 Response
+
 ```json
 {
-    "message":"Filter produk",
-    "category":"furniture",
-    "sort":"asc",
-    "page":"2"
+  "message": "Filter produk",
+  "category": "furniture",
+  "sort": "asc",
+  "page": "2"
 }
 ```
 
 ### Menggabungkan Route & Query Parameters
+
 ```js
-app.get('/users/:id', (req, res) => {
+app.get("/users/:id", (req, res) => {
   res.json({
     id: req.params.id,
-    status: req.query.status
+    status: req.query.status,
   });
 });
 ```
+
 Jika diakses
+
 ```yaml
 /users/7?status=true
 ```
+
 Response
+
 ```json
 {
   "id": "7",
