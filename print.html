@@ -6347,65 +6347,70 @@ app.listen(PORT, () =&gt; {
 <h2 id="apa-itu-route"><a class="header" href="#apa-itu-route">Apa itu Route?</a></h2>
 <p>Route adalah kombinasi dari:</p>
 <ul>
-<li>HTTP method → GET, POST, PUT, PATCH, DELETE</li>
-<li>Path (URL) → misalnya /users, /products/:id</li>
+<li>HTTP method → <code>GET</code>, <code>POST</code>, <code>PUT</code>, <code>PATCH</code>, <code>DELETE</code></li>
+<li>Path (URL) → misalnya <code>/users</code>, <code>/products/:id</code></li>
 <li>Handler (callback) → fungsi yang menangani permintaan dan memberikan respons</li>
 </ul>
 <h2 id="membuat-route"><a class="header" href="#membuat-route">Membuat Route</a></h2>
 <h3 id="get"><a class="header" href="#get"><code>GET</code></a></h3>
 <p>Route GET digunakan untuk mengambil data atau menampilkan informasi.</p>
-<pre><code class="language-js">app.get('/hello', (req, res) =&gt; {
-  res.send('Ini adalah route GET!');
+<pre><code class="language-js">app.get("/hello", (req, res) =&gt; {
+  res.send("Ini adalah route GET!");
 });
 </code></pre>
-<p>Jika kita akses http://localhost:3000/hello, teks tersebut akan tampil di browser.</p>
+<p>Selain <code>res.send()</code>, Express juga mendukung <code>res.json()</code> untuk mengirim data format JSON.</p>
+<pre><code class="language-js">app.get("/json", (req, res) =&gt; {
+  res.json({
+    message: "Hello dari JSON!",
+    status: "success",
+  });
+});
+</code></pre>
+<p>Jika kita akses <a href="http://localhost:3000/hello">http://localhost:3000/hello</a>, teks tersebut akan tampil di browser.</p>
 <h3 id="post"><a class="header" href="#post"><code>POST</code></a></h3>
 <p>Route POST biasanya digunakan untuk mengirimkan data dari client ke server.</p>
-<pre><code class="language-js">app.post('/submit', (req, res) =&gt; {
-  res.send('Data berhasil diterima!');
+<pre><code class="language-js">app.post("/submit", (req, res) =&gt; {
+  res.send("Data berhasil diterima!");
 });
 </code></pre>
 <p>Catatan:
-Jika menggunakan body JSON, pastikan app menggunakan middleware:</p>
+Jika menggunakan body JSON, pastikan app menggunakan <a href="./middleware-expres-js.html">middleware</a>:</p>
 <pre><code class="language-js">app.use(express.json());
+
+app.post("/submit", (req, res) =&gt; {
+  console.log(req.body);
+  res.json(req.body);
+});
 </code></pre>
+<p><code>req.body</code> dapat digunakan untuk mengakses data yang dikrimkan</p>
 <h3 id="put"><a class="header" href="#put"><code>PUT</code></a></h3>
 <p>Digunakan untuk memperbarui seluruh data.</p>
-<pre><code class="language-js">app.put('/update', (req, res) =&gt; {
-  res.send('Data berhasil diperbarui!');
+<pre><code class="language-js">app.put("/update", (req, res) =&gt; {
+  res.send("Data berhasil diperbarui!");
 });
 </code></pre>
 <h3 id="delete"><a class="header" href="#delete"><code>DELETE</code></a></h3>
 <p>Digunakan untuk menghapus data.</p>
-<pre><code class="language-js">app.delete('/delete', (req, res) =&gt; {
-  res.send('Data berhasil dihapus!');
-});
-</code></pre>
-<h3 id="mengirim-response-json"><a class="header" href="#mengirim-response-json">Mengirim Response JSON</a></h3>
-<p>Selain <code>res.send()</code>, Express juga mendukung <code>res.json()</code> untuk mengirim data format JSON.</p>
-<pre><code class="language-js">app.get('/json', (req, res) =&gt; {
-  res.json({
-    message: 'Hello dari JSON!',
-    status: 'success'
-  });
+<pre><code class="language-js">app.delete("/delete", (req, res) =&gt; {
+  res.send("Data berhasil dihapus!");
 });
 </code></pre>
 <h3 id="route-dasar-dengan-status-code"><a class="header" href="#route-dasar-dengan-status-code">Route Dasar dengan Status Code</a></h3>
 <p>Mengirimkan response dengan status tertentu</p>
-<pre><code class="language-js">app.get('/status', (req, res) =&gt; {
-  res.status(201).json({ message: 'Created!' });
+<pre><code class="language-js">app.get("/status", (req, res) =&gt; {
+  res.status(201).json({ message: "Created!" });
 });
 </code></pre>
 <h3 id="menangani-semua-http-method"><a class="header" href="#menangani-semua-http-method">Menangani Semua HTTP Method</a></h3>
 <p>Express dapat menerima semua HTTP method menggunakan <code>all()</code></p>
-<pre><code class="language-js">app.all('/all', (req, res) =&gt; {
-  res.send('Route ini menangani semua method');
+<pre><code class="language-js">app.all("/all", (req, res) =&gt; {
+  res.send("Route ini menangani semua method");
 });
 </code></pre>
 <h3 id="menangani-semua-url-dengan"><a class="header" href="#menangani-semua-url-dengan">Menangani Semua URL dengan</a></h3>
 <p>Route wildcard (<code>*</code>) biasanya digunakan untuk 404</p>
-<pre><code class="language-js">app.all('*', (req, res) =&gt; {
-  res.status(404).send('Route tidak ditemukan');
+<pre><code class="language-js">app.all("*", (req, res) =&gt; {
+  res.status(404).send("Route tidak ditemukan");
 });
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="route-parameters"><a class="header" href="#route-parameters">Route Parameters</a></h1>
@@ -6417,7 +6422,7 @@ Jika menggunakan body JSON, pastikan app menggunakan middleware:</p>
 </ul>
 <p>Bagian yang berubah tersebut disebut parameter dan ditulis menggunakan tanda titik dua <code>:</code> pada definisi route.</p>
 <p>Contoh route parameter sederhana</p>
-<pre><code class="language-js">app.get('/users/:id', (req, res) =&gt; {
+<pre><code class="language-js">app.get("/users/:id", (req, res) =&gt; {
   const userId = req.params.id;
   res.send(`User dengan ID: ${userId}`);
 });
@@ -6428,29 +6433,29 @@ Jika menggunakan body JSON, pastikan app menggunakan middleware:</p>
 <li><code>req.params.id</code> untuk mengambil nilainya</li>
 </ul>
 <p>Jika URL yang dipanggil adalah</p>
-<pre><code class="language-bash">GET /users/50
+<pre><code class="language-yaml">/users/50
 </code></pre>
 <p>Maka response-nya</p>
 <pre><code class="language-bash">User dengan ID: 50
 </code></pre>
 <h2 id="menggunakan-banyak-parameter"><a class="header" href="#menggunakan-banyak-parameter">Menggunakan Banyak Parameter</a></h2>
 <p>Kita mendefinisikan lebih dari satu route parameter</p>
-<pre><code class="language-js">app.get('/products/:category/:id', (req, res) =&gt; {
+<pre><code class="language-js">app.get("/products/:category/:id", (req, res) =&gt; {
   const { category, id } = req.params;
 
   res.send(`Kategori: ${category}, Produk ID: ${id}`);
 });
 </code></pre>
 <p>Contoh pemanggilan</p>
-<pre><code class="language-bash">GET /products/electronics/123
+<pre><code class="language-yaml">/products/electronics/123
 </code></pre>
 <p>Response</p>
 <pre><code class="language-bash">Kategori: electronics, Produk ID: 123
 </code></pre>
 <h3 id="parameter-opsional"><a class="header" href="#parameter-opsional">Parameter Opsional</a></h3>
 <p>Dengan menambahkan tanda <code>?,</code> parameter menjadi opsional</p>
-<pre><code class="language-js">app.get('/hello/:name?', (req, res) =&gt; {
-  const name = req.params.name || 'Guest';
+<pre><code class="language-js">app.get("/hello/:name?", (req, res) =&gt; {
+  const name = req.params.name || "Guest";
   res.send(`Hello, ${name}!`);
 });
 </code></pre>
@@ -6467,15 +6472,15 @@ Jika menggunakan body JSON, pastikan app menggunakan middleware:</p>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="query-parameters"><a class="header" href="#query-parameters">Query Parameters</a></h1>
 <p>Query Parameters adalah nilai yang dikirimkan melalui URL dengan format</p>
-<pre><code class="language-bash">?key=value
+<pre><code class="language-yaml">url?key_1=value_1&amp;key_2=value_2
 </code></pre>
 <p>Query parameter <strong>tidak berada di path</strong>, melainkan berada setelah tanda tanya <code>?</code>, dan dapat memiliki banyak pasangan <code>key=value</code> yang dipisahkan oleh <code>&amp;</code>.</p>
 <p>Contoh URL</p>
-<pre><code class="language-bash">/search?keyword=music&amp;limit=10
+<pre><code class="language-yaml">/search?keyword=music&amp;limit=10
 </code></pre>
 <p>Pada <code>ExpressJs</code>, query parameters dapat diakses menggunakan <code>req.query</code></p>
 <h3 id="contoh-query-parameters"><a class="header" href="#contoh-query-parameters">Contoh Query Parameters</a></h3>
-<pre><code class="language-js">app.get('/search', (req, res) =&gt; {
+<pre><code class="language-js">app.get("/search", (req, res) =&gt; {
   const { keyword, limit } = req.query;
   res.send(`Mencari: ${keyword}, batas: ${limit}`);
 });
@@ -6487,13 +6492,13 @@ Jika menggunakan body JSON, pastikan app menggunakan middleware:</p>
 <pre><code class="language-bash">Mencari: express, batas: 5
 </code></pre>
 <h3 id="query-parameters-untuk-filtering-data"><a class="header" href="#query-parameters-untuk-filtering-data">Query Parameters untuk Filtering Data</a></h3>
-<pre><code class="language-js">app.get('/products', (req, res) =&gt; {
+<pre><code class="language-js">app.get("/products", (req, res) =&gt; {
   const { category, sort, page } = req.query;
   res.json({
     message: "Filter produk",
     category,
     sort,
-    page
+    page,
   });
 });
 </code></pre>
@@ -6502,17 +6507,17 @@ Jika menggunakan body JSON, pastikan app menggunakan middleware:</p>
 </code></pre>
 <p>Response</p>
 <pre><code class="language-json">{
-    "message":"Filter produk",
-    "category":"furniture",
-    "sort":"asc",
-    "page":"2"
+  "message": "Filter produk",
+  "category": "furniture",
+  "sort": "asc",
+  "page": "2"
 }
 </code></pre>
 <h3 id="menggabungkan-route--query-parameters"><a class="header" href="#menggabungkan-route--query-parameters">Menggabungkan Route &amp; Query Parameters</a></h3>
-<pre><code class="language-js">app.get('/users/:id', (req, res) =&gt; {
+<pre><code class="language-js">app.get("/users/:id", (req, res) =&gt; {
   res.json({
     id: req.params.id,
-    status: req.query.status
+    status: req.query.status,
   });
 });
 </code></pre>

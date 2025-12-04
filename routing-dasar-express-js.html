@@ -180,65 +180,70 @@
 <h2 id="apa-itu-route"><a class="header" href="#apa-itu-route">Apa itu Route?</a></h2>
 <p>Route adalah kombinasi dari:</p>
 <ul>
-<li>HTTP method → GET, POST, PUT, PATCH, DELETE</li>
-<li>Path (URL) → misalnya /users, /products/:id</li>
+<li>HTTP method → <code>GET</code>, <code>POST</code>, <code>PUT</code>, <code>PATCH</code>, <code>DELETE</code></li>
+<li>Path (URL) → misalnya <code>/users</code>, <code>/products/:id</code></li>
 <li>Handler (callback) → fungsi yang menangani permintaan dan memberikan respons</li>
 </ul>
 <h2 id="membuat-route"><a class="header" href="#membuat-route">Membuat Route</a></h2>
 <h3 id="get"><a class="header" href="#get"><code>GET</code></a></h3>
 <p>Route GET digunakan untuk mengambil data atau menampilkan informasi.</p>
-<pre><code class="language-js">app.get('/hello', (req, res) =&gt; {
-  res.send('Ini adalah route GET!');
+<pre><code class="language-js">app.get("/hello", (req, res) =&gt; {
+  res.send("Ini adalah route GET!");
 });
 </code></pre>
-<p>Jika kita akses http://localhost:3000/hello, teks tersebut akan tampil di browser.</p>
+<p>Selain <code>res.send()</code>, Express juga mendukung <code>res.json()</code> untuk mengirim data format JSON.</p>
+<pre><code class="language-js">app.get("/json", (req, res) =&gt; {
+  res.json({
+    message: "Hello dari JSON!",
+    status: "success",
+  });
+});
+</code></pre>
+<p>Jika kita akses <a href="http://localhost:3000/hello">http://localhost:3000/hello</a>, teks tersebut akan tampil di browser.</p>
 <h3 id="post"><a class="header" href="#post"><code>POST</code></a></h3>
 <p>Route POST biasanya digunakan untuk mengirimkan data dari client ke server.</p>
-<pre><code class="language-js">app.post('/submit', (req, res) =&gt; {
-  res.send('Data berhasil diterima!');
+<pre><code class="language-js">app.post("/submit", (req, res) =&gt; {
+  res.send("Data berhasil diterima!");
 });
 </code></pre>
 <p>Catatan:
-Jika menggunakan body JSON, pastikan app menggunakan middleware:</p>
+Jika menggunakan body JSON, pastikan app menggunakan <a href="./middleware-expres-js.html">middleware</a>:</p>
 <pre><code class="language-js">app.use(express.json());
+
+app.post("/submit", (req, res) =&gt; {
+  console.log(req.body);
+  res.json(req.body);
+});
 </code></pre>
+<p><code>req.body</code> dapat digunakan untuk mengakses data yang dikrimkan</p>
 <h3 id="put"><a class="header" href="#put"><code>PUT</code></a></h3>
 <p>Digunakan untuk memperbarui seluruh data.</p>
-<pre><code class="language-js">app.put('/update', (req, res) =&gt; {
-  res.send('Data berhasil diperbarui!');
+<pre><code class="language-js">app.put("/update", (req, res) =&gt; {
+  res.send("Data berhasil diperbarui!");
 });
 </code></pre>
 <h3 id="delete"><a class="header" href="#delete"><code>DELETE</code></a></h3>
 <p>Digunakan untuk menghapus data.</p>
-<pre><code class="language-js">app.delete('/delete', (req, res) =&gt; {
-  res.send('Data berhasil dihapus!');
-});
-</code></pre>
-<h3 id="mengirim-response-json"><a class="header" href="#mengirim-response-json">Mengirim Response JSON</a></h3>
-<p>Selain <code>res.send()</code>, Express juga mendukung <code>res.json()</code> untuk mengirim data format JSON.</p>
-<pre><code class="language-js">app.get('/json', (req, res) =&gt; {
-  res.json({
-    message: 'Hello dari JSON!',
-    status: 'success'
-  });
+<pre><code class="language-js">app.delete("/delete", (req, res) =&gt; {
+  res.send("Data berhasil dihapus!");
 });
 </code></pre>
 <h3 id="route-dasar-dengan-status-code"><a class="header" href="#route-dasar-dengan-status-code">Route Dasar dengan Status Code</a></h3>
 <p>Mengirimkan response dengan status tertentu</p>
-<pre><code class="language-js">app.get('/status', (req, res) =&gt; {
-  res.status(201).json({ message: 'Created!' });
+<pre><code class="language-js">app.get("/status", (req, res) =&gt; {
+  res.status(201).json({ message: "Created!" });
 });
 </code></pre>
 <h3 id="menangani-semua-http-method"><a class="header" href="#menangani-semua-http-method">Menangani Semua HTTP Method</a></h3>
 <p>Express dapat menerima semua HTTP method menggunakan <code>all()</code></p>
-<pre><code class="language-js">app.all('/all', (req, res) =&gt; {
-  res.send('Route ini menangani semua method');
+<pre><code class="language-js">app.all("/all", (req, res) =&gt; {
+  res.send("Route ini menangani semua method");
 });
 </code></pre>
 <h3 id="menangani-semua-url-dengan"><a class="header" href="#menangani-semua-url-dengan">Menangani Semua URL dengan</a></h3>
 <p>Route wildcard (<code>*</code>) biasanya digunakan untuk 404</p>
-<pre><code class="language-js">app.all('*', (req, res) =&gt; {
-  res.status(404).send('Route tidak ditemukan');
+<pre><code class="language-js">app.all("*", (req, res) =&gt; {
+  res.status(404).send("Route tidak ditemukan");
 });
 </code></pre>
 

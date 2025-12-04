@@ -184,7 +184,7 @@
 </ul>
 <p>Bagian yang berubah tersebut disebut parameter dan ditulis menggunakan tanda titik dua <code>:</code> pada definisi route.</p>
 <p>Contoh route parameter sederhana</p>
-<pre><code class="language-js">app.get('/users/:id', (req, res) =&gt; {
+<pre><code class="language-js">app.get("/users/:id", (req, res) =&gt; {
   const userId = req.params.id;
   res.send(`User dengan ID: ${userId}`);
 });
@@ -195,29 +195,29 @@
 <li><code>req.params.id</code> untuk mengambil nilainya</li>
 </ul>
 <p>Jika URL yang dipanggil adalah</p>
-<pre><code class="language-bash">GET /users/50
+<pre><code class="language-yaml">/users/50
 </code></pre>
 <p>Maka response-nya</p>
 <pre><code class="language-bash">User dengan ID: 50
 </code></pre>
 <h2 id="menggunakan-banyak-parameter"><a class="header" href="#menggunakan-banyak-parameter">Menggunakan Banyak Parameter</a></h2>
 <p>Kita mendefinisikan lebih dari satu route parameter</p>
-<pre><code class="language-js">app.get('/products/:category/:id', (req, res) =&gt; {
+<pre><code class="language-js">app.get("/products/:category/:id", (req, res) =&gt; {
   const { category, id } = req.params;
 
   res.send(`Kategori: ${category}, Produk ID: ${id}`);
 });
 </code></pre>
 <p>Contoh pemanggilan</p>
-<pre><code class="language-bash">GET /products/electronics/123
+<pre><code class="language-yaml">/products/electronics/123
 </code></pre>
 <p>Response</p>
 <pre><code class="language-bash">Kategori: electronics, Produk ID: 123
 </code></pre>
 <h3 id="parameter-opsional"><a class="header" href="#parameter-opsional">Parameter Opsional</a></h3>
 <p>Dengan menambahkan tanda <code>?,</code> parameter menjadi opsional</p>
-<pre><code class="language-js">app.get('/hello/:name?', (req, res) =&gt; {
-  const name = req.params.name || 'Guest';
+<pre><code class="language-js">app.get("/hello/:name?", (req, res) =&gt; {
+  const name = req.params.name || "Guest";
   res.send(`Hello, ${name}!`);
 });
 </code></pre>
