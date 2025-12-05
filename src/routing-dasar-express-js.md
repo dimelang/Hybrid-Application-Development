@@ -8,7 +8,7 @@ Route adalah kombinasi dari:
 
 - HTTP method → `GET`, `POST`, `PUT`, `PATCH`, `DELETE`
 - Path (URL) → misalnya `/users`, `/products/:id`
-- Handler (callback) → fungsi yang menangani permintaan dan memberikan respons
+- Handler (callback) → fungsi yang menangani request dan memberikan response
 
 ## Membuat Route
 
@@ -76,16 +76,6 @@ Digunakan untuk menghapus data.
 ```js
 app.delete("/delete", (req, res) => {
   res.send("Data berhasil dihapus!");
-});
-```
-
-### Route Dasar dengan Status Code
-
-Mengirimkan response dengan status tertentu
-
-```js
-app.get("/status", (req, res) => {
-  res.status(201).json({ message: "Created!" });
 });
 ```
 
