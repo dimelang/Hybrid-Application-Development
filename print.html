@@ -6328,12 +6328,6 @@ app.listen(PORT, () =&gt; {
 <li><code>PUT /products/:id</code></li>
 <li><code>DELETE /posts/:id</code></li>
 </ul>
-<p>Routing menjadi fondasi utama dalam membangun RESTful API.</p>
-<p>Contoh route dasar di Express:</p>
-<pre><code class="language-js">app.get('/hello', (req, res) =&gt; {
-  res.send('Hello World!');
-});
-</code></pre>
 <h2 id="http-methods-yang-didukung-express"><a class="header" href="#http-methods-yang-didukung-express">HTTP Methods yang Didukung Express</a></h2>
 <div class="table-wrapper"><table><thead><tr><th>Method</th><th>Keterangan</th></tr></thead><tbody>
 <tr><td><strong>GET</strong></td><td>Mengambil data</td></tr>
@@ -6342,14 +6336,181 @@ app.listen(PORT, () =&gt; {
 <tr><td><strong>PATCH</strong></td><td>Mengupdate sebagian data</td></tr>
 <tr><td><strong>DELETE</strong></td><td>Menghapus data</td></tr>
 </tbody></table>
-</div><div style="break-before: page; page-break-before: always;"></div><h1 id="routing-dasar"><a class="header" href="#routing-dasar">Routing Dasar</a></h1>
+</div>
+<p>Routing menjadi fondasi utama dalam membangun RESTful API.</p>
+<p>Contoh route dasar di Express:</p>
+<pre><code class="language-js">app.get("/hello", (req, res) =&gt; {
+  res.send("Hello World!");
+});
+</code></pre>
+<h3 id="memahami-objek-req-dan-res"><a class="header" href="#memahami-objek-req-dan-res">Memahami Objek <code>req</code> dan <code>res</code></a></h3>
+<p>Saat membuat route di Express (seperti contoh di atas), function handler akan menerima dua objek penting yaitu <code>req</code> (request) dan <code>res</code> (response).</p>
+<h3 id="req"><a class="header" href="#req"><code>req</code></a></h3>
+<p>Berisi informasi dari client yang dikirim ke server. Objek ini memiliki beberapa property penting:</p>
+<ul>
+<li>
+<p><code>req.originalUrl</code> Menunjukkan URL lengkap. <code>req.baseUrl</code> Menunjukkan dasar tempat sebuah router dipasang. <code>req.path</code> Menunjukkan bagian spesifik dari URL yang menangani suatu route.</p>
+<pre><code class="language-js">// GET 'http://www.example.com/admin/new?sort=desc'
+app.use("/admin", (req, res, next) =&gt; {
+  console.dir(req.originalUrl); // '/admin/new?sort=desc'
+  console.dir(req.baseUrl); // '/admin'
+  console.dir(req.path); // '/new'
+  next();
+});
+</code></pre>
+</li>
+<li>
+<p><code>req.subdomains</code> Menunjukkan array subdomain.</p>
+<pre><code class="language-js">// Host: "tobi.ferrets.example.com/admin"
+app.get("/admin", (req, res) =&gt; {
+  console.dir(req.subdomains);
+  // =&gt; ["ferrets", "tobi"]
+});
+</code></pre>
+</li>
+<li>
+<p><code>req.params</code> Menyimpan nilai dari <a href="./route-parameter-express-js.html">Route Parameters</a>.</p>
+<pre><code class="language-js">app.get("/users/:id", (req, res) =&gt; {
+  console.log(req.params.id);
+});
+</code></pre>
+</li>
+<li>
+<p><code>req.query</code> Menyimpan <a href="./query-parameter-express-js.html">Query Parameters</a></p>
+<pre><code class="language-yaml">GET /search?title=express
+</code></pre>
+<pre><code class="language-js">req.query.title; // "express"
+</code></pre>
+<p>Pastikan key sudah sama dengan yang terdapat pada URL. Contoh di atas, key-nya adalah <code>title</code></p>
+</li>
+<li>
+<p><code>req.headers</code> Berisi semua header request HTTP yang dikirim oleh client.</p>
+<pre><code class="language-js">app.get("/data", (req, res) =&gt; {
+  const userAgent = req.headers["User-Agent"];
+  console.log(`User Agent: ${userAgent}`);
+});
+</code></pre>
+</li>
+<li>
+<p><code>req.body</code> Berisi data yang dikirim melalui body (<code>POST</code>, <code>PUT</code>, <code>PATCH</code>) dan wajib menambahkan <a href="./middleware-expres-js.html">Middleware</a> berikut</p>
+<pre><code class="language-js">app.use(express.json());
+</code></pre>
+<pre><code class="language-js">app.post("/user/register", (req, res) =&gt; {
+  const dataBody = req.body; // mendapatkan seluruh data body
+  const username = req.body.username; // mendapatkan data dari suatu key
+});
+</code></pre>
+</li>
+<li>
+<p><code>req.method</code> Menunjukkan HTTP method yang digunakan dan <code>req.url</code> Menunjukkan URL path yang diminta.</p>
+<pre><code class="language-js">app.use((req, res, next) =&gt; {
+  console.log(`Request: ${req.method} - ${req.url}`);
+  next();
+});
+</code></pre>
+</li>
+</ul>
+<h3 id="res"><a class="header" href="#res"><code>res</code></a></h3>
+<p>Digunakan untuk mengirimkan response ke client. Objek ini memiliki beberapa method penting:</p>
+<ul>
+<li>
+<p><code>res.send()</code> digunakan untuk mengirim <code>string</code>, <code>object</code>, <code>buffer</code>, atau <code>array</code> sebagai response.</p>
+<pre><code class="language-js">app.get("/hello", (req, res) =&gt; {
+  res.send("Hello world!");
+});
+</code></pre>
+</li>
+<li>
+<p><code>res.json()</code> digunakan untuk mengirimkan response ke client dalam format JSON.</p>
+<pre><code class="language-js">app.post("/register", (req, res) =&gt; {
+  res.json({
+    message: "Behasil mendaftar",
+    status: "success",
+  });
+});
+</code></pre>
+</li>
+<li>
+<p><code>res.attachment()</code> digunakan untuk mengirimkan suatu file ke client.</p>
+<pre><code class="language-js">app.post("/register", (req, res) =&gt; {
+  res.attachment("path/file.ekstensi").json({
+    message: "Behasil mendaftar",
+    status: "success",
+  });
+});
+</code></pre>
+</li>
+<li>
+<p><code>res.status()</code> digunakan untuk mengatur HTTP status code.</p>
+<pre><code class="language-js">app.get("/hello", (req, res) =&gt; {
+  res.status(200).send("Hello world!");
+});
+</code></pre>
+<pre><code class="language-js">app.all("*", (req, res) =&gt; {
+  res.status(404).send("Route tidak ditemukan");
+});
+</code></pre>
+</li>
+<li>
+<p><code>res.end()</code> diguanakan untuk mengakhiri proses response tanpa mengirimkan data.</p>
+<pre><code class="language-js">app.all("*", (req, res) =&gt; {
+  res.status(404).end();
+});
+</code></pre>
+</li>
+<li>
+<p><code>res.format()</code> digunakan untuk negosiasi konten yang memungkinkan server merespons dengan tipe konten yang berbeda seperti HTML, JSON, atau teks biasa berdasarkan header HTTP Accept yang dikirim oleh client.</p>
+<pre><code class="language-js">res.format({
+  "text/plain"() {
+    res.send("hey");
+  },
+
+  "text/html"() {
+    res.send("&lt;p&gt;hey&lt;/p&gt;");
+  },
+
+  "application/json"() {
+    res.send({ message: "hey" });
+  },
+
+  default() {
+    // log the request and respond with 406
+    res.status(406).send("Not Acceptable");
+  },
+});
+</code></pre>
+<p>Kode di atas menunjukkan perbedaan jenis konten yang akan diterima oleh client.</p>
+</li>
+<li>
+<p><code>res.redirect()</code> digunakan untuk mengalihkan browser pengguna ke URL lain.</p>
+<pre><code class="language-js">app.get("/register", (req, res) =&gt; {
+  // logic register
+  res.redirect("/beranda");
+});
+</code></pre>
+</li>
+<li>
+<p><code>res.render()</code> digunakan untuk merender template tampilan dan mengirimkan HTML ke client. Untuk menggunakan metode ini, pastikan untuk menggunakan view engine seperti <a href="https://ejs.co/">EJS</a>.</p>
+<pre><code class="language-js">const express = require("express");
+const app = express();
+
+app.set("view engine", "ejs");
+app.set("views", "./views"); // folder tempat menyimpan file .ejs
+
+app.get("/", (req, res) =&gt; {
+  res.render("home", { nama: "Dimas" });
+});
+</code></pre>
+</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="routing-dasar"><a class="header" href="#routing-dasar">Routing Dasar</a></h1>
 <p>Route dasar adalah titik awal untuk memahami bagaimana Express menangani sebuah request dari client. Pada route dasar, kita mendefinisikan HTTP method, path, dan handler (fungsi yang dijalankan saat route dipanggil).</p>
 <h2 id="apa-itu-route"><a class="header" href="#apa-itu-route">Apa itu Route?</a></h2>
 <p>Route adalah kombinasi dari:</p>
 <ul>
 <li>HTTP method → <code>GET</code>, <code>POST</code>, <code>PUT</code>, <code>PATCH</code>, <code>DELETE</code></li>
 <li>Path (URL) → misalnya <code>/users</code>, <code>/products/:id</code></li>
-<li>Handler (callback) → fungsi yang menangani permintaan dan memberikan respons</li>
+<li>Handler (callback) → fungsi yang menangani request dan memberikan response</li>
 </ul>
 <h2 id="membuat-route"><a class="header" href="#membuat-route">Membuat Route</a></h2>
 <h3 id="get"><a class="header" href="#get"><code>GET</code></a></h3>
@@ -6393,12 +6554,6 @@ app.post("/submit", (req, res) =&gt; {
 <p>Digunakan untuk menghapus data.</p>
 <pre><code class="language-js">app.delete("/delete", (req, res) =&gt; {
   res.send("Data berhasil dihapus!");
-});
-</code></pre>
-<h3 id="route-dasar-dengan-status-code"><a class="header" href="#route-dasar-dengan-status-code">Route Dasar dengan Status Code</a></h3>
-<p>Mengirimkan response dengan status tertentu</p>
-<pre><code class="language-js">app.get("/status", (req, res) =&gt; {
-  res.status(201).json({ message: "Created!" });
 });
 </code></pre>
 <h3 id="menangani-semua-http-method"><a class="header" href="#menangani-semua-http-method">Menangani Semua HTTP Method</a></h3>
@@ -6579,7 +6734,342 @@ app.listen(3000, () =&gt; {
 <tr><td>GET</td><td><code>/users</code></td><td>Menampilkan daftar user</td></tr>
 <tr><td>GET</td><td><code>/users/:id</code></td><td>Menampilkan detail user</td></tr>
 </tbody></table>
-</div>
+</div><div style="break-before: page; page-break-before: always;"></div><h1 id="middleware"><a class="header" href="#middleware">Middleware</a></h1>
+<p>Middleware adalah fungsi yang berada di antara <em>request</em> dan <em>respond</em> pada Express. Setiap <em>request</em> yang masuk ke server akan melewati satu atau rangkaian middleware sebelum akhirnya mencapai <em>route handler</em>. Middleware digunakan untuk berbagai kebutuhan, seperti:</p>
+<ul>
+<li>Memproses atau memodifikasi <em>request</em> sebelum ke route.</li>
+<li>Melakukan logging.</li>
+<li>Validasi data.</li>
+<li>Autentikasi dan otorisasi.</li>
+<li>Menangani error.</li>
+<li>dll.</li>
+</ul>
+<h2 id="cara-kerja-middleware"><a class="header" href="#cara-kerja-middleware">Cara Kerja Middleware</a></h2>
+<p>Sebuah middleware Express memiliki bentuk dasar:</p>
+<pre><code class="language-js">function (req, res, next){
+    // kode middleware
+    next();
+}
+</code></pre>
+<p>Penjelasan parameter:</p>
+<ul>
+<li><code>req</code>: objek <em>request</em></li>
+<li><code>res</code>: objek <em>response</em></li>
+<li><code>next()</code>: fungsi untuk melanjutkan ke middleware berikutnya</li>
+</ul>
+<h2 id="jenis-jenis-middleware-di-express"><a class="header" href="#jenis-jenis-middleware-di-express">Jenis-jenis Middleware di Express</a></h2>
+<p>Express mendukung beberapa jenis middleware:</p>
+<h2 id="application-level-middleware"><a class="header" href="#application-level-middleware">Application-level Middleware</a></h2>
+<p>Application-level middleware adalah middleware yang diterapkan langsung pada instance aplikasi Express, yaitu <code>app</code>.
+Biasanya digunakan untuk kebutuhan yang berlaku global di seluruh route, seperti:</p>
+<ul>
+<li>Logging request</li>
+<li>Autentikasi dasar</li>
+<li>Validasi global</li>
+<li>Parsing body (JSON, URL-encoded)</li>
+<li>Rate limiting</li>
+<li>Menambah data ke objek req</li>
+<li>Mengatur response header</li>
+</ul>
+<h3 id="cara-menggunakan-application-level-middleware"><a class="header" href="#cara-menggunakan-application-level-middleware">Cara Menggunakan Application-level Middleware</a></h3>
+<p>Untuk menggunakan Application-level middleware, dapat dilakukan melalui dua cara, yaitu:</p>
+<pre><code class="language-js">app.use(middlewareFunction);
+</code></pre>
+<p>Middleware ini akan berjalan setiap kali ada request masuk, kecuali jika dibatasi pada route tertentu seperti cara berikut
+atau</p>
+<pre><code class="language-js">app.use("/path", middlewareFunction);
+</code></pre>
+<h3 id="contoh-application-level-middleware-paling-dasar"><a class="header" href="#contoh-application-level-middleware-paling-dasar">Contoh Application-level middleware paling dasar:</a></h3>
+<pre><code class="language-js">const express = require("express");
+const app = express();
+
+app.use(express.json());
+
+// Application-level middleware
+app.use((req, res, next) =&gt; {
+  console.log(`Request: ${req.method} - ${req.url}`);
+  next(); // lanjut ke middleware berikutnya
+});
+
+app.get("/", (req, res) =&gt; {
+  res.send("Hello dari Home Page!");
+});
+
+app.post("/submit", (req, res) =&gt; {
+  const dataSubmited = req.body;
+  res.send("Berhasil submit data");
+});
+
+app.listen(3000, () =&gt; {
+  console.log("Server berjalan di port 3000");
+});
+</code></pre>
+<p>Middleware di atas akan mencetak log setiap kali ada request masuk.</p>
+<h3 id="contoh-application-level-middleware-dengan-path"><a class="header" href="#contoh-application-level-middleware-dengan-path">Contoh Application-level middleware dengan Path</a></h3>
+<p>Middleware juga dapat diberlakukan hanya untuk path tertentu.</p>
+<pre><code class="language-js">app.use("/admin", (req, res, next) =&gt; {
+  console.log("Middleware admin dijalankan");
+  next();
+});
+
+app.get("/admin/dashboard", (req, res) =&gt; {
+  res.send("Dashboard Admin");
+});
+</code></pre>
+<p>Middleware hanya berjalan untuk URL yang diawali <code>/admin</code>.</p>
+<h3 id="contoh-rangkaian-apllication-level-middleware"><a class="header" href="#contoh-rangkaian-apllication-level-middleware">Contoh rangkaian Apllication-level middleware</a></h3>
+<p>Kita juga dapat membuat rangkaian middleware</p>
+<pre><code class="language-js">app.use(
+  "/user/:id",
+  (req, res, next) =&gt; {
+    console.log("Request URL:", req.originalUrl);
+    next();
+  },
+  (req, res, next) =&gt; {
+    console.log("Request Type:", req.method);
+    next();
+  }
+);
+</code></pre>
+<p>Kode di atas menunjukkan adanya dua middleware yang dirangkai untuk route yang mengarah ke path <code>/user/:id</code></p>
+<h3 id="-middleware-tanpa-next"><a class="header" href="#-middleware-tanpa-next">🛑 Middleware tanpa <code>next()</code></a></h3>
+<p>Jika sebuah middleware <strong>TIDAK</strong> memanggil <code>next()</code> maka request akan terhenti.</p>
+<pre><code class="language-js">app.use((req, res) =&gt; {
+  res.send("Request dihentikan di middleware ini");
+});
+</code></pre>
+<p>Ini dapat digunakan untuk:</p>
+<ul>
+<li>Menolak akses</li>
+<li>Mengembalikan error</li>
+<li>Maintenance mode</li>
+</ul>
+<h2 id="router-level-middleware"><a class="header" href="#router-level-middleware">Router-level Middleware</a></h2>
+<p>Router-level middleware adalah middleware yang prinsip kerjanya sama seperti application-level middleware, tetapi dikhususkan hanya untuk instance Router. Artinya, middleware jenis ini hanya berlaku untuk sekelompok route tertentu. Biasanya digunakan untuk kebutuhan:</p>
+<ul>
+<li>Membantu modularisasi</li>
+<li>Membatasi cakupan middleware</li>
+<li>Membuat struktur kode lebih bersih dan terorganisir</li>
+</ul>
+<h3 id="cara-menggunakan-router-level-middleware"><a class="header" href="#cara-menggunakan-router-level-middleware">Cara Menggunakan Router-level Middleware</a></h3>
+<p>Untuk menggunakan Router-level middleware, dapat dilakukan dalam dua tahap, yaitu:</p>
+<ol>
+<li>
+<p>Buat Router dan tambahkan middleware ke router</p>
+<p><strong>src/routes/user.routes.js</strong></p>
+<pre><code class="language-js">const express = require("express");
+const router = express.Router();
+
+// Router-level middleware dengan path
+router.use(
+  "/profile/:id",
+  (req, res, next) =&gt; {
+    console.log("Request URL:", req.originalUrl);
+    next();
+  },
+  (req, res, next) =&gt; {
+    console.log("Request Type:", req.method);
+    next();
+  }
+);
+
+// Route
+router.get("/profile/:id", (req, res) =&gt; {
+  res.send(`Profil user dengan ID: ${req.params.id}`);
+});
+
+module.exports = router;
+</code></pre>
+<p>Penjelasan:</p>
+<ul>
+<li><code>router.use()</code> menerapkan middleware hanya untuk route di router ini.</li>
+<li>Middleware akan berjalan untuk semua request yang cocok dengan path <code>/profile/:id</code>.</li>
+</ul>
+</li>
+<li>
+<p>Tambahkan router ke aplikasi utama</p>
+<p><strong>index.js</strong></p>
+<pre><code class="language-js">const express = require("express");
+const app = express();
+const userRoutes = require("./src/routes/user.routes");
+
+// gunakan router
+app.use("/users", userRoutes);
+
+app.listen(3000, () =&gt; {
+  console.log("Server berjalan pada port 3000");
+});
+</code></pre>
+</li>
+</ol>
+<h2 id="error-handling-middleware"><a class="header" href="#error-handling-middleware">Error-Handling Middleware</a></h2>
+<p>Error-handling middleware adalah middleware khusus di Express yang digunakan untuk menangani error dalam aplikasi. Middleware ini memiliki empat parameter, yaitu: <code>err</code>, <code>req</code>, <code>res</code>, <code>next</code>. Express secara otomatis akan mengenali middleware sebagai error handler ketika memiliki empat parameter, bukan tiga.</p>
+<p>Error-handling middleware berfungsi untuk:</p>
+<ul>
+<li>Menangkap error dari route handler atau middleware lain</li>
+<li>Mengirim response error yang konsisten</li>
+<li>Mencegah aplikasi berhenti ketika terjadi error</li>
+<li>Logging error secara terpusat</li>
+<li>Mengatur standar format error aplikasi</li>
+</ul>
+<h3 id="bentuk-dasar-error-handling-middleware"><a class="header" href="#bentuk-dasar-error-handling-middleware">Bentuk dasar error-handling middleware</a></h3>
+<pre><code class="language-js">app.use((err, req, res, next) =&gt; {
+  console.error(err.stack);
+  res.status(500).send("Terjadi kesalahan pada server");
+});
+</code></pre>
+<h3 id="contoh-sederhana"><a class="header" href="#contoh-sederhana">Contoh sederhana</a></h3>
+<pre><code class="language-js">const express = require("express");
+const app = express();
+
+app.use(express.json());
+
+// Route dengan validasi manual
+app.post("/register", (req, res, next) =&gt; {
+  const { username } = req.body;
+
+  if (!username) {
+    const error = new Error("Username wajib diisi");
+    error.status = 400;
+    return next(error);
+  }
+
+  res.send("Register berhasil");
+});
+
+// 404 Handler
+app.use((req, res, next) =&gt; {
+  res.status(404).json({ message: "Endpoint tidak ditemukan" });
+});
+
+// Error handler
+app.use((err, req, res, next) =&gt; {
+  res.status(err.status || 500).json({
+    success: false,
+    message: err.message,
+  });
+});
+
+app.listen(3000, () =&gt; console.log("Server berjalan di port 3000"));
+</code></pre>
+<p>Error-handling middleware harus ditempatkan setelah semua route dan middleware lainnya, karena Express memprosesnya secara berurutan (top-down).</p>
+<h2 id="built-in-middleware"><a class="header" href="#built-in-middleware">Built-in Middleware</a></h2>
+<p>Built-in middleware adalah middleware bawaan yang sudah disediakan oleh Express tanpa perlu menginstal library tambahan. Middleware ini sangat sering digunakan dalam aplikasi backend untuk memproses body request, menyajikan file statis, dan menangani URL-encoded form. Express menyediakan beberapa built-in middleware utama:</p>
+<h3 id="expressjson"><a class="header" href="#expressjson"><code>express.json()</code></a></h3>
+<p>Middleware ini digunakan untuk membaca request body yang dikirim dalam format JSON. Tanpa middleware ini, <code>req.body</code> akan bernilai <code>undefined</code>.</p>
+<h3 id="contoh-4"><a class="header" href="#contoh-4">Contoh:</a></h3>
+<pre><code class="language-js">const express = require("express");
+const app = express();
+
+// Mengaktifkan JSON parser
+app.use(express.json());
+
+app.post("/data", (req, res) =&gt; {
+  res.send({
+    message: "Data diterima",
+    data: req.body,
+  });
+});
+
+app.listen(3000, () =&gt; console.log("Server berjalan di port 3000"));
+</code></pre>
+<h3 id="expressurlencoded"><a class="header" href="#expressurlencoded"><code>express.urlencoded()</code></a></h3>
+<p>Middleware untuk membaca body request dari form HTML (seperti <code>application/x-www-form-urlencoded</code>). Biasanya digunakan untuk form login atau register.</p>
+<h3 id="contoh-5"><a class="header" href="#contoh-5">Contoh:</a></h3>
+<pre><code class="language-js">const express = require("express");
+const app = express();
+const PORT = 3000;
+app.use(express.urlencoded({ extended: true }));
+
+app.get("/login", (req, res) =&gt; {
+  res.send(
+    "&lt;form method=POST action=/login&gt;&lt;input type=text name=username&gt;&lt;input type=number name=age&gt;&lt;input type=submit&gt;&lt;/form&gt;"
+  );
+});
+
+app.post("/login", (req, res) =&gt; {
+  console.log(req.body);
+  res.send("data has been recieved by the server");
+});
+
+app.listen(PORT, () =&gt; {
+  console.log("Server is running on localhost://3000");
+});
+</code></pre>
+<h3 id="expressstatic"><a class="header" href="#expressstatic"><code>express.static()</code></a></h3>
+<p>Middleware ini digunakan untuk menyajikan file statis, seperti:</p>
+<ul>
+<li>Gambar</li>
+<li>CSS</li>
+<li>File JavaScript frontend</li>
+<li>Dokumen</li>
+<li>Asset lainnya</li>
+</ul>
+<p>Biasanya digunakan untuk folder publik.</p>
+<h3 id="contoh-6"><a class="header" href="#contoh-6">Contoh:</a></h3>
+<p>Jika kita memiliki sebuah file di <code>public/logo.png</code>.</p>
+<pre><code class="language-js">// tambahkan middleware pada aplikasi utama
+app.use("/assets", express.static("public"));
+</code></pre>
+<p>maka dapat diakses <code>http://localhost:3000/assets/logo.png</code></p>
+<h2 id="custom-middleware"><a class="header" href="#custom-middleware">Custom Middleware</a></h2>
+<p>Custom middleware adalah middleware yang dapat dibuat sendiri oleh pengguna yang biasanya ditujukan untuk menangani kebutuhan tertentu pada aplikasi Express misalnya logging, autentikasi, validasi, hingga memodifikasi objek <code>req</code> atau <code>res</code>.</p>
+<p>Middleware custom memiliki struktur dasar:</p>
+<pre><code class="language-js">function middlewareName(req, res, next) {
+  // logic middleware
+  next(); // lanjut ke middleware berikutnya
+}
+</code></pre>
+<p>Middleware wajib memanggil <code>next()</code> agar request dapat diteruskan ke middleware atau route handler berikutnya.</p>
+<p>Setelah didefinisikan, middleware bisa digunakan dengan:</p>
+<pre><code class="language-js">app.use(middlewareName);
+</code></pre>
+<p>Atau jika ingin diterapkan pada route tertentu</p>
+<pre><code class="language-js">app.get("/route", middlewareName, (req, res) =&gt; {
+  res.send("OK");
+});
+</code></pre>
+<h3 id="contoh-custom-logging-request"><a class="header" href="#contoh-custom-logging-request">Contoh: custom logging request</a></h3>
+<pre><code class="language-js">const requestLogger = (req, res, next) =&gt; {
+  console.log(`[${new Date().toISOString()}] ${req.method} ${req.originalUrl}`);
+  next();
+};
+
+app.use(requestLogger);
+</code></pre>
+<h3 id="contoh-middleware-autentikasi-sederhana"><a class="header" href="#contoh-middleware-autentikasi-sederhana">Contoh: Middleware Autentikasi Sederhana</a></h3>
+<pre><code class="language-js">const simpleAuth = (req, res, next) =&gt; {
+  const token = req.headers["x-api-key"];
+
+  if (token !== "12345") {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+
+  next();
+};
+
+// Contoh penggunaan
+app.get("/dashboard", simpleAuth, (req, res) =&gt; {
+  res.send("Welcome to Dashboard");
+});
+</code></pre>
+<h3 id="contoh-middleware-validasi-sederhana"><a class="header" href="#contoh-middleware-validasi-sederhana">Contoh: Middleware Validasi Sederhana</a></h3>
+<pre><code class="language-js">const validateName = (req, res, next) =&gt; {
+  const { name } = req.body;
+
+  if (!name) {
+    return res.status(400).json({ message: "Name wajib diisi" });
+  }
+
+  next();
+};
+
+app.post("/hello", validateName, (req, res) =&gt; {
+  res.send(`Halo, ${req.body.name}`);
+});
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="database"><a class="header" href="#database">Database</a></h1>
+
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">

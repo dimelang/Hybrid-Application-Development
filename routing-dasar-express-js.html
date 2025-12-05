@@ -182,7 +182,7 @@
 <ul>
 <li>HTTP method → <code>GET</code>, <code>POST</code>, <code>PUT</code>, <code>PATCH</code>, <code>DELETE</code></li>
 <li>Path (URL) → misalnya <code>/users</code>, <code>/products/:id</code></li>
-<li>Handler (callback) → fungsi yang menangani permintaan dan memberikan respons</li>
+<li>Handler (callback) → fungsi yang menangani request dan memberikan response</li>
 </ul>
 <h2 id="membuat-route"><a class="header" href="#membuat-route">Membuat Route</a></h2>
 <h3 id="get"><a class="header" href="#get"><code>GET</code></a></h3>
@@ -226,12 +226,6 @@ app.post("/submit", (req, res) =&gt; {
 <p>Digunakan untuk menghapus data.</p>
 <pre><code class="language-js">app.delete("/delete", (req, res) =&gt; {
   res.send("Data berhasil dihapus!");
-});
-</code></pre>
-<h3 id="route-dasar-dengan-status-code"><a class="header" href="#route-dasar-dengan-status-code">Route Dasar dengan Status Code</a></h3>
-<p>Mengirimkan response dengan status tertentu</p>
-<pre><code class="language-js">app.get("/status", (req, res) =&gt; {
-  res.status(201).json({ message: "Created!" });
 });
 </code></pre>
 <h3 id="menangani-semua-http-method"><a class="header" href="#menangani-semua-http-method">Menangani Semua HTTP Method</a></h3>

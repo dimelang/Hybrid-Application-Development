@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Routing - Hybrid Application Development</title>
+        <title>Database - Hybrid Application Development</title>
 
 
         <!-- Custom HTML head -->
@@ -175,202 +175,16 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="routing"><a class="header" href="#routing">Routing</a></h1>
-<p>Routing adalah konsep dasar dalam <code>ExpressJs</code> yang digunakan untuk menentukan bagaimana server merespons suatu <em>request</em> dari client berdasarkan HTTP method dan URL path.</p>
-<p>Dengan routing, kita dapat mengatur endpoint seperti:</p>
-<ul>
-<li><code>GET /users</code></li>
-<li><code>POST /login</code></li>
-<li><code>PUT /products/:id</code></li>
-<li><code>DELETE /posts/:id</code></li>
-</ul>
-<h2 id="http-methods-yang-didukung-express"><a class="header" href="#http-methods-yang-didukung-express">HTTP Methods yang Didukung Express</a></h2>
-<div class="table-wrapper"><table><thead><tr><th>Method</th><th>Keterangan</th></tr></thead><tbody>
-<tr><td><strong>GET</strong></td><td>Mengambil data</td></tr>
-<tr><td><strong>POST</strong></td><td>Mengirim data baru</td></tr>
-<tr><td><strong>PUT</strong></td><td>Mengupdate data (replace)</td></tr>
-<tr><td><strong>PATCH</strong></td><td>Mengupdate sebagian data</td></tr>
-<tr><td><strong>DELETE</strong></td><td>Menghapus data</td></tr>
-</tbody></table>
-</div>
-<p>Routing menjadi fondasi utama dalam membangun RESTful API.</p>
-<p>Contoh route dasar di Express:</p>
-<pre><code class="language-js">app.get("/hello", (req, res) =&gt; {
-  res.send("Hello World!");
-});
-</code></pre>
-<h3 id="memahami-objek-req-dan-res"><a class="header" href="#memahami-objek-req-dan-res">Memahami Objek <code>req</code> dan <code>res</code></a></h3>
-<p>Saat membuat route di Express (seperti contoh di atas), function handler akan menerima dua objek penting yaitu <code>req</code> (request) dan <code>res</code> (response).</p>
-<h3 id="req"><a class="header" href="#req"><code>req</code></a></h3>
-<p>Berisi informasi dari client yang dikirim ke server. Objek ini memiliki beberapa property penting:</p>
-<ul>
-<li>
-<p><code>req.originalUrl</code> Menunjukkan URL lengkap. <code>req.baseUrl</code> Menunjukkan dasar tempat sebuah router dipasang. <code>req.path</code> Menunjukkan bagian spesifik dari URL yang menangani suatu route.</p>
-<pre><code class="language-js">// GET 'http://www.example.com/admin/new?sort=desc'
-app.use("/admin", (req, res, next) =&gt; {
-  console.dir(req.originalUrl); // '/admin/new?sort=desc'
-  console.dir(req.baseUrl); // '/admin'
-  console.dir(req.path); // '/new'
-  next();
-});
-</code></pre>
-</li>
-<li>
-<p><code>req.subdomains</code> Menunjukkan array subdomain.</p>
-<pre><code class="language-js">// Host: "tobi.ferrets.example.com/admin"
-app.get("/admin", (req, res) =&gt; {
-  console.dir(req.subdomains);
-  // =&gt; ["ferrets", "tobi"]
-});
-</code></pre>
-</li>
-<li>
-<p><code>req.params</code> Menyimpan nilai dari <a href="./route-parameter-express-js.html">Route Parameters</a>.</p>
-<pre><code class="language-js">app.get("/users/:id", (req, res) =&gt; {
-  console.log(req.params.id);
-});
-</code></pre>
-</li>
-<li>
-<p><code>req.query</code> Menyimpan <a href="./query-parameter-express-js.html">Query Parameters</a></p>
-<pre><code class="language-yaml">GET /search?title=express
-</code></pre>
-<pre><code class="language-js">req.query.title; // "express"
-</code></pre>
-<p>Pastikan key sudah sama dengan yang terdapat pada URL. Contoh di atas, key-nya adalah <code>title</code></p>
-</li>
-<li>
-<p><code>req.headers</code> Berisi semua header request HTTP yang dikirim oleh client.</p>
-<pre><code class="language-js">app.get("/data", (req, res) =&gt; {
-  const userAgent = req.headers["User-Agent"];
-  console.log(`User Agent: ${userAgent}`);
-});
-</code></pre>
-</li>
-<li>
-<p><code>req.body</code> Berisi data yang dikirim melalui body (<code>POST</code>, <code>PUT</code>, <code>PATCH</code>) dan wajib menambahkan <a href="./middleware-expres-js.html">Middleware</a> berikut</p>
-<pre><code class="language-js">app.use(express.json());
-</code></pre>
-<pre><code class="language-js">app.post("/user/register", (req, res) =&gt; {
-  const dataBody = req.body; // mendapatkan seluruh data body
-  const username = req.body.username; // mendapatkan data dari suatu key
-});
-</code></pre>
-</li>
-<li>
-<p><code>req.method</code> Menunjukkan HTTP method yang digunakan dan <code>req.url</code> Menunjukkan URL path yang diminta.</p>
-<pre><code class="language-js">app.use((req, res, next) =&gt; {
-  console.log(`Request: ${req.method} - ${req.url}`);
-  next();
-});
-</code></pre>
-</li>
-</ul>
-<h3 id="res"><a class="header" href="#res"><code>res</code></a></h3>
-<p>Digunakan untuk mengirimkan response ke client. Objek ini memiliki beberapa method penting:</p>
-<ul>
-<li>
-<p><code>res.send()</code> digunakan untuk mengirim <code>string</code>, <code>object</code>, <code>buffer</code>, atau <code>array</code> sebagai response.</p>
-<pre><code class="language-js">app.get("/hello", (req, res) =&gt; {
-  res.send("Hello world!");
-});
-</code></pre>
-</li>
-<li>
-<p><code>res.json()</code> digunakan untuk mengirimkan response ke client dalam format JSON.</p>
-<pre><code class="language-js">app.post("/register", (req, res) =&gt; {
-  res.json({
-    message: "Behasil mendaftar",
-    status: "success",
-  });
-});
-</code></pre>
-</li>
-<li>
-<p><code>res.attachment()</code> digunakan untuk mengirimkan suatu file ke client.</p>
-<pre><code class="language-js">app.post("/register", (req, res) =&gt; {
-  res.attachment("path/file.ekstensi").json({
-    message: "Behasil mendaftar",
-    status: "success",
-  });
-});
-</code></pre>
-</li>
-<li>
-<p><code>res.status()</code> digunakan untuk mengatur HTTP status code.</p>
-<pre><code class="language-js">app.get("/hello", (req, res) =&gt; {
-  res.status(200).send("Hello world!");
-});
-</code></pre>
-<pre><code class="language-js">app.all("*", (req, res) =&gt; {
-  res.status(404).send("Route tidak ditemukan");
-});
-</code></pre>
-</li>
-<li>
-<p><code>res.end()</code> diguanakan untuk mengakhiri proses response tanpa mengirimkan data.</p>
-<pre><code class="language-js">app.all("*", (req, res) =&gt; {
-  res.status(404).end();
-});
-</code></pre>
-</li>
-<li>
-<p><code>res.format()</code> digunakan untuk negosiasi konten yang memungkinkan server merespons dengan tipe konten yang berbeda seperti HTML, JSON, atau teks biasa berdasarkan header HTTP Accept yang dikirim oleh client.</p>
-<pre><code class="language-js">res.format({
-  "text/plain"() {
-    res.send("hey");
-  },
-
-  "text/html"() {
-    res.send("&lt;p&gt;hey&lt;/p&gt;");
-  },
-
-  "application/json"() {
-    res.send({ message: "hey" });
-  },
-
-  default() {
-    // log the request and respond with 406
-    res.status(406).send("Not Acceptable");
-  },
-});
-</code></pre>
-<p>Kode di atas menunjukkan perbedaan jenis konten yang akan diterima oleh client.</p>
-</li>
-<li>
-<p><code>res.redirect()</code> digunakan untuk mengalihkan browser pengguna ke URL lain.</p>
-<pre><code class="language-js">app.get("/register", (req, res) =&gt; {
-  // logic register
-  res.redirect("/beranda");
-});
-</code></pre>
-</li>
-<li>
-<p><code>res.render()</code> digunakan untuk merender template tampilan dan mengirimkan HTML ke client. Untuk menggunakan metode ini, pastikan untuk menggunakan view engine seperti <a href="https://ejs.co/">EJS</a>.</p>
-<pre><code class="language-js">const express = require("express");
-const app = express();
-
-app.set("view engine", "ejs");
-app.set("views", "./views"); // folder tempat menyimpan file .ejs
-
-app.get("/", (req, res) =&gt; {
-  res.render("home", { nama: "Dimas" });
-});
-</code></pre>
-</li>
-</ul>
+                        <h1 id="database"><a class="header" href="#database">Database</a></h1>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="struktur-proyek-express-js.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="middleware-expres-js.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next prefetch" href="routing-dasar-express-js.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
-                                <i class="fa fa-angle-right"></i>
-                            </a>
 
                         <div style="clear: both"></div>
                     </nav>
@@ -378,13 +192,10 @@ app.get("/", (req, res) =&gt; {
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="struktur-proyek-express-js.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="middleware-expres-js.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next prefetch" href="routing-dasar-express-js.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
-                        <i class="fa fa-angle-right"></i>
-                    </a>
             </nav>
 
         </div>

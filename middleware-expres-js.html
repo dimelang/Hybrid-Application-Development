@@ -1,0 +1,564 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Middleware - Hybrid Application Development</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "searchindex.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Hybrid Application Development</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="middleware"><a class="header" href="#middleware">Middleware</a></h1>
+<p>Middleware adalah fungsi yang berada di antara <em>request</em> dan <em>respond</em> pada Express. Setiap <em>request</em> yang masuk ke server akan melewati satu atau rangkaian middleware sebelum akhirnya mencapai <em>route handler</em>. Middleware digunakan untuk berbagai kebutuhan, seperti:</p>
+<ul>
+<li>Memproses atau memodifikasi <em>request</em> sebelum ke route.</li>
+<li>Melakukan logging.</li>
+<li>Validasi data.</li>
+<li>Autentikasi dan otorisasi.</li>
+<li>Menangani error.</li>
+<li>dll.</li>
+</ul>
+<h2 id="cara-kerja-middleware"><a class="header" href="#cara-kerja-middleware">Cara Kerja Middleware</a></h2>
+<p>Sebuah middleware Express memiliki bentuk dasar:</p>
+<pre><code class="language-js">function (req, res, next){
+    // kode middleware
+    next();
+}
+</code></pre>
+<p>Penjelasan parameter:</p>
+<ul>
+<li><code>req</code>: objek <em>request</em></li>
+<li><code>res</code>: objek <em>response</em></li>
+<li><code>next()</code>: fungsi untuk melanjutkan ke middleware berikutnya</li>
+</ul>
+<h2 id="jenis-jenis-middleware-di-express"><a class="header" href="#jenis-jenis-middleware-di-express">Jenis-jenis Middleware di Express</a></h2>
+<p>Express mendukung beberapa jenis middleware:</p>
+<h2 id="application-level-middleware"><a class="header" href="#application-level-middleware">Application-level Middleware</a></h2>
+<p>Application-level middleware adalah middleware yang diterapkan langsung pada instance aplikasi Express, yaitu <code>app</code>.
+Biasanya digunakan untuk kebutuhan yang berlaku global di seluruh route, seperti:</p>
+<ul>
+<li>Logging request</li>
+<li>Autentikasi dasar</li>
+<li>Validasi global</li>
+<li>Parsing body (JSON, URL-encoded)</li>
+<li>Rate limiting</li>
+<li>Menambah data ke objek req</li>
+<li>Mengatur response header</li>
+</ul>
+<h3 id="cara-menggunakan-application-level-middleware"><a class="header" href="#cara-menggunakan-application-level-middleware">Cara Menggunakan Application-level Middleware</a></h3>
+<p>Untuk menggunakan Application-level middleware, dapat dilakukan melalui dua cara, yaitu:</p>
+<pre><code class="language-js">app.use(middlewareFunction);
+</code></pre>
+<p>Middleware ini akan berjalan setiap kali ada request masuk, kecuali jika dibatasi pada route tertentu seperti cara berikut
+atau</p>
+<pre><code class="language-js">app.use("/path", middlewareFunction);
+</code></pre>
+<h3 id="contoh-application-level-middleware-paling-dasar"><a class="header" href="#contoh-application-level-middleware-paling-dasar">Contoh Application-level middleware paling dasar:</a></h3>
+<pre><code class="language-js">const express = require("express");
+const app = express();
+
+app.use(express.json());
+
+// Application-level middleware
+app.use((req, res, next) =&gt; {
+  console.log(`Request: ${req.method} - ${req.url}`);
+  next(); // lanjut ke middleware berikutnya
+});
+
+app.get("/", (req, res) =&gt; {
+  res.send("Hello dari Home Page!");
+});
+
+app.post("/submit", (req, res) =&gt; {
+  const dataSubmited = req.body;
+  res.send("Berhasil submit data");
+});
+
+app.listen(3000, () =&gt; {
+  console.log("Server berjalan di port 3000");
+});
+</code></pre>
+<p>Middleware di atas akan mencetak log setiap kali ada request masuk.</p>
+<h3 id="contoh-application-level-middleware-dengan-path"><a class="header" href="#contoh-application-level-middleware-dengan-path">Contoh Application-level middleware dengan Path</a></h3>
+<p>Middleware juga dapat diberlakukan hanya untuk path tertentu.</p>
+<pre><code class="language-js">app.use("/admin", (req, res, next) =&gt; {
+  console.log("Middleware admin dijalankan");
+  next();
+});
+
+app.get("/admin/dashboard", (req, res) =&gt; {
+  res.send("Dashboard Admin");
+});
+</code></pre>
+<p>Middleware hanya berjalan untuk URL yang diawali <code>/admin</code>.</p>
+<h3 id="contoh-rangkaian-apllication-level-middleware"><a class="header" href="#contoh-rangkaian-apllication-level-middleware">Contoh rangkaian Apllication-level middleware</a></h3>
+<p>Kita juga dapat membuat rangkaian middleware</p>
+<pre><code class="language-js">app.use(
+  "/user/:id",
+  (req, res, next) =&gt; {
+    console.log("Request URL:", req.originalUrl);
+    next();
+  },
+  (req, res, next) =&gt; {
+    console.log("Request Type:", req.method);
+    next();
+  }
+);
+</code></pre>
+<p>Kode di atas menunjukkan adanya dua middleware yang dirangkai untuk route yang mengarah ke path <code>/user/:id</code></p>
+<h3 id="-middleware-tanpa-next"><a class="header" href="#-middleware-tanpa-next">🛑 Middleware tanpa <code>next()</code></a></h3>
+<p>Jika sebuah middleware <strong>TIDAK</strong> memanggil <code>next()</code> maka request akan terhenti.</p>
+<pre><code class="language-js">app.use((req, res) =&gt; {
+  res.send("Request dihentikan di middleware ini");
+});
+</code></pre>
+<p>Ini dapat digunakan untuk:</p>
+<ul>
+<li>Menolak akses</li>
+<li>Mengembalikan error</li>
+<li>Maintenance mode</li>
+</ul>
+<h2 id="router-level-middleware"><a class="header" href="#router-level-middleware">Router-level Middleware</a></h2>
+<p>Router-level middleware adalah middleware yang prinsip kerjanya sama seperti application-level middleware, tetapi dikhususkan hanya untuk instance Router. Artinya, middleware jenis ini hanya berlaku untuk sekelompok route tertentu. Biasanya digunakan untuk kebutuhan:</p>
+<ul>
+<li>Membantu modularisasi</li>
+<li>Membatasi cakupan middleware</li>
+<li>Membuat struktur kode lebih bersih dan terorganisir</li>
+</ul>
+<h3 id="cara-menggunakan-router-level-middleware"><a class="header" href="#cara-menggunakan-router-level-middleware">Cara Menggunakan Router-level Middleware</a></h3>
+<p>Untuk menggunakan Router-level middleware, dapat dilakukan dalam dua tahap, yaitu:</p>
+<ol>
+<li>
+<p>Buat Router dan tambahkan middleware ke router</p>
+<p><strong>src/routes/user.routes.js</strong></p>
+<pre><code class="language-js">const express = require("express");
+const router = express.Router();
+
+// Router-level middleware dengan path
+router.use(
+  "/profile/:id",
+  (req, res, next) =&gt; {
+    console.log("Request URL:", req.originalUrl);
+    next();
+  },
+  (req, res, next) =&gt; {
+    console.log("Request Type:", req.method);
+    next();
+  }
+);
+
+// Route
+router.get("/profile/:id", (req, res) =&gt; {
+  res.send(`Profil user dengan ID: ${req.params.id}`);
+});
+
+module.exports = router;
+</code></pre>
+<p>Penjelasan:</p>
+<ul>
+<li><code>router.use()</code> menerapkan middleware hanya untuk route di router ini.</li>
+<li>Middleware akan berjalan untuk semua request yang cocok dengan path <code>/profile/:id</code>.</li>
+</ul>
+</li>
+<li>
+<p>Tambahkan router ke aplikasi utama</p>
+<p><strong>index.js</strong></p>
+<pre><code class="language-js">const express = require("express");
+const app = express();
+const userRoutes = require("./src/routes/user.routes");
+
+// gunakan router
+app.use("/users", userRoutes);
+
+app.listen(3000, () =&gt; {
+  console.log("Server berjalan pada port 3000");
+});
+</code></pre>
+</li>
+</ol>
+<h2 id="error-handling-middleware"><a class="header" href="#error-handling-middleware">Error-Handling Middleware</a></h2>
+<p>Error-handling middleware adalah middleware khusus di Express yang digunakan untuk menangani error dalam aplikasi. Middleware ini memiliki empat parameter, yaitu: <code>err</code>, <code>req</code>, <code>res</code>, <code>next</code>. Express secara otomatis akan mengenali middleware sebagai error handler ketika memiliki empat parameter, bukan tiga.</p>
+<p>Error-handling middleware berfungsi untuk:</p>
+<ul>
+<li>Menangkap error dari route handler atau middleware lain</li>
+<li>Mengirim response error yang konsisten</li>
+<li>Mencegah aplikasi berhenti ketika terjadi error</li>
+<li>Logging error secara terpusat</li>
+<li>Mengatur standar format error aplikasi</li>
+</ul>
+<h3 id="bentuk-dasar-error-handling-middleware"><a class="header" href="#bentuk-dasar-error-handling-middleware">Bentuk dasar error-handling middleware</a></h3>
+<pre><code class="language-js">app.use((err, req, res, next) =&gt; {
+  console.error(err.stack);
+  res.status(500).send("Terjadi kesalahan pada server");
+});
+</code></pre>
+<h3 id="contoh-sederhana"><a class="header" href="#contoh-sederhana">Contoh sederhana</a></h3>
+<pre><code class="language-js">const express = require("express");
+const app = express();
+
+app.use(express.json());
+
+// Route dengan validasi manual
+app.post("/register", (req, res, next) =&gt; {
+  const { username } = req.body;
+
+  if (!username) {
+    const error = new Error("Username wajib diisi");
+    error.status = 400;
+    return next(error);
+  }
+
+  res.send("Register berhasil");
+});
+
+// 404 Handler
+app.use((req, res, next) =&gt; {
+  res.status(404).json({ message: "Endpoint tidak ditemukan" });
+});
+
+// Error handler
+app.use((err, req, res, next) =&gt; {
+  res.status(err.status || 500).json({
+    success: false,
+    message: err.message,
+  });
+});
+
+app.listen(3000, () =&gt; console.log("Server berjalan di port 3000"));
+</code></pre>
+<p>Error-handling middleware harus ditempatkan setelah semua route dan middleware lainnya, karena Express memprosesnya secara berurutan (top-down).</p>
+<h2 id="built-in-middleware"><a class="header" href="#built-in-middleware">Built-in Middleware</a></h2>
+<p>Built-in middleware adalah middleware bawaan yang sudah disediakan oleh Express tanpa perlu menginstal library tambahan. Middleware ini sangat sering digunakan dalam aplikasi backend untuk memproses body request, menyajikan file statis, dan menangani URL-encoded form. Express menyediakan beberapa built-in middleware utama:</p>
+<h3 id="expressjson"><a class="header" href="#expressjson"><code>express.json()</code></a></h3>
+<p>Middleware ini digunakan untuk membaca request body yang dikirim dalam format JSON. Tanpa middleware ini, <code>req.body</code> akan bernilai <code>undefined</code>.</p>
+<h3 id="contoh"><a class="header" href="#contoh">Contoh:</a></h3>
+<pre><code class="language-js">const express = require("express");
+const app = express();
+
+// Mengaktifkan JSON parser
+app.use(express.json());
+
+app.post("/data", (req, res) =&gt; {
+  res.send({
+    message: "Data diterima",
+    data: req.body,
+  });
+});
+
+app.listen(3000, () =&gt; console.log("Server berjalan di port 3000"));
+</code></pre>
+<h3 id="expressurlencoded"><a class="header" href="#expressurlencoded"><code>express.urlencoded()</code></a></h3>
+<p>Middleware untuk membaca body request dari form HTML (seperti <code>application/x-www-form-urlencoded</code>). Biasanya digunakan untuk form login atau register.</p>
+<h3 id="contoh-1"><a class="header" href="#contoh-1">Contoh:</a></h3>
+<pre><code class="language-js">const express = require("express");
+const app = express();
+const PORT = 3000;
+app.use(express.urlencoded({ extended: true }));
+
+app.get("/login", (req, res) =&gt; {
+  res.send(
+    "&lt;form method=POST action=/login&gt;&lt;input type=text name=username&gt;&lt;input type=number name=age&gt;&lt;input type=submit&gt;&lt;/form&gt;"
+  );
+});
+
+app.post("/login", (req, res) =&gt; {
+  console.log(req.body);
+  res.send("data has been recieved by the server");
+});
+
+app.listen(PORT, () =&gt; {
+  console.log("Server is running on localhost://3000");
+});
+</code></pre>
+<h3 id="expressstatic"><a class="header" href="#expressstatic"><code>express.static()</code></a></h3>
+<p>Middleware ini digunakan untuk menyajikan file statis, seperti:</p>
+<ul>
+<li>Gambar</li>
+<li>CSS</li>
+<li>File JavaScript frontend</li>
+<li>Dokumen</li>
+<li>Asset lainnya</li>
+</ul>
+<p>Biasanya digunakan untuk folder publik.</p>
+<h3 id="contoh-2"><a class="header" href="#contoh-2">Contoh:</a></h3>
+<p>Jika kita memiliki sebuah file di <code>public/logo.png</code>.</p>
+<pre><code class="language-js">// tambahkan middleware pada aplikasi utama
+app.use("/assets", express.static("public"));
+</code></pre>
+<p>maka dapat diakses <code>http://localhost:3000/assets/logo.png</code></p>
+<h2 id="custom-middleware"><a class="header" href="#custom-middleware">Custom Middleware</a></h2>
+<p>Custom middleware adalah middleware yang dapat dibuat sendiri oleh pengguna yang biasanya ditujukan untuk menangani kebutuhan tertentu pada aplikasi Express misalnya logging, autentikasi, validasi, hingga memodifikasi objek <code>req</code> atau <code>res</code>.</p>
+<p>Middleware custom memiliki struktur dasar:</p>
+<pre><code class="language-js">function middlewareName(req, res, next) {
+  // logic middleware
+  next(); // lanjut ke middleware berikutnya
+}
+</code></pre>
+<p>Middleware wajib memanggil <code>next()</code> agar request dapat diteruskan ke middleware atau route handler berikutnya.</p>
+<p>Setelah didefinisikan, middleware bisa digunakan dengan:</p>
+<pre><code class="language-js">app.use(middlewareName);
+</code></pre>
+<p>Atau jika ingin diterapkan pada route tertentu</p>
+<pre><code class="language-js">app.get("/route", middlewareName, (req, res) =&gt; {
+  res.send("OK");
+});
+</code></pre>
+<h3 id="contoh-custom-logging-request"><a class="header" href="#contoh-custom-logging-request">Contoh: custom logging request</a></h3>
+<pre><code class="language-js">const requestLogger = (req, res, next) =&gt; {
+  console.log(`[${new Date().toISOString()}] ${req.method} ${req.originalUrl}`);
+  next();
+};
+
+app.use(requestLogger);
+</code></pre>
+<h3 id="contoh-middleware-autentikasi-sederhana"><a class="header" href="#contoh-middleware-autentikasi-sederhana">Contoh: Middleware Autentikasi Sederhana</a></h3>
+<pre><code class="language-js">const simpleAuth = (req, res, next) =&gt; {
+  const token = req.headers["x-api-key"];
+
+  if (token !== "12345") {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+
+  next();
+};
+
+// Contoh penggunaan
+app.get("/dashboard", simpleAuth, (req, res) =&gt; {
+  res.send("Welcome to Dashboard");
+});
+</code></pre>
+<h3 id="contoh-middleware-validasi-sederhana"><a class="header" href="#contoh-middleware-validasi-sederhana">Contoh: Middleware Validasi Sederhana</a></h3>
+<pre><code class="language-js">const validateName = (req, res, next) =&gt; {
+  const { name } = req.body;
+
+  if (!name) {
+    return res.status(400).json({ message: "Name wajib diisi" });
+  }
+
+  next();
+};
+
+app.post("/hello", validateName, (req, res) =&gt; {
+  res.send(`Halo, ${req.body.name}`);
+});
+</code></pre>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="express-router.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="database-express-js.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="express-router.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="database-express-js.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>
