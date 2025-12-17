@@ -3,7 +3,7 @@
 Dalam `ExpressJs`, Route Parameters digunakan untuk membuat route yang memiliki bagian URL dinamis. Artinya, sebagian path dapat berubah-ubah, misalnya:
 
 - `/users/10`
-- `/users/27`
+- `/articles/sport/2025`
 - `/products/666`
 
 Bagian yang berubah tersebut disebut parameter dan ditulis menggunakan tanda titik dua `:` pada definisi route.
@@ -20,7 +20,7 @@ app.get("/users/:id", (req, res) => {
 Pada contoh di atas:
 
 - `:id` adalah parameter
-- `req.params.id` untuk mengambil nilainya
+- `req.params.id` digunakan untuk mengambil nilainya
 
 Jika URL yang dipanggil adalah
 
@@ -79,3 +79,54 @@ Contoh URL valid:
   ```bash
   Hello Admin
   ```
+
+### Wildcard Parameter
+
+Jika ingin menangkap sisa path URL sebagai satu parameter, Express menyediakan teknik bernama splat parameter:
+
+```js
+app.get("/files/*", (req, res) => {
+  const path = req.params[0];
+  res.send(`Anda mengakses file: ${path}`);
+});
+```
+
+Contoh akses:
+
+```yaml
+/files/images/2025/banner.png
+```
+
+Output:
+
+```yaml
+Anda mengakses file: images/2025/banner.png
+```
+
+Teknik ini cocok digunakan untuk routing file statis dan dynamic path.
+
+### Validasi Menggunakan Regex
+
+Express memungkinkan parameter memiliki pattern menggunakan regex.
+
+```js
+app.get("/users/:id(\\d+)", (req, res) => {
+  res.send(`User ID valid: ${req.params.id}`);
+});
+```
+
+Contoh valid:
+
+- `/users/123`
+
+Contoh tidak valid:
+
+- `/users/abc`
+- `/users/12x`
+
+Regex umum yang dapat digunakan:
+| Regex | Arti |
+| ----------- | ------------ |
+| `\\d+` | Hanya angka |
+| `[a-zA-Z]+` | Hanya huruf |
+| `[a-z0-9]+` | Alphanumeric |

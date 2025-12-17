@@ -10,14 +10,15 @@ REST (Representational State Transfer) adalah arsitektur yang menggunakan HTTP s
 
 Setiap endpoint biasanya mewakili sebuah resource, misalnya:
 
-| Resource | Contoh Endpoint              |
-| -------- | ---------------------------- |
-| Customer | `/customer`, `/customer/:id` |
-| Products | `/products`, `/products/:id` |
+| Resource | Contoh Endpoint      |
+| -------- | -------------------- |
+| Task     | `/task`, `/task/:id` |
+| User     | `/user`, `/user/:id` |
 
 REST API selalu mengembalikan data dalam format JSON sehingga mudah diproses di frontend.
 
 **Cara Kerja REST API di Express**
+Pada aplikasi Express, alur kerja REST API adalah sebagai berikut:
 
 1. Ketika client mengirim request ke server:
 2. Request masuk ke routing (routes/)
@@ -27,27 +28,9 @@ REST API selalu mengembalikan data dalam format JSON sehingga mudah diproses di 
 6. Hasil dikembalikan ke controller
 7. Controller mengirim response JSON ke client
 
-**Contoh Endpoint REST API**
-
-```js
-app.get("/customer", (req, res) => {
-  res.json({ message: "Daftar customer" });
-});
-```
-
-Response JSON yang umum digunakan:
-
-```json
-{
-  "success": true,
-  "data": [...],
-  "message": "Berhasil mengambil data"
-}
-```
-
 ## Integrasi REST API + Express + MySQL
 
-Contoh pada modul ini menggunakan database [northwind](https://en.wikiversity.org/wiki/Database_Examples/Northwind/MySQL). Pastikan telah me-_import_ ke MySQL local.
+Contoh pada modul ini menggunakan database [todo_app](./assets/todo_app.sql) dan menerapakan struktur yang rapi (clean architecture sederhana).
 
 ## Struktur Folder
 
@@ -58,17 +41,21 @@ project/
 │  ├── config/
 │  │  └── db.js → koneksi MySQL
 │  │
-│  ├── repositories/
-│  │  └── customer.repository.js → query SQL (data access layer)
+│  ├── repositories/  → query SQL (data access layer)
+│  │  ├── task.repository.js
+│  │  └── user.repository.js
 │  │
-│  ├── services/
-│  │  └── customer.service.js → business logic (domain layer)
+│  ├── services/  → business logic (domain layer)
+│  │  ├── task.service.js
+│  │  └── user.service.js
 │  │
-│  ├── controllers/
-│  │  └── customer.controller.js → HTTP request handler (interface layer)
+│  ├── controllers/  → HTTP request handler (interface layer)
+│  │  ├── task.controller.js
+│  │  └── user.controller.js
 │  │
 │  ├── routes/
-│  │  └── customer.routes.js → routing
+│  │  ├── task.routes.js
+│  │  └── user.routes.js
 │  │
 │  ├── middlewares/
 │  │  └── errorHandler.js
@@ -78,172 +65,314 @@ project/
 └── index.js → entry point server
 ```
 
-## Contoh
+### Routing
 
-### Membuat Koneksi ke MySQL
+Routing bertugas untuk menerima request berdasarkan URL dan HTTP method, lalu meneruskannya ke controller.
 
-**src/config/db.js**
+Contoh file `src/routes/task.routes.js`
 
 ```js
-const mysql = require("mysql2/promise");
+const express = require("express");
+const router = express.Router();
+const authController = require("../controllers/auth.controller");
+
+router.get("/", taskController.getAllTasks);
+router.get("/:id", taskController.getTaskById);
+router.post("/", taskController.createTask);
+router.put("/:id", taskController.updateTask);
+router.delete("/:id", taskController.deleteTask);
+
+module.exports = router;
+```
+
+Routing hanya berfungsi sebagai penghubung, tidak mengandung logic bisnis maupun query database.
+
+### Controller
+
+Controller bertugas:
+
+- Menerima _request_ (`req`)
+- Memanggil service
+- Mengembalikan response ke client
+
+Contoh file `src/controllers/task.controller.js`
+
+```js
+const taskService = require("../services/task.service");
+
+class TaskController {
+  async getTaskById(req, res) {
+    try {
+      const { id } = req.params;
+      const task = await taskService.getTaskById(id);
+
+      res.status(200).json({
+        success: true,
+        data: task,
+      });
+    } catch (error) {
+      res.status(404).json({
+        success: false,
+        message: error.message,
+      });
+    }
+  }
+
+  async getUserTasks(req, res) {
+    try {
+      const { userId } = req.params;
+      const result = await taskService.getUserTasks(userId);
+
+      res.status(200).json({
+        success: true,
+        data: result,
+      });
+    } catch (error) {
+      res.status(404).json({
+        success: false,
+        message: error.message,
+      });
+    }
+  }
+
+  async createTask(req, res) {
+    try {
+      const taskData = req.body;
+      const result = await taskService.createTask(taskData);
+
+      res.status(201).json(result);
+    } catch (error) {
+      res.status(400).json({
+        success: false,
+        message: error.message,
+      });
+    }
+  }
+
+  async updateTask(req, res) {
+    try {
+      const { id } = req.params;
+      const updateData = req.body;
+      const result = await taskService.updateTask(id, updateData);
+      res.status(200).json(result);
+    } catch (error) {
+      res.status(400).json({
+        success: false,
+        message: error.message,
+      });
+    }
+  }
+
+  async deleteTask(req, res) {
+    try {
+      const { id } = req.params;
+      const result = await taskService.deleteTask(id);
+      res.status(200).json(result);
+    } catch (error) {
+      res.status(400).json({
+        success: false,
+        message: error.message,
+      });
+    }
+  }
+}
+
+module.exports = new TaskController();
+```
+
+### Service
+
+Service berisi logic aplikasi, misalnya:
+
+- Validasi tambahan
+- Aturan bisnis
+- Pengolahan data sebelum atau sesudah dari database
+
+Contoh file `src/services/task.service.js`
+
+```js
+const taskRepository = require("../repositories/task.repository");
+
+class TaskService {
+  async getTaskById(id) {
+    const task = await taskRepository.findById(id);
+    if (!task) throw new Error("Task tidak ditemukan");
+    return task;
+  }
+
+  async getUserTasks(userId) {
+    const tasks = await taskRepository.findByUserId(userId);
+    if (!tasks) throw new Error("Task dari user ini tidak ditemukan");
+    return tasks;
+  }
+
+  async createTask(taskData) {
+    const createdTask = await taskRepository.createTask(taskData);
+    if (!createdTask) throw new Error("Gagal menambahkan task");
+    return {
+      success: true,
+      message: "Berhasil menambahkan task baru",
+    };
+  }
+
+  async updateTask(id, updatedData) {
+    const existingData = await taskRepository.findById(id);
+    if (!existingData) throw new Error("Task tidak ditemukan");
+
+    const result = await taskRepository.updateTask(id, updatedData);
+    return {
+      success: true,
+      message: result
+        ? "Berhasil memperbarui data task"
+        : "Tidak ada task yang diperbarui",
+    };
+  }
+
+  async deleteTask(id) {
+    const existingData = await taskRepository.findById(id);
+    if (!existingData) throw new Error("Task tidak ditemukan");
+
+    const result = await taskRepository.deleteTask(id);
+
+    return {
+      success: true,
+      message: result
+        ? "Berhasil menghapus data task"
+        : "Tidak ada task yang dihapus",
+    };
+  }
+}
+
+module.exports = new TaskService();
+```
+
+### Repository
+
+Repository bertugas untuk menangani komunikasi dengan database, menggunakan query SQL seperti yang telah dibahas pada materi [Database](./database-express-js.md).
+
+Contoh file `repositories/task.repository.js`:
+
+```js
+const db = require("../configs/db");
+
+class TaskRepository {
+  async findById(id) {
+    const query = "SELECT * FROM tb_tasks WHERE id=?";
+    const [result] = await db.execute(query, [id]);
+    return result[0] || null;
+  }
+
+  async findByUserId(user_id) {
+    const query = "SELECT * FROM tb_tasks WHERE user_id=?";
+    const [result] = await db.execute(query, [user_id]);
+    return result;
+  }
+
+  async createTask(taskData) {
+    const keys = Object.keys(taskData);
+    const values = Object.values(taskData);
+
+    const query = `INSERT INTO tb_tasks (${keys.join(", ")}) VALUES (${keys
+      .map((_) => "?")
+      .join(", ")})`;
+    const [result] = await db.execute(query, values);
+    return result.affectedRows > 0;
+  }
+
+  async updateTask(id, taskData) {
+    const keys = Object.keys(taskData);
+    const values = Object.values(taskData);
+
+    const query = `UPDATE tb_tasks SET ${keys
+      .map((key) => key + "=?")
+      .join(", ")} WHERE id=?`;
+    const [result] = await db.execute(query, [...values, id]);
+    return result.affectedRows > 0;
+  }
+
+  async deleteTask(id) {
+    const query = `DELETE FROM tb_tasks WHERE id=?`;
+    const [result] = await db.execute(query, [id]);
+    return result.affectedRows > 0;
+  }
+}
+
+module.exports = new TaskRepository();
+```
+
+Dengan pendekatan ini, query database terisolasi dan mudah dikelola.
+
+### Database
+
+```js
+const mysql = require('mysql2/promise');
 
 const pool = mysql.createPool({
-  host: "localhost",
-  user: "root",
-  password: "",
-  database: "northwind",
-  port: 3306,
+    host: localhost,
+    user: root,
+    password: ,
+    database: todo_app,
+    port: 3306,
+    waitForConnections: true,
+    connectionLimit: 10,
 });
 
 module.exports = pool;
 ```
 
-### Membuat Query (Repository Layer)
+### Middleware
 
-Repositori bertanggung jawab penuh terhadap query ke database.
+Middleware dapat digunakan untuk:
 
-**src/repositories/user.repository.js**
+- Logging
+- Validasi input
+- Autentikasi
+- Error handling
 
-```js
-const db = require("../config/db");
-
-async function getAllCustomer() {
-  const [rows, fields] = await db.execute("SELECT * FROM customers");
-  return rows;
-}
-
-async function getCustomerById(id) {
-  const sql = "SELECT * FROM customers WHERE id=?";
-  const [rows, field] = await db.execute(sql, id);
-  return rows[0] ?? null;
-}
-
-module.exports = {
-  getAllCustomer,
-  getCustomerById,
-};
-```
-
-### Membuat Logic Bisnis (Service Layer)
-
-Lapisan service berfungsi sebagai business logic, misalnya validasi, transformasi data, dan aturan bisnis lainnya.
-
-**src/services/customer.service.js**
-
-```js
-const customerRepository = require("../repositories/customer.repository");
-
-async function listCustomer() {
-  return await customerRepository.getAllCustomer();
-}
-
-async function findCustomer(id) {
-  if (!/^[+-]?\d+(\.\d+)?$/.test(id)) {
-    throw new Error("Id customer tidak valid. Harus berupa angka");
-  }
-  const customer = await customerRepository.getCustomerById([id]);
-
-  if (!customer) throw new Error("Customer tidak ditemukan");
-
-  return customer;
-}
-
-module.exports = {
-  listCustomer,
-  findCustomer,
-};
-```
-
-### Membuat Controller
-
-Lapisan ini berfungsi sebagai jembatan antara request dari client dan layanan aplikasi.
-
-**src/controllers/customer.controller.js**
-
-```js
-const customerService = require("../services/customer.service");
-
-async function getAllCustomer(req, res, next) {
-  try {
-    const customers = await customerService.listCustomer();
-    res.json({ success: true, data: customers });
-  } catch (error) {
-    next(error);
-  }
-}
-async function getCustomerById(req, res, next) {
-  try {
-    const { id } = req.params;
-    const customer = await customerService.findCustomer(id);
-    res.json({ success: true, data: customer });
-  } catch (error) {
-    next(error);
-  }
-}
-
-module.exports = {
-  getAllCustomer,
-  getCustomerById,
-};
-```
-
-### Membuat Routing
-
-**src/routes/customer.routes.js**
-
-```js
-const express = require("express");
-const router = express.Router();
-const customerController = require("../controllers/customer.controller");
-
-router.get("/", customerController.getAllCustomer);
-router.get("/:id", customerController.getCustomerById);
-
-module.exports = router;
-```
-
-### Membuat Middleware (Error Handler)
-
-**errorHandler.js**
+Contoh file `src/middlewares/error_handler.js`
 
 ```js
 module.exports = (err, req, res, next) => {
   console.log(err);
+  const statusCode = err.statusCode || 500;
 
-  res.status(err.status).json({
+  res.status(statusCode).json({
     success: false,
-    message: err.message,
+    method: req.method,
+    url: req.originalUrl,
+    message: err.message || "Internal Server Error",
   });
 };
 ```
 
-### Integrasi Ke Aplikasi
+### Gabungkan Semuanya
 
-**src/app.js**
+`src/app.js`
 
 ```js
 const express = require("express");
+const errorHandler = require("./middlewares/error_handler");
+const taskRoutes = require("./routes/task.routes");
+
 const app = express();
-
-const customerRoutes = require("./routes/customer.routes");
-const errorHandler = require("./middlewares/errorHandler");
-
 app.use(express.json());
+app.use(express.urlencoded());
 
-app.use("/customer", customerRoutes);
+app.use("task", taskRoutes);
 
 app.use(errorHandler);
-
 module.exports = app;
 ```
 
-**index.js**
+`index.js`
 
 ```js
+require("dotenv").config();
 const app = require("./src/app");
-const PORT = 3001;
+
+const PORT = process.env.PORT;
 
 app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+  console.log(`Server berjalan pada http://localhost:${PORT}`);
 });
 ```

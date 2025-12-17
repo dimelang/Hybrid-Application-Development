@@ -68,6 +68,26 @@ Response
 }
 ```
 
+### Query Parameters dengan Nilai Array
+
+Express secara otomatis mengubah query parameter berulang menjadi array
+
+```yaml
+/products?tag=promo&tag=discount
+```
+
+```js
+app.get("/products", (req, res) => {
+  res.json(req.query.tag);
+});
+```
+
+Output:
+
+```yaml
+["promo", discount]
+```
+
 ### Menggabungkan Route & Query Parameters
 
 ```js

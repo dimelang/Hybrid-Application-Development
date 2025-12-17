@@ -33,8 +33,6 @@ app.get("/json", (req, res) => {
 });
 ```
 
-Jika kita akses [http://localhost:3000/hello](http://localhost:3000/hello), teks tersebut akan tampil di browser.
-
 ### `POST`
 
 Route POST biasanya digunakan untuk mengirimkan data dari client ke server.
@@ -46,7 +44,7 @@ app.post("/submit", (req, res) => {
 ```
 
 Catatan:
-Jika menggunakan body JSON, pastikan app menggunakan [middleware](./middleware-expres-js.md):
+Jika menggunakan body JSON, pastikan app menggunakan [middleware](./middleware-expres-js.md) `express.json()`:
 
 ```js
 app.use(express.json());
@@ -57,8 +55,6 @@ app.post("/submit", (req, res) => {
 });
 ```
 
-`req.body` dapat digunakan untuk mengakses data yang dikrimkan
-
 ### `PUT`
 
 Digunakan untuk memperbarui seluruh data.
@@ -66,6 +62,20 @@ Digunakan untuk memperbarui seluruh data.
 ```js
 app.put("/update", (req, res) => {
   res.send("Data berhasil diperbarui!");
+});
+```
+
+### `PATCH`
+
+Digunakan untuk memperbarui sebagian data.
+
+```js
+app.use(express.json());
+app.patch("/update", (req, res) => {
+  const updatedData = req.body;
+  // logic update data
+
+  res.status(200).send("Data berhasil diperbarui!");
 });
 ```
 
@@ -81,11 +91,11 @@ app.delete("/delete", (req, res) => {
 
 ### Menangani Semua HTTP Method
 
-Express dapat menerima semua HTTP method menggunakan `all()`
+Express dapat menerima semua HTTP method menggunakan `all()`.
 
 ```js
 app.all("/all", (req, res) => {
-  res.send("Route ini menangani semua method");
+  res.send(`Metode HTTP yang diterima oleh route ini: ${req.method}`);
 });
 ```
 

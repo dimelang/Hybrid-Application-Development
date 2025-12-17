@@ -6,7 +6,6 @@ Database berfungsi untuk menyimpan dan mengelola data secara permanen, sehingga 
 - mengambil daftar produk,
 - mengupdate informasi,
 - menghapus data,
-- dll.
 
 Pada aplikasi backend, Express bertindak sebagai web server yang menerima _request_ lalu memprosesnya. Biasanya juga berinteraksi dengan database untuk mengambil atau menyimpan data. Menurut [dokumentasi resmi Express](https://expressjs.com/en/guide/database-integration.html), integrasi database dilakukan dengan menggunakan driver database bawaan Node.js seperti `Cassandra`, `Couchbase`, `CouchDB`, `MongoDB`, `MySQL`, dll. Namun, pada modul ini kita akan fokus pada MySQL, salah satu database relasional yang paling populer dan sering digunakan untuk aplikasi web skala kecil hingga besar.
 

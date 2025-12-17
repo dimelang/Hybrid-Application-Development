@@ -1,6 +1,6 @@
 # Middleware
 
-Middleware adalah fungsi yang berada di antara _request_ dan _respond_ pada Express. Setiap _request_ yang masuk ke server akan melewati satu atau rangkaian middleware sebelum akhirnya mencapai _route handler_. Middleware digunakan untuk berbagai kebutuhan, seperti:
+Middleware adalah fungsi yang berada di antara _request_ dan _respond_ pada Express. Setiap _request_ yang masuk ke server akan melewati satu atau rangkaian middleware sebelum akhirnya mencapai `route handler`. Middleware digunakan untuk berbagai kebutuhan, seperti:
 
 - Memproses atau memodifikasi _request_ sebelum ke route.
 - Melakukan logging.
@@ -105,7 +105,7 @@ app.get("/admin/dashboard", (req, res) => {
 
 Middleware hanya berjalan untuk URL yang diawali `/admin`.
 
-### Contoh rangkaian Apllication-level middleware
+### Contoh rangkaian Application-level middleware
 
 Kita juga dapat membuat rangkaian middleware
 
@@ -140,6 +140,10 @@ Ini dapat digunakan untuk:
 - Menolak akses
 - Mengembalikan error
 - Maintenance mode
+
+**Catatan:**
+
+Express mengeksekusi middleware secara berurutan dari atas ke bawah sesuai urutan penulisannya di kode.
 
 ## Router-level Middleware
 
