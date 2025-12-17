@@ -33,7 +33,42 @@ npm install express-validator
 
 Setelah instalasi selesai, kita dapat langsung menggunakan `express-validator` sebagai middleware pada route Express untuk melakukan validasi input.
 
-## Middleware `validate`
+## Konsep Dasar Validasi
+
+Validasi pada Express umumnya terdiri dari dua bagian:
+
+1. Aturan validasi (validation rules)
+2. Handler hasil validasi (menangani error validasi)
+
+express-validator menyediakan fungsi `body`, `param`, dan `query` untuk mendefinisikan aturan validasi.
+
+## Membuat Aturan Validasi
+
+Buat file `validators/task.validator.js`:
+
+```js
+const { body } = require("express-validator");
+
+exports.createTaskValidation = [
+  body("title").notEmpty().withMessage("Title tidak boleh kosong"),
+
+  body("description")
+    .optional()
+    .isString()
+    .withMessage("Description harus berupa string"),
+];
+```
+
+Penjelasan:
+
+- `body("title")`: mengambil data dari req.body.title
+- `notEmpty()`: field tidak boleh kosong
+- `withMessage()`: pesan error kustom
+- `optional()`: field boleh tidak dikirim
+
+Rule lainnya dapat dilihat pada [laman ini](https://express-validator.github.io/docs/api/validation-chain/)
+
+## Menangani Hasil Validasi
 
 Aturan validasi yang dibuat menggunakan express-validator tidak otomatis menghentikan request ketika terjadi kesalahan. Express hanya akan mencatat hasil validasi tersebut. Oleh karena itu, kita membutuhkan satu middleware tambahan untuk:
 
@@ -55,10 +90,10 @@ const validate = (req, res, next) => {
   if (!errors.isEmpty()) {
     return res.status(400).json({
       success: false,
+      message: "Validasi gagal",
       errors: errors.array(),
     });
   }
-
   next();
 };
 
@@ -115,7 +150,9 @@ router.post("/users", createUserValidator, validate, (req, res) => {
 });
 ```
 
-## Contoh Validasi `req.params`
+Selain melakukan validasi terhadap objek `req.body`, `express-validator` juga memungkinkan untuk memvalidasi parameter URL dan Query parameter.
+
+## Validasi Parameter URL
 
 Untuk endpoint seperti:
 
@@ -139,18 +176,7 @@ Penjelasan:
 - `isInt()` memastikan parameter berupa angka.
 - `withMessage()` menentukan pesan error jika validasi gagal.
 
-Lakukan hal yang sama seperti pada contoh sebelumnya, tambahkan validator beserta middleware ke dalam route.
-
-```js
-const { userIdValidator } = require("../validators/user.validation");
-const validate = require("../middlewares/validate");
-
-router.post("/users/:id", userIdValidator, validate, (req, res) => {
-  res.json({ message: "Detail user" });
-});
-```
-
-## Contoh Validasi `req.query`
+## Validasi Query Parameter
 
 Query parameter biasanya digunakan untuk kebutuhan seperti filtering, sorting, atau pagination.
 
@@ -182,16 +208,3 @@ Penjelasan:
 - `optional()` menandakan bahwa parameter tidak wajib
 - `trim()` menghapus spasi di awal dan akhir
 - `isBoolean()` memastikan nilai berupa boolean
-
-Penggunaan di route
-
-```js
-const { userQueryValidator } = require("../validators/user.validation");
-const validate = require("../middlewares/validate");
-
-router.post("/users", userIdValidator, validate, (req, res) => {
-  res.json({ message: "Daftar user" });
-});
-```
-
-`express-validator` memiliki banyak API validasi yang dapat dilihat pada [laman ini](https://express-validator.github.io/docs/api/validation-chain/)
