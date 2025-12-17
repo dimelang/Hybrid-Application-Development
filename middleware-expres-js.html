@@ -176,7 +176,7 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="middleware"><a class="header" href="#middleware">Middleware</a></h1>
-<p>Middleware adalah fungsi yang berada di antara <em>request</em> dan <em>respond</em> pada Express. Setiap <em>request</em> yang masuk ke server akan melewati satu atau rangkaian middleware sebelum akhirnya mencapai <em>route handler</em>. Middleware digunakan untuk berbagai kebutuhan, seperti:</p>
+<p>Middleware adalah fungsi yang berada di antara <em>request</em> dan <em>respond</em> pada Express. Setiap <em>request</em> yang masuk ke server akan melewati satu atau rangkaian middleware sebelum akhirnya mencapai <code>route handler</code>. Middleware digunakan untuk berbagai kebutuhan, seperti:</p>
 <ul>
 <li>Memproses atau memodifikasi <em>request</em> sebelum ke route.</li>
 <li>Melakukan logging.</li>
@@ -258,7 +258,7 @@ app.get("/admin/dashboard", (req, res) =&gt; {
 });
 </code></pre>
 <p>Middleware hanya berjalan untuk URL yang diawali <code>/admin</code>.</p>
-<h3 id="contoh-rangkaian-apllication-level-middleware"><a class="header" href="#contoh-rangkaian-apllication-level-middleware">Contoh rangkaian Apllication-level middleware</a></h3>
+<h3 id="contoh-rangkaian-application-level-middleware"><a class="header" href="#contoh-rangkaian-application-level-middleware">Contoh rangkaian Application-level middleware</a></h3>
 <p>Kita juga dapat membuat rangkaian middleware</p>
 <pre><code class="language-js">app.use(
   "/user/:id",
@@ -285,6 +285,8 @@ app.get("/admin/dashboard", (req, res) =&gt; {
 <li>Mengembalikan error</li>
 <li>Maintenance mode</li>
 </ul>
+<p><strong>Catatan:</strong></p>
+<p>Express mengeksekusi middleware secara berurutan dari atas ke bawah sesuai urutan penulisannya di kode.</p>
 <h2 id="router-level-middleware"><a class="header" href="#router-level-middleware">Router-level Middleware</a></h2>
 <p>Router-level middleware adalah middleware yang prinsip kerjanya sama seperti application-level middleware, tetapi dikhususkan hanya untuk instance Router. Artinya, middleware jenis ini hanya berlaku untuk sekelompok route tertentu. Biasanya digunakan untuk kebutuhan:</p>
 <ul>

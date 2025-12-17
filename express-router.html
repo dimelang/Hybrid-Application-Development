@@ -176,55 +176,105 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="express-router"><a class="header" href="#express-router">Express Router</a></h1>
-<p>Saat aplikasi Express semakin besar, jumlah route akan bertambah dan bisa membuat file utama (<code>index.js</code> atau <code>app.js</code>) menjadi berantakan. Untuk menjaga struktur tetap rapi, Express menyediakan fitur Router untuk memisahkan route ke file-file terpisah.</p>
+<p>Saat aplikasi Express semakin besar, jumlah route akan bertambah dan dapat membuat file utama (<code>index.js</code> atau <code>app.js</code>) menjadi berantakan. Untuk menjaga struktur tetap rapi, Express menyediakan fitur Router untuk memisahkan route ke file-file terpisah.</p>
 <p>Dengan Express Router, kita dapat:</p>
 <ul>
 <li>Mengelompokkan route berdasarkan fitur (Users, Products, Auth, dll.)</li>
-<li>Mempermudah maintenance</li>
-<li>Membuat struktur folder API lebih terorganisir</li>
+<li>Menjaga file utama tetap bersih</li>
+<li>Mempermudah scaling dan maintenance aplikasi</li>
+<li>Menerapkan middleware khusus untuk grup route tertentu</li>
+</ul>
+<h2 id="konsep-dasar-express-router"><a class="header" href="#konsep-dasar-express-router">Konsep Dasar Express Router</a></h2>
+<p><code>Router</code> adalah instance terpisah dari Express yang hanya bertanggung jawab mengatur route.</p>
+<pre><code class="language-js">const router = express.Router();
+</code></pre>
+<p>Router dapat:</p>
+<ul>
+<li>Memiliki route sendiri</li>
+<li>Memiliki middleware sendiri</li>
+<li>di-<em>mount</em> ke path tertentu menggunakan <code>app.use()</code></li>
 </ul>
 <h2 id="membuat-router-sederhana"><a class="header" href="#membuat-router-sederhana">Membuat Router Sederhana</a></h2>
 <p>Misalnya, kita ingin membuat router untuk user.</p>
 <h3 id="langkah-1--buat-folder-dan-file-router"><a class="header" href="#langkah-1--buat-folder-dan-file-router">Langkah 1 — Buat folder dan file router</a></h3>
 <pre><code class="language-bash">src/
 └── routes/
-    └── user.routes.js
+│    ├── user.routes.js
+│    └── article.routes.js
+└── app.js
 </code></pre>
-<h3 id="langkah-2---isi-file-userroutesjs"><a class="header" href="#langkah-2---isi-file-userroutesjs">Langkah 2 - Isi file user.routes.js:</a></h3>
-<pre><code class="language-js">const express = require('express');
+<h3 id="langkah-2---isi-file-userroutesjs-dan-articleroutesjs"><a class="header" href="#langkah-2---isi-file-userroutesjs-dan-articleroutesjs">Langkah 2 - Isi file <code>user.routes.js</code> dan <code>article.routes.js</code>:</a></h3>
+<pre><code class="language-js">const express = require("express");
 const router = express.Router();
 
 // GET /users
-router.get('/', (req, res) =&gt; {
-  res.send('Menampilkan daftar user');
+router.get("/", (req, res) =&gt; {
+  res.send("Menampilkan daftar user");
 });
 
 // GET /users/:id
-router.get('/:id', (req, res) =&gt; {
+router.get("/:id", (req, res) =&gt; {
   res.send(`Detail user dengan ID: ${req.params.id}`);
 });
 
 module.exports = router;
 </code></pre>
-<h3 id="langkah-3---menggunakan-router-di-indexjs"><a class="header" href="#langkah-3---menggunakan-router-di-indexjs">Langkah 3 - Menggunakan Router di <code>index.js</code></a></h3>
+<pre><code class="language-js">const express = require("express");
+const router = express.Router();
+
+// GET /users
+router.get("/", (req, res) =&gt; {
+  res.send("Menampilkan daftar artikel");
+});
+
+// GET /users/:id
+router.get("/:id", (req, res) =&gt; {
+  const { include, limit } = req.query;
+  res.json({
+    articleId: req.params.id,
+    include,
+    limit,
+  });
+});
+
+module.exports = router;
+</code></pre>
+<p>Catatan:</p>
+<ul>
+<li>Path pada router tidak perlu menuliskan /users</li>
+<li>Prefix URL akan ditentukan saat router dipasang</li>
+</ul>
+<h3 id="langkah-3---menggunakan-router-di-file-utama"><a class="header" href="#langkah-3---menggunakan-router-di-file-utama">Langkah 3 - Menggunakan Router di File Utama</a></h3>
 <p>Di file utama (misalnya <code>index.js</code> atau <code>src/app.js</code>), kita import router tersebut</p>
-<pre><code class="language-js">const express = require('express');
+<pre><code class="language-js">const express = require("express");
 const app = express();
-const userRoutes = require('./src/routes/user.routes');
+const userRoutes = require("./src/routes/user.routes");
+const articleRoutes = require("./src/routes/article.routes");
 
 // gunakan router
-app.use('/users', userRoutes);
+app.use("/users", userRoutes);
+app.use("/articles", articleRoutes);
 
 app.listen(3000, () =&gt; {
-  console.log('Server berjalan pada port 3000');
+  console.log("Server berjalan pada port 3000");
 });
 </code></pre>
 <p>Sekarang route berikut otomatis aktif</p>
 <div class="table-wrapper"><table><thead><tr><th>Method</th><th>URL</th><th>Handler</th></tr></thead><tbody>
 <tr><td>GET</td><td><code>/users</code></td><td>Menampilkan daftar user</td></tr>
 <tr><td>GET</td><td><code>/users/:id</code></td><td>Menampilkan detail user</td></tr>
+<tr><td>GET</td><td><code>/articles</code></td><td>Menampilkan daftar artkel</td></tr>
+<tr><td>GET</td><td><code>/articles/:id</code></td><td>Menampilkan detail artikel</td></tr>
 </tbody></table>
 </div>
+<h3 id="best-practice"><a class="header" href="#best-practice">Best Practice</a></h3>
+<ol>
+<li>Gunakan 1 router per fitur</li>
+<li>Hindari logic bisnis di file route</li>
+<li>Pisahkan controller dan service</li>
+<li>Gunakan nama file konsisten (<code>*.routes.js</code>)</li>
+</ol>
+
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">

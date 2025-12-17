@@ -199,7 +199,6 @@
   });
 });
 </code></pre>
-<p>Jika kita akses <a href="http://localhost:3000/hello">http://localhost:3000/hello</a>, teks tersebut akan tampil di browser.</p>
 <h3 id="post"><a class="header" href="#post"><code>POST</code></a></h3>
 <p>Route POST biasanya digunakan untuk mengirimkan data dari client ke server.</p>
 <pre><code class="language-js">app.post("/submit", (req, res) =&gt; {
@@ -207,7 +206,7 @@
 });
 </code></pre>
 <p>Catatan:
-Jika menggunakan body JSON, pastikan app menggunakan <a href="./middleware-expres-js.html">middleware</a>:</p>
+Jika menggunakan body JSON, pastikan app menggunakan <a href="./middleware-expres-js.html">middleware</a> <code>express.json()</code>:</p>
 <pre><code class="language-js">app.use(express.json());
 
 app.post("/submit", (req, res) =&gt; {
@@ -215,11 +214,20 @@ app.post("/submit", (req, res) =&gt; {
   res.json(req.body);
 });
 </code></pre>
-<p><code>req.body</code> dapat digunakan untuk mengakses data yang dikrimkan</p>
 <h3 id="put"><a class="header" href="#put"><code>PUT</code></a></h3>
 <p>Digunakan untuk memperbarui seluruh data.</p>
 <pre><code class="language-js">app.put("/update", (req, res) =&gt; {
   res.send("Data berhasil diperbarui!");
+});
+</code></pre>
+<h3 id="patch"><a class="header" href="#patch"><code>PATCH</code></a></h3>
+<p>Digunakan untuk memperbarui sebagian data.</p>
+<pre><code class="language-js">app.use(express.json());
+app.patch("/update", (req, res) =&gt; {
+  const updatedData = req.body;
+  // logic update data
+
+  res.status(200).send("Data berhasil diperbarui!");
 });
 </code></pre>
 <h3 id="delete"><a class="header" href="#delete"><code>DELETE</code></a></h3>
@@ -229,9 +237,9 @@ app.post("/submit", (req, res) =&gt; {
 });
 </code></pre>
 <h3 id="menangani-semua-http-method"><a class="header" href="#menangani-semua-http-method">Menangani Semua HTTP Method</a></h3>
-<p>Express dapat menerima semua HTTP method menggunakan <code>all()</code></p>
+<p>Express dapat menerima semua HTTP method menggunakan <code>all()</code>.</p>
 <pre><code class="language-js">app.all("/all", (req, res) =&gt; {
-  res.send("Route ini menangani semua method");
+  res.send(`Metode HTTP yang diterima oleh route ini: ${req.method}`);
 });
 </code></pre>
 <h3 id="menangani-semua-url-dengan"><a class="header" href="#menangani-semua-url-dengan">Menangani Semua URL dengan</a></h3>

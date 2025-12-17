@@ -179,7 +179,7 @@
 <p>Dalam <code>ExpressJs</code>, Route Parameters digunakan untuk membuat route yang memiliki bagian URL dinamis. Artinya, sebagian path dapat berubah-ubah, misalnya:</p>
 <ul>
 <li><code>/users/10</code></li>
-<li><code>/users/27</code></li>
+<li><code>/articles/sport/2025</code></li>
 <li><code>/products/666</code></li>
 </ul>
 <p>Bagian yang berubah tersebut disebut parameter dan ditulis menggunakan tanda titik dua <code>:</code> pada definisi route.</p>
@@ -192,7 +192,7 @@
 <p>Pada contoh di atas:</p>
 <ul>
 <li><code>:id</code> adalah parameter</li>
-<li><code>req.params.id</code> untuk mengambil nilainya</li>
+<li><code>req.params.id</code> digunakan untuk mengambil nilainya</li>
 </ul>
 <p>Jika URL yang dipanggil adalah</p>
 <pre><code class="language-yaml">/users/50
@@ -232,7 +232,42 @@
 </code></pre>
 </li>
 </ul>
-
+<h3 id="wildcard-parameter"><a class="header" href="#wildcard-parameter">Wildcard Parameter</a></h3>
+<p>Jika ingin menangkap sisa path URL sebagai satu parameter, Express menyediakan teknik bernama splat parameter:</p>
+<pre><code class="language-js">app.get("/files/*", (req, res) =&gt; {
+  const path = req.params[0];
+  res.send(`Anda mengakses file: ${path}`);
+});
+</code></pre>
+<p>Contoh akses:</p>
+<pre><code class="language-yaml">/files/images/2025/banner.png
+</code></pre>
+<p>Output:</p>
+<pre><code class="language-yaml">Anda mengakses file: images/2025/banner.png
+</code></pre>
+<p>Teknik ini cocok digunakan untuk routing file statis dan dynamic path.</p>
+<h3 id="validasi-menggunakan-regex"><a class="header" href="#validasi-menggunakan-regex">Validasi Menggunakan Regex</a></h3>
+<p>Express memungkinkan parameter memiliki pattern menggunakan regex.</p>
+<pre><code class="language-js">app.get("/users/:id(\\d+)", (req, res) =&gt; {
+  res.send(`User ID valid: ${req.params.id}`);
+});
+</code></pre>
+<p>Contoh valid:</p>
+<ul>
+<li><code>/users/123</code></li>
+</ul>
+<p>Contoh tidak valid:</p>
+<ul>
+<li><code>/users/abc</code></li>
+<li><code>/users/12x</code></li>
+</ul>
+<p>Regex umum yang dapat digunakan:</p>
+<div class="table-wrapper"><table><thead><tr><th>Regex</th><th>Arti</th></tr></thead><tbody>
+<tr><td><code>\\d+</code></td><td>Hanya angka</td></tr>
+<tr><td><code>[a-zA-Z]+</code></td><td>Hanya huruf</td></tr>
+<tr><td><code>[a-z0-9]+</code></td><td>Alphanumeric</td></tr>
+</tbody></table>
+</div>
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">

@@ -182,8 +182,10 @@
 <li><code>GET /users</code></li>
 <li><code>POST /login</code></li>
 <li><code>PUT /products/:id</code></li>
+<li><code>PATCH /posts/:id</code></li>
 <li><code>DELETE /posts/:id</code></li>
 </ul>
+<p>Routing menjadi fondasi utama dalam membangun <a href="./rest-api-express-js.html">RESTful API</a>.</p>
 <h2 id="http-methods-yang-didukung-express"><a class="header" href="#http-methods-yang-didukung-express">HTTP Methods yang Didukung Express</a></h2>
 <div class="table-wrapper"><table><thead><tr><th>Method</th><th>Keterangan</th></tr></thead><tbody>
 <tr><td><strong>GET</strong></td><td>Mengambil data</td></tr>
@@ -193,19 +195,18 @@
 <tr><td><strong>DELETE</strong></td><td>Menghapus data</td></tr>
 </tbody></table>
 </div>
-<p>Routing menjadi fondasi utama dalam membangun RESTful API.</p>
 <p>Contoh route dasar di Express:</p>
 <pre><code class="language-js">app.get("/hello", (req, res) =&gt; {
   res.send("Hello World!");
 });
 </code></pre>
 <h3 id="memahami-objek-req-dan-res"><a class="header" href="#memahami-objek-req-dan-res">Memahami Objek <code>req</code> dan <code>res</code></a></h3>
-<p>Saat membuat route di Express (seperti contoh di atas), function handler akan menerima dua objek penting yaitu <code>req</code> (request) dan <code>res</code> (response).</p>
-<h3 id="req"><a class="header" href="#req"><code>req</code></a></h3>
+<p>Ketika membuat route, handler function akan menerima dua objek penting yaitu <code>req</code> (request) dan <code>res</code> (response).</p>
+<h3 id="objek-req"><a class="header" href="#objek-req">Objek <code>req</code></a></h3>
 <p>Berisi informasi dari client yang dikirim ke server. Objek ini memiliki beberapa property penting:</p>
 <ul>
 <li>
-<p><code>req.originalUrl</code> Menunjukkan URL lengkap. <code>req.baseUrl</code> Menunjukkan dasar tempat sebuah router dipasang. <code>req.path</code> Menunjukkan bagian spesifik dari URL yang menangani suatu route.</p>
+<p><code>req.originalUrl</code> Menunjukkan URL lengkap. <code>req.baseUrl</code> Menunjukkan dasar tempat sebuah router dipasang. <code>req.path</code> Menunjukkan path spesifik dari URL yang menangani suatu route.</p>
 <pre><code class="language-js">// GET 'http://www.example.com/admin/new?sort=desc'
 app.use("/admin", (req, res, next) =&gt; {
   console.dir(req.originalUrl); // '/admin/new?sort=desc'
@@ -215,6 +216,9 @@ app.use("/admin", (req, res, next) =&gt; {
 });
 </code></pre>
 </li>
+</ul>
+<p><code>next</code> merupakan fungsi tambahan untuk kebutuhan <a href="./middleware-expres-js.html">Middleware</a></p>
+<ul>
 <li>
 <p><code>req.subdomains</code> Menunjukkan array subdomain.</p>
 <pre><code class="language-js">// Host: "tobi.ferrets.example.com/admin"
@@ -226,18 +230,26 @@ app.get("/admin", (req, res) =&gt; {
 </li>
 <li>
 <p><code>req.params</code> Menyimpan nilai dari <a href="./route-parameter-express-js.html">Route Parameters</a>.</p>
+<pre><code class="language-yaml">GET /users/45
+</code></pre>
 <pre><code class="language-js">app.get("/users/:id", (req, res) =&gt; {
-  console.log(req.params.id);
+  console.log(req.params.id); // 45
 });
 </code></pre>
 </li>
 <li>
 <p><code>req.query</code> Menyimpan <a href="./query-parameter-express-js.html">Query Parameters</a></p>
-<pre><code class="language-yaml">GET /search?title=express
+<pre><code class="language-yaml">GET /search?title=express?year=2025
 </code></pre>
-<pre><code class="language-js">req.query.title; // "express"
+<pre><code class="language-js">app.get("/search", (req, res) =&gt; {
+  // const title = req.params.title   // jika ingin mendapatkan key tertentu
+  // const year = req.params.year   // jika ingin mendapatkan key tertentu
+  const { title, year } = req.params;
+
+  console.log(title, year); // "express", 2025
+});
 </code></pre>
-<p>Pastikan key sudah sama dengan yang terdapat pada URL. Contoh di atas, key-nya adalah <code>title</code></p>
+<p>Pastikan key sudah sama dengan yang terdapat pada URL. Contoh di atas, key-nya adalah <code>title</code> dan <code>year</code></p>
 </li>
 <li>
 <p><code>req.headers</code> Berisi semua header request HTTP yang dikirim oleh client.</p>
@@ -266,8 +278,8 @@ app.get("/admin", (req, res) =&gt; {
 </code></pre>
 </li>
 </ul>
-<h3 id="res"><a class="header" href="#res"><code>res</code></a></h3>
-<p>Digunakan untuk mengirimkan response ke client. Objek ini memiliki beberapa method penting:</p>
+<h3 id="objek-res"><a class="header" href="#objek-res">Objek <code>res</code></a></h3>
+<p>Digunakan untuk mengirim response ke client. Objek ini memiliki beberapa method penting:</p>
 <ul>
 <li>
 <p><code>res.send()</code> digunakan untuk mengirim <code>string</code>, <code>object</code>, <code>buffer</code>, atau <code>array</code> sebagai response.</p>
@@ -287,12 +299,16 @@ app.get("/admin", (req, res) =&gt; {
 </code></pre>
 </li>
 <li>
-<p><code>res.attachment()</code> digunakan untuk mengirimkan suatu file ke client.</p>
-<pre><code class="language-js">app.post("/register", (req, res) =&gt; {
-  res.attachment("path/file.ekstensi").json({
-    message: "Behasil mendaftar",
-    status: "success",
-  });
+<p><code>res.status()</code> digunakan untuk mengatur HTTP status code.</p>
+<pre><code class="language-js">app.get("/hello", (req, res) =&gt; {
+  res.status(200).send("Hello world!");
+});
+</code></pre>
+</li>
+<li>
+<p><code>res.end()</code> diguanakan untuk mengakhiri proses response tanpa mengirimkan data.</p>
+<pre><code class="language-js">app.all("*", (req, res) =&gt; {
+  res.status(404).end();
 });
 </code></pre>
 </li>
@@ -308,9 +324,20 @@ app.get("/admin", (req, res) =&gt; {
 </code></pre>
 </li>
 <li>
-<p><code>res.end()</code> diguanakan untuk mengakhiri proses response tanpa mengirimkan data.</p>
-<pre><code class="language-js">app.all("*", (req, res) =&gt; {
-  res.status(404).end();
+<p><code>res.redirect()</code> digunakan untuk mengalihkan client ke URL lain.</p>
+<pre><code class="language-js">app.get("/register", (req, res) =&gt; {
+  // logic register
+  res.redirect("/beranda");
+});
+</code></pre>
+</li>
+<li>
+<p><code>res.attachment()</code> digunakan untuk mengirimkan suatu file ke client.</p>
+<pre><code class="language-js">app.post("/register", (req, res) =&gt; {
+  res.attachment("path/file.ekstensi").json({
+    message: "Behasil mendaftar",
+    status: "success",
+  });
 });
 </code></pre>
 </li>
@@ -338,14 +365,6 @@ app.get("/admin", (req, res) =&gt; {
 <p>Kode di atas menunjukkan perbedaan jenis konten yang akan diterima oleh client.</p>
 </li>
 <li>
-<p><code>res.redirect()</code> digunakan untuk mengalihkan browser pengguna ke URL lain.</p>
-<pre><code class="language-js">app.get("/register", (req, res) =&gt; {
-  // logic register
-  res.redirect("/beranda");
-});
-</code></pre>
-</li>
-<li>
 <p><code>res.render()</code> digunakan untuk merender template tampilan dan mengirimkan HTML ke client. Untuk menggunakan metode ini, pastikan untuk menggunakan view engine seperti <a href="https://ejs.co/">EJS</a>.</p>
 <pre><code class="language-js">const express = require("express");
 const app = express();
@@ -354,7 +373,7 @@ app.set("view engine", "ejs");
 app.set("views", "./views"); // folder tempat menyimpan file .ejs
 
 app.get("/", (req, res) =&gt; {
-  res.render("home", { nama: "Dimas" });
+  res.render("home", { nama: "John" });
 });
 </code></pre>
 </li>

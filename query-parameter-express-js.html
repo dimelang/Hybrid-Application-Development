@@ -218,6 +218,17 @@
   "page": "2"
 }
 </code></pre>
+<h3 id="query-parameters-dengan-nilai-array"><a class="header" href="#query-parameters-dengan-nilai-array">Query Parameters dengan Nilai Array</a></h3>
+<p>Express secara otomatis mengubah query parameter berulang menjadi array</p>
+<pre><code class="language-yaml">/products?tag=promo&amp;tag=discount
+</code></pre>
+<pre><code class="language-js">app.get("/products", (req, res) =&gt; {
+  res.json(req.query.tag);
+});
+</code></pre>
+<p>Output:</p>
+<pre><code class="language-yaml">["promo", discount]
+</code></pre>
 <h3 id="menggabungkan-route--query-parameters"><a class="header" href="#menggabungkan-route--query-parameters">Menggabungkan Route &amp; Query Parameters</a></h3>
 <pre><code class="language-js">app.get("/users/:id", (req, res) =&gt; {
   res.json({
