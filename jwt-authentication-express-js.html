@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Validasi Input - Hybrid Application Development</title>
+        <title>JWT Authentication - Hybrid Application Development</title>
 
 
         <!-- Custom HTML head -->
@@ -175,184 +175,65 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="validasi-input"><a class="header" href="#validasi-input">Validasi Input</a></h1>
-<p>Validasi input merupakan proses penting dalam pengembangan aplikasi backend untuk memastikan bahwa data yang dikirim oleh client benar-benar sesuai dengan yang diharapkan oleh server. Proses ini dilakukan sebelum data diproses lebih lanjut atau disimpan ke dalam database.</p>
-<p>Dengan validasi input, aplikasi dapat memastikan bahwa data yang diterima:</p>
-<ul>
-<li>Memiliki format yang benar</li>
-<li>Tidak kosong jika wajib diisi</li>
-<li>Sesuai dengan aturan bisnis</li>
-<li>Aman sebelum diproses atau disimpan ke database</li>
-</ul>
-<p>Tanpa validasi yang baik, aplikasi berisiko menerima data tidak valid yang dapat menyebabkan error, inkonsistensi data, hingga celah keamanan.</p>
-<p>Dalam aplikasi Express, data dari client dapat dikirim melalui beberapa bagian request, yaitu <code>req.body</code>, <code>req.params</code>, dan <code>req.query</code>. Semua sumber data tersebut perlu divalidasi, karena seluruhnya berasal dari input eksternal.</p>
-<p>Validasi input sebenarnya dapat dilakukan secara manual menggunakan kondisi <code>if</code>, misalnya:</p>
-<pre><code class="language-js">if (!req.body.email) {
-  return res.status(400).json({ message: "Email wajib diisi" });
-}
+                        <h1 id="jwt-authentication"><a class="header" href="#jwt-authentication">JWT Authentication</a></h1>
+<p>Setelah password berhasil diverifikasi menggunakan <code>bcrypt</code>, langkah selanjutnya adalah memberikan identitas kepada user agar backend dapat mengenali user pada request berikutnya. Pada bagian ini, kita akan menggunakan JSON Web Token (JWT) sebagai mekanisme autentikasi.</p>
+<p>JWT (<em>JSON Web Token</em>) adalah token berbentuk string yang digunakan untuk merepresentasikan identitas user secara aman.</p>
+<p>Contoh JWT:</p>
+<pre><code class="language-yaml">xxxxx.yyyyy.zzzzz
 </code></pre>
-<p>Pendekatan ini masih dapat diterima untuk aplikasi yang sangat kecil. Namun, pendekatan ini kurang direkomendasikan untuk aplikasi berskala menengah hingga besar. Oleh karena itu, Express menyediakan kemudahan integrasi dengan library pihak ketiga. Salah satu library yang paling umum dan direkomendasikan adalah <a href="https://express-validator.github.io/docs">express-validator</a>. <code>express-validator</code> merupakan middleware berbasis <code>validator.js</code> yang terintegrasi langsung dengan Express.</p>
-<h2 id="instalasi"><a class="header" href="#instalasi">Instalasi</a></h2>
-<p>Untuk mulai menggunakan <code>express-validator</code>, instal terlebih dahulu library-nya:</p>
-<pre><code class="language-bash">npm install express-validator
-</code></pre>
-<p>Setelah instalasi selesai, kita dapat langsung menggunakan <code>express-validator</code> sebagai middleware pada route Express untuk melakukan validasi input.</p>
-<h2 id="konsep-dasar-validasi"><a class="header" href="#konsep-dasar-validasi">Konsep Dasar Validasi</a></h2>
-<p>Validasi pada Express umumnya terdiri dari dua bagian:</p>
+<p>JWT terdiri dari tiga bagian:</p>
 <ol>
-<li>Aturan validasi (validation rules)</li>
-<li>Handler hasil validasi (menangani error validasi)</li>
+<li>Header memuat informasi algoritma &amp; tipe token</li>
+<li>Payload memuat data (claim) yang disimpan</li>
+<li>Signature memuat tanda tangan untuk memastikan token tidak dimodifikasi</li>
 </ol>
-<p>express-validator menyediakan fungsi <code>body</code>, <code>param</code>, dan <code>query</code> untuk mendefinisikan aturan validasi.</p>
-<h2 id="membuat-aturan-validasi"><a class="header" href="#membuat-aturan-validasi">Membuat Aturan Validasi</a></h2>
-<p>Buat file <code>validators/task.validator.js</code>:</p>
-<pre><code class="language-js">const { body } = require("express-validator");
-
-exports.createTaskValidation = [
-  body("title").notEmpty().withMessage("Title tidak boleh kosong"),
-
-  body("description")
-    .optional()
-    .isString()
-    .withMessage("Description harus berupa string"),
-];
+<p>JWT bersifat stateless, artinya backend tidak perlu menyimpan session.</p>
+<h2 id="instalasi"><a class="header" href="#instalasi">Instalasi</a></h2>
+<pre><code class="language-bash">npm install jsonwebtoken
 </code></pre>
-<p>Penjelasan:</p>
-<ul>
-<li><code>body("title")</code>: mengambil data dari req.body.title</li>
-<li><code>notEmpty()</code>: field tidak boleh kosong</li>
-<li><code>withMessage()</code>: pesan error kustom</li>
-<li><code>optional()</code>: field boleh tidak dikirim</li>
-</ul>
-<p>Rule lainnya dapat dilihat pada <a href="https://express-validator.github.io/docs/api/validation-chain/">laman ini</a></p>
-<h2 id="menangani-hasil-validasi"><a class="header" href="#menangani-hasil-validasi">Menangani Hasil Validasi</a></h2>
-<p>Aturan validasi yang dibuat menggunakan express-validator tidak otomatis menghentikan request ketika terjadi kesalahan. Express hanya akan mencatat hasil validasi tersebut. Oleh karena itu, kita membutuhkan satu middleware tambahan untuk:</p>
-<ul>
-<li>Mengumpulkan hasil validasi</li>
-<li>Mengecek apakah terdapat error</li>
-<li>Menghentikan request jika validasi gagal</li>
-<li>Meneruskan request jika validasi berhasil</li>
-</ul>
-<p>Middleware inilah yang akan melakukan tugas di atas.</p>
-<p><strong>src/middleware/validate.js</strong></p>
-<pre><code class="language-js">const { validationResult } = require("express-validator");
+<h2 id="membuat-jwt"><a class="header" href="#membuat-jwt">Membuat JWT</a></h2>
+<p>JWT biasanya baru dibentuk setelah user berhasil melakukan login.</p>
+<pre><code class="language-js">const jwt = require("jsonwebtoken");
 
-const validate = (req, res, next) =&gt; {
-  const errors = validationResult(req);
-
-  if (!errors.isEmpty()) {
-    return res.status(400).json({
-      success: false,
-      message: "Validasi gagal",
-      errors: errors.array(),
-    });
-  }
-  next();
+const payload = {
+  id: user.id,
+  email: user.email,
 };
 
-module.exports = validate;
-</code></pre>
-<p>Cara Kerja Middleware validate</p>
-<ol>
-<li><code>validationResult(req)</code> mengambil seluruh hasil validasi yang sebelumnya dijalankan</li>
-<li>Jika terdapat error:
-<ul>
-<li>Request dihentikan</li>
-<li>Server mengirim response status <code>400</code></li>
-<li>Daftar error dikirim ke client</li>
-</ul>
-</li>
-<li>Jika tidak ada error:
-<ul>
-<li><code>next()</code> dipanggil</li>
-<li>Request diteruskan ke request handler</li>
-</ul>
-</li>
-</ol>
-<h2 id="validasi-body-request"><a class="header" href="#validasi-body-request">Validasi body request</a></h2>
-<p>Misalnya kita memiliki endpoint untuk task baru dan ingin memastikan:</p>
-<ul>
-<li><code>username</code> wajib diisi.</li>
-<li><code>email </code> harus berupa email yang valid.</li>
-</ul>
-<p><strong>src/validators/user.validation.js</strong></p>
-<pre><code class="language-js">const { body } = require("express-validator");
-
-exports.createUserValidator = [
-  body("username").notEmpty().withMessage("Username wajib diisi"),
-  body("email").isEmail().withMessage("Format email tidak valid"),
-];
+const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "1h" });
 </code></pre>
 <p>Penjelasan:</p>
 <ul>
-<li><code>body("username")</code> mengambail nilai dari <code>req.body.username</code>.</li>
-<li><code>body("email")</code> mengambil nilai dari <code>req.body.email</code>.</li>
-<li><code>.notEmpty()</code> memastikan nilainya tidak kosong.</li>
-<li><code>.isEmail()</code> memastikan format email valid.</li>
-<li><code>withMessage()</code> menentukan pesan error jika validasi gagal.</li>
+<li>payload: data yang akan disimpan di token. Pada contoh di atas adalah id dan email user.</li>
+<li>JWT<em>SECRET: secret key untuk menandatangani token. Biasanya disimpan pada file <code>.env</code> (_variable environment</em>)</li>
+<li>expiresIn: masa berlaku token</li>
 </ul>
-<p>Selanjutnya, tambahkan validator beserta middleware ke dalam route</p>
-<p><strong>src/routes/user.routes.js</strong></p>
-<pre><code class="language-js">const { createUserValidator } = require("../validators/user.validation");
-const validateMiddleware = require("../middlewares/validate");
-
-router.post("/users", createUserValidator, validateMiddleware, (req, res) =&gt; {
-  res.json({ message: "User berhasil dibuat" });
-});
+<p>Jangan menyimpan data sensitif seperti password di dalam payload JWT.</p>
+<p>Token yang dibentuk kemudian dikirim ke client sebagai <em>response</em>. Client wajib menyimpan token ini dan mengirimkannya kembali pada request selanjutnya. Client dapat mengirim JWT bersama request tertentu dengan cara tambahkan token dengan format berikut pada HTTP Header.</p>
+<pre><code class="language-yaml">Authorization: Bearer &lt;token&gt;
 </code></pre>
-<p>Selain melakukan validasi terhadap objek <code>req.body</code>, <code>express-validator</code> juga memungkinkan untuk memvalidasi parameter URL dan Query parameter.</p>
-<h2 id="validasi-parameter-url"><a class="header" href="#validasi-parameter-url">Validasi Parameter URL</a></h2>
-<p>Untuk endpoint seperti:</p>
-<pre><code class="language-yaml">GET /users/:id
+<p>Contoh:</p>
+<pre><code class="language-json">Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJEaW1hcyIsImVtYWlsIjoiZGltYXNAbWFpbC5jb20iLCJyb2xlIjoiR1VFU1QiLCJpYXQiOjE3NjYzMjIyMDcsImV4cCI6MTc2NjMyNTgwN30.rlxVaCreLp1oYTZYuJDnYAdvFEUVDzNLrjx-1IjjeCE
 </code></pre>
-<p>Kita dapat memvalidasi parameter <code>id</code> sebagai berikut:</p>
-<pre><code class="language-js">const { param } = require("express-validator");
-
-exports.userIdValidator = [
-  param("id").isInt().withMessage("ID harus berupa angka"),
-];
+<h2 id="verifikasi-jwt"><a class="header" href="#verifikasi-jwt">Verifikasi JWT</a></h2>
+<p>Untuk memverifikasi JWT, kita menggunakan jwt.verify. Proses ini biasanya dilakukan di middleware.</p>
+<pre><code class="language-js">const decoded = jwt.verify(token, process.env.JWT_SECRET);
 </code></pre>
-<p>Penjelasan:</p>
+<p>Jika token:</p>
 <ul>
-<li><code>param("id")</code> mengambail nilai dari <code>req.params.id</code>.</li>
-<li><code>isInt()</code> memastikan parameter berupa angka.</li>
-<li><code>withMessage()</code> menentukan pesan error jika validasi gagal.</li>
-</ul>
-<h2 id="validasi-query-parameter"><a class="header" href="#validasi-query-parameter">Validasi Query Parameter</a></h2>
-<p>Query parameter biasanya digunakan untuk kebutuhan seperti filtering, sorting, atau pagination.</p>
-<p>Contoh endpoint:</p>
-<pre><code class="language-yaml">GET /users?search=John&amp;status=true
-</code></pre>
-<p>Kita dapat memvalidasi query sebagai berikut:</p>
-<pre><code class="language-js">const { query } = require("express-validator");
-
-exports.userQueryValidator = [
-  query("search")
-    .optional()
-    .trim()
-    .notEmpty()
-    .withMessage("Search tidak boleh kosong"),
-
-  query("status").optional().isBoolean().withMessage("Status harus boolean"),
-];
-</code></pre>
-<p>Penjelasan:</p>
-<ul>
-<li><code>query("search")</code> mengambil nilai dari req.query.search</li>
-<li><code>optional()</code> menandakan bahwa parameter tidak wajib</li>
-<li><code>trim()</code> menghapus spasi di awal dan akhir</li>
-<li><code>isBoolean()</code> memastikan nilai berupa boolean</li>
+<li>Valid maka payload dikembalikan</li>
+<li>Tidak valid / expired mengembalikan error</li>
 </ul>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="rest-api-express-js.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="password-hashing-express-js.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next prefetch" href="authentication-express-js.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="protected-routes-express-js.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -362,11 +243,11 @@ exports.userQueryValidator = [
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="rest-api-express-js.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="password-hashing-express-js.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next prefetch" href="authentication-express-js.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="protected-routes-express-js.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>

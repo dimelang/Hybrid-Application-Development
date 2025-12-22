@@ -7754,7 +7754,7 @@ exports.createTaskValidation = [
 <li>Menghentikan request jika validasi gagal</li>
 <li>Meneruskan request jika validasi berhasil</li>
 </ul>
-<p>Middleware inilah yang biasanya disebut sebagai <code>validate</code>.</p>
+<p>Middleware inilah yang akan melakukan tugas di atas.</p>
 <p><strong>src/middleware/validate.js</strong></p>
 <pre><code class="language-js">const { validationResult } = require("express-validator");
 
@@ -7790,11 +7790,11 @@ module.exports = validate;
 </ul>
 </li>
 </ol>
-<h2 id="contoh-validasi-reqbody"><a class="header" href="#contoh-validasi-reqbody">Contoh Validasi <code>req.body</code></a></h2>
-<p>Misalnya kita memiliki endpoint untuk membuat user dan ingin memastikan:</p>
+<h2 id="validasi-body-request"><a class="header" href="#validasi-body-request">Validasi body request</a></h2>
+<p>Misalnya kita memiliki endpoint untuk task baru dan ingin memastikan:</p>
 <ul>
 <li><code>username</code> wajib diisi.</li>
-<li><code>email</code> harus berupa email yang valid.</li>
+<li><code>email </code> harus berupa email yang valid.</li>
 </ul>
 <p><strong>src/validators/user.validation.js</strong></p>
 <pre><code class="language-js">const { body } = require("express-validator");
@@ -7815,9 +7815,9 @@ exports.createUserValidator = [
 <p>Selanjutnya, tambahkan validator beserta middleware ke dalam route</p>
 <p><strong>src/routes/user.routes.js</strong></p>
 <pre><code class="language-js">const { createUserValidator } = require("../validators/user.validation");
-const validate = require("../middlewares/validate");
+const validateMiddleware = require("../middlewares/validate");
 
-router.post("/users", createUserValidator, validate, (req, res) =&gt; {
+router.post("/users", createUserValidator, validateMiddleware, (req, res) =&gt; {
   res.json({ message: "User berhasil dibuat" });
 });
 </code></pre>
@@ -7864,6 +7864,280 @@ exports.userQueryValidator = [
 <li><code>trim()</code> menghapus spasi di awal dan akhir</li>
 <li><code>isBoolean()</code> memastikan nilai berupa boolean</li>
 </ul>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="authentication"><a class="header" href="#authentication">Authentication</a></h1>
+<p>Autentikasi adalah proses untuk memverifikasi identitas user. Dalam aplikasi backend, autentikasi umumnya dilakukan dengan mencocokkan kredensial (email &amp; password) lalu memberikan token yang digunakan pada request berikutnya.</p>
+<p>Pada bagian ini, kita akan membangun sistem autentikasi menggunakan <code>bcrypt</code> dan <code>JSON Web Token</code>.</p>
+<h2 id="konsep-dasar-autentikasi"><a class="header" href="#konsep-dasar-autentikasi">Konsep Dasar Autentikasi</a></h2>
+<p>Secara umum, alur autentikasi khususnya menggunakan skema JWT token adalah sebagai berikut:</p>
+<ol>
+<li>User melakukan registrasi dengan email dan password</li>
+<li>Password di-<em>hash</em> menggunakan <code>bcrypt</code></li>
+<li>Data user disimpan ke database</li>
+<li>User melakukan login</li>
+<li>Server memverifikasi email dan password</li>
+<li>Jika valid, server mengirimkan JWT token</li>
+<li>JWT dikirim kembali oleh client pada request selanjutnya</li>
+<li>Backend memverifikasi token sebelum mengakses resource</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="password-hashing"><a class="header" href="#password-hashing">Password Hashing</a></h1>
+<p>Pada bagian ini, kita akan fokus pada cara menyimpan password dengan aman menggunakan <code>bcrypt</code>. Materi ini menjadi fondasi penting sebelum masuk ke proses login dan JWT authentication.</p>
+<p>Menyimpan password dalam bentuk <strong>plaintext</strong> adalah kesalahan fatal karena:</p>
+<ul>
+<li>Jika database bocor, semua akun ikut bocor</li>
+<li>User sering menggunakan password yang sama di banyak layanan</li>
+</ul>
+<p>Mengatasi masalah di atas, kita dapat menggunakan hashing. Hashing adalah proses mengubah data menjadi string acak dengan karakteristik:</p>
+<ul>
+<li>Tidak bisa dikembalikan ke bentuk semula (one-way)</li>
+<li>Input yang sama selalu menghasilkan hash yang sama</li>
+<li>Sedikit perubahan input menghasilkan hash yang sangat berbeda</li>
+</ul>
+<p><code>bcrypt</code> adalah library hashing yang dirancang khusus untuk password.</p>
+<h2 id="instalasi-17"><a class="header" href="#instalasi-17">Instalasi</a></h2>
+<pre><code class="language-bash">npm install bcrypt
+</code></pre>
+<h2 id="hashing-password-menggunakan-bcrypt"><a class="header" href="#hashing-password-menggunakan-bcrypt">Hashing Password Menggunakan <code>bcrypt</code></a></h2>
+<pre><code class="language-js">const bcrypt = require("bcrypt");
+
+const password = "password123";
+const saltRounds = 10;
+const hashedPassword = await bcrypt.hash(password, saltRounds);
+</code></pre>
+<p>Penjelasan:</p>
+<ul>
+<li><code>password</code>: password asli dari user</li>
+<li><code>saltRounds</code>: tingkat kompleksitas (semakin besar, semakin aman tapi lambat)</li>
+<li><code>hashedPassword</code>: hasil hash yang akan disimpan</li>
+</ul>
+<h2 id="verifikasi-password"><a class="header" href="#verifikasi-password">Verifikasi Password</a></h2>
+<pre><code class="language-js">const email = "example@mail.com";
+const passwordInput = "password123";
+const user = await userRepository.findByEmail(email);
+const isMatch = await bcrypt.compare(passwordInput, user.password);
+</code></pre>
+<p>Penjelasan:</p>
+<ul>
+<li><code>passwordInput</code>: input user</li>
+<li><code>user.password</code>: hash dari database</li>
+<li><code>isMatch</code>: true atau false</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="jwt-authentication"><a class="header" href="#jwt-authentication">JWT Authentication</a></h1>
+<p>Setelah password berhasil diverifikasi menggunakan <code>bcrypt</code>, langkah selanjutnya adalah memberikan identitas kepada user agar backend dapat mengenali user pada request berikutnya. Pada bagian ini, kita akan menggunakan JSON Web Token (JWT) sebagai mekanisme autentikasi.</p>
+<p>JWT (<em>JSON Web Token</em>) adalah token berbentuk string yang digunakan untuk merepresentasikan identitas user secara aman.</p>
+<p>Contoh JWT:</p>
+<pre><code class="language-yaml">xxxxx.yyyyy.zzzzz
+</code></pre>
+<p>JWT terdiri dari tiga bagian:</p>
+<ol>
+<li>Header memuat informasi algoritma &amp; tipe token</li>
+<li>Payload memuat data (claim) yang disimpan</li>
+<li>Signature memuat tanda tangan untuk memastikan token tidak dimodifikasi</li>
+</ol>
+<p>JWT bersifat stateless, artinya backend tidak perlu menyimpan session.</p>
+<h2 id="instalasi-18"><a class="header" href="#instalasi-18">Instalasi</a></h2>
+<pre><code class="language-bash">npm install jsonwebtoken
+</code></pre>
+<h2 id="membuat-jwt"><a class="header" href="#membuat-jwt">Membuat JWT</a></h2>
+<p>JWT biasanya baru dibentuk setelah user berhasil melakukan login.</p>
+<pre><code class="language-js">const jwt = require("jsonwebtoken");
+
+const payload = {
+  id: user.id,
+  email: user.email,
+};
+
+const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "1h" });
+</code></pre>
+<p>Penjelasan:</p>
+<ul>
+<li>payload: data yang akan disimpan di token. Pada contoh di atas adalah id dan email user.</li>
+<li>JWT<em>SECRET: secret key untuk menandatangani token. Biasanya disimpan pada file <code>.env</code> (_variable environment</em>)</li>
+<li>expiresIn: masa berlaku token</li>
+</ul>
+<p>Jangan menyimpan data sensitif seperti password di dalam payload JWT.</p>
+<p>Token yang dibentuk kemudian dikirim ke client sebagai <em>response</em>. Client wajib menyimpan token ini dan mengirimkannya kembali pada request selanjutnya. Client dapat mengirim JWT bersama request tertentu dengan cara tambahkan token dengan format berikut pada HTTP Header.</p>
+<pre><code class="language-yaml">Authorization: Bearer &lt;token&gt;
+</code></pre>
+<p>Contoh:</p>
+<pre><code class="language-json">Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJEaW1hcyIsImVtYWlsIjoiZGltYXNAbWFpbC5jb20iLCJyb2xlIjoiR1VFU1QiLCJpYXQiOjE3NjYzMjIyMDcsImV4cCI6MTc2NjMyNTgwN30.rlxVaCreLp1oYTZYuJDnYAdvFEUVDzNLrjx-1IjjeCE
+</code></pre>
+<h2 id="verifikasi-jwt"><a class="header" href="#verifikasi-jwt">Verifikasi JWT</a></h2>
+<p>Untuk memverifikasi JWT, kita menggunakan jwt.verify. Proses ini biasanya dilakukan di middleware.</p>
+<pre><code class="language-js">const decoded = jwt.verify(token, process.env.JWT_SECRET);
+</code></pre>
+<p>Jika token:</p>
+<ul>
+<li>Valid maka payload dikembalikan</li>
+<li>Tidak valid / expired mengembalikan error</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="protected-routes"><a class="header" href="#protected-routes">Protected Routes</a></h1>
+<p>Setelah user berhasil login dan mendapatkan JWT, langkah selanjutnya adalah melindungi endpoint tertentu agar hanya dapat diakses oleh user yang sudah terautentikasi.</p>
+<p>Protected route adalah endpoint yang hanya dapat diakses jika user:</p>
+<ul>
+<li>Mengirimkan JWT yang valid</li>
+<li>Telah melalui proses autentikasi</li>
+</ul>
+<p>Alur protected route secara umum:</p>
+<ol>
+<li>Client mengirim request ke endpoint protected</li>
+<li>JWT dikirim melalui header <code>Authorization</code></li>
+<li>Middleware memeriksa keberadaan token</li>
+<li>Middleware memverifikasi token</li>
+<li>Jika valid, request diteruskan ke controller</li>
+<li>Jika tidak valid, request ditolak</li>
+</ol>
+<h2 id="middleware-authentication"><a class="header" href="#middleware-authentication">Middleware Authentication</a></h2>
+<p>Middleware ini bertugas:</p>
+<ul>
+<li>Mengambil token dari header</li>
+<li>Memverifikasi token</li>
+<li>Menyimpan data user ke <code>req.user</code></li>
+</ul>
+<pre><code class="language-js">const jwt = require("jsonwebtoken");
+
+const authMiddleware = (req, res, next) =&gt; {
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader) {
+    return res.status(401).json({
+      success: false,
+      message: "Token tidak ditemukan",
+    });
+  }
+
+  const [type, token] = authHeader.split(" ");
+  if (type !== "Bearer" || !token) {
+    return res.status(401).json({
+      success: false,
+      message: "Format token tidak valid",
+    });
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded;
+    next();
+  } catch (err) {
+    return res.status(401).json({
+      success: false,
+      message: "Token tidak valid",
+    });
+  }
+};
+
+module.exports = authMiddleware;
+</code></pre>
+<p>Data user yang tersimpan di <code>req.user</code> berasal dari payload JWT dan akan digunakan pada proses authorization di tahap selanjutnya.</p>
+<h2 id="menggunakan-middleware-pada-route"><a class="header" href="#menggunakan-middleware-pada-route">Menggunakan Middleware pada Route</a></h2>
+<p>Middleware authentication digunakan sebelum controller.</p>
+<pre><code class="language-js">const authMiddleware = require("../middlewares/authMiddleware");
+const userController = require("../controllers/user.controller");
+
+router.get("/profile", authMiddleware, userController.getProfile);
+module.exports = router;
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="contoh-kasus-sederhana-todo-list"><a class="header" href="#contoh-kasus-sederhana-todo-list">Contoh Kasus Sederhana (todo list)</a></h1>
+<p>Pada bagian ini, kita akan mengimplementasikan seluruh topik yang telah dibahas sejauh ini pada sebuah aplikasi sederhana berupa Todo List API. Program beserta skema database dapat di download <a href="./assets/todolist_app.zip">disini</a>.</p>
+<h2 id="gambaran-umum-aplikasi"><a class="header" href="#gambaran-umum-aplikasi">Gambaran Umum Aplikasi</a></h2>
+<p>Aplikasi Todo List ini memiliki fitur:</p>
+<ul>
+<li>Register dan login user</li>
+<li>Setiap user memiliki todo masing-masing</li>
+<li>Endpoint todo hanya bisa diakses oleh user yang login</li>
+</ul>
+<h2 id="arsitektur-aplikasi"><a class="header" href="#arsitektur-aplikasi">Arsitektur Aplikasi</a></h2>
+<p>Aplikasi ini menerapkan praktik <em>clean architecture</em> sederhana yang terdiri atas:</p>
+<pre><code class="language-bash">project/
+│
+├── src/
+│  ├── config/
+│  │  └── db.js → koneksi MySQL
+│  │
+│  ├── controllers/  → HTTP request handler (interface layer)
+│  │  ├── auth.controller.js
+│  │  └── task.controller.js
+│  │  └── user.controller.js
+│  │
+│  ├── middlewares/
+│  │  ├── auth.js
+│  │  └── error_handler.js
+│  │  └── validation.js
+│  │
+│  ├── repositories/  → query SQL (data access layer)
+│  │  ├── task.repository.js
+│  │  └── user.repository.js
+│  │
+│  ├── routes/
+│  │  ├── auth.routes.js
+│  │  └── task.routes.js
+│  │  └── user.routes.js
+│  │
+│  ├── services/  → business logic (domain layer)
+│  │  ├── auth.service.js
+│  │  └── task.service.js
+│  │  └── user.service.js
+│  │
+│  ├── validation/  → validation rule
+│  │  ├── auth.validation.js
+│  │  └── task.validation.js
+│  │
+│  └── app.js → konfigurasi Express
+│
+└── index.js → entry point server
+</code></pre>
+<h2 id="database-2"><a class="header" href="#database-2">Database</a></h2>
+<p>Database digunakan untuk menyimpan data utama aplikasi, yaitu: User dan Task. Konfigurasi database dapat dilihat pada file <code>src/configs/db.js</code> dimana nilainya diambil dari variable environment yang telah ditetapkan pada file <code>.env</code>.</p>
+<h2 id="controllers"><a class="header" href="#controllers">Controllers</a></h2>
+<p>Controller bertugas sebagai interface layer yang berhubungan langsung dengan HTTP request dan response. Pada aplikasi ini, Controller bertugas untuk:</p>
+<ul>
+<li>Menerima input dari client</li>
+<li>Memanggil <code>Services</code> yang sesuai</li>
+<li>Mengembalikan response ke client</li>
+</ul>
+<h2 id="middlewares"><a class="header" href="#middlewares">Middlewares</a></h2>
+<p>Middleware digunakan untuk memproses request sebelum sampai ke controller. Pada aplikasi ini, middleware digunakan untuk:</p>
+<ul>
+<li>Autentikasi JWT (file <code>auth.js</code>) yang memastikan bahwa endpoint tertentu hanya dapat diakses oleh user yang sudah login.</li>
+<li>Validasi input (file <code>validation.js</code>) yang menangani validasi dan mengirim response error ke client.</li>
+<li>Penanganan error (file <code>error_handler.js</code>).</li>
+</ul>
+<h2 id="repositories"><a class="header" href="#repositories">Repositories</a></h2>
+<p>Repository bertanggung jawab pada akses data dengan tugas utama yaitu menjalankan query SQL.</p>
+<h2 id="routes"><a class="header" href="#routes">Routes</a></h2>
+<p>Routes mendefinisikan:</p>
+<ul>
+<li>Endpoint yang tersedia</li>
+<li>HTTP method</li>
+<li>Middleware yang digunakan</li>
+<li>Controller yang menangani request</li>
+</ul>
+<p>Melalui routes, kita dapat melihat dengan jelas:</p>
+<ul>
+<li>Endpoint mana yang protected</li>
+<li>Endpoint mana yang membutuhkan autentikasi</li>
+</ul>
+<h2 id="services"><a class="header" href="#services">Services</a></h2>
+<p>Service berisi business logic utama aplikasi dan juga menjadi penghubung antara controller dan repository. Layer ini bertugas untuk:</p>
+<ul>
+<li>Proses login user</li>
+<li>Transformasi data</li>
+<li>Validasi kepemilikan todo</li>
+<li>Mengatur alur autentikasi</li>
+</ul>
+<h2 id="validators"><a class="header" href="#validators">Validators</a></h2>
+<p>Validator digunakan untuk:</p>
+<ul>
+<li>Memastikan data request sesuai aturan</li>
+<li>Menghindari data tidak valid masuk ke sistem</li>
+<li>Menjaga konsistensi input</li>
+</ul>
+<p>Validasi dilakukan sebelum request diproses lebih lanjut.</p>
+<p>Untuk menggunakan aplikasi ini, cukup ekstrak dan import database MySQL. Setelah itu, pada folder project, jalankan perintah berikut untuk meng-<em>install</em> seluruh dependency.</p>
+<pre><code class="language-bash">npm install
+</code></pre>
+<p>Jalankan program express melalui perintah</p>
+<pre><code class="language-bash">npm run dev
+</code></pre>
 
                     </main>
 

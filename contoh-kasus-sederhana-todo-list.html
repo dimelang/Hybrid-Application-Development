@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Validasi Input - Hybrid Application Development</title>
+        <title>Contoh Kasus Sederhana (todo list) - Hybrid Application Development</title>
 
 
         <!-- Custom HTML head -->
@@ -175,186 +175,117 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="validasi-input"><a class="header" href="#validasi-input">Validasi Input</a></h1>
-<p>Validasi input merupakan proses penting dalam pengembangan aplikasi backend untuk memastikan bahwa data yang dikirim oleh client benar-benar sesuai dengan yang diharapkan oleh server. Proses ini dilakukan sebelum data diproses lebih lanjut atau disimpan ke dalam database.</p>
-<p>Dengan validasi input, aplikasi dapat memastikan bahwa data yang diterima:</p>
+                        <h1 id="contoh-kasus-sederhana-todo-list"><a class="header" href="#contoh-kasus-sederhana-todo-list">Contoh Kasus Sederhana (todo list)</a></h1>
+<p>Pada bagian ini, kita akan mengimplementasikan seluruh topik yang telah dibahas sejauh ini pada sebuah aplikasi sederhana berupa Todo List API. Program beserta skema database dapat di download <a href="./assets/todolist_app.zip">disini</a>.</p>
+<h2 id="gambaran-umum-aplikasi"><a class="header" href="#gambaran-umum-aplikasi">Gambaran Umum Aplikasi</a></h2>
+<p>Aplikasi Todo List ini memiliki fitur:</p>
 <ul>
-<li>Memiliki format yang benar</li>
-<li>Tidak kosong jika wajib diisi</li>
-<li>Sesuai dengan aturan bisnis</li>
-<li>Aman sebelum diproses atau disimpan ke database</li>
+<li>Register dan login user</li>
+<li>Setiap user memiliki todo masing-masing</li>
+<li>Endpoint todo hanya bisa diakses oleh user yang login</li>
 </ul>
-<p>Tanpa validasi yang baik, aplikasi berisiko menerima data tidak valid yang dapat menyebabkan error, inkonsistensi data, hingga celah keamanan.</p>
-<p>Dalam aplikasi Express, data dari client dapat dikirim melalui beberapa bagian request, yaitu <code>req.body</code>, <code>req.params</code>, dan <code>req.query</code>. Semua sumber data tersebut perlu divalidasi, karena seluruhnya berasal dari input eksternal.</p>
-<p>Validasi input sebenarnya dapat dilakukan secara manual menggunakan kondisi <code>if</code>, misalnya:</p>
-<pre><code class="language-js">if (!req.body.email) {
-  return res.status(400).json({ message: "Email wajib diisi" });
-}
+<h2 id="arsitektur-aplikasi"><a class="header" href="#arsitektur-aplikasi">Arsitektur Aplikasi</a></h2>
+<p>Aplikasi ini menerapkan praktik <em>clean architecture</em> sederhana yang terdiri atas:</p>
+<pre><code class="language-bash">project/
+│
+├── src/
+│  ├── config/
+│  │  └── db.js → koneksi MySQL
+│  │
+│  ├── controllers/  → HTTP request handler (interface layer)
+│  │  ├── auth.controller.js
+│  │  └── task.controller.js
+│  │  └── user.controller.js
+│  │
+│  ├── middlewares/
+│  │  ├── auth.js
+│  │  └── error_handler.js
+│  │  └── validation.js
+│  │
+│  ├── repositories/  → query SQL (data access layer)
+│  │  ├── task.repository.js
+│  │  └── user.repository.js
+│  │
+│  ├── routes/
+│  │  ├── auth.routes.js
+│  │  └── task.routes.js
+│  │  └── user.routes.js
+│  │
+│  ├── services/  → business logic (domain layer)
+│  │  ├── auth.service.js
+│  │  └── task.service.js
+│  │  └── user.service.js
+│  │
+│  ├── validation/  → validation rule
+│  │  ├── auth.validation.js
+│  │  └── task.validation.js
+│  │
+│  └── app.js → konfigurasi Express
+│
+└── index.js → entry point server
 </code></pre>
-<p>Pendekatan ini masih dapat diterima untuk aplikasi yang sangat kecil. Namun, pendekatan ini kurang direkomendasikan untuk aplikasi berskala menengah hingga besar. Oleh karena itu, Express menyediakan kemudahan integrasi dengan library pihak ketiga. Salah satu library yang paling umum dan direkomendasikan adalah <a href="https://express-validator.github.io/docs">express-validator</a>. <code>express-validator</code> merupakan middleware berbasis <code>validator.js</code> yang terintegrasi langsung dengan Express.</p>
-<h2 id="instalasi"><a class="header" href="#instalasi">Instalasi</a></h2>
-<p>Untuk mulai menggunakan <code>express-validator</code>, instal terlebih dahulu library-nya:</p>
-<pre><code class="language-bash">npm install express-validator
-</code></pre>
-<p>Setelah instalasi selesai, kita dapat langsung menggunakan <code>express-validator</code> sebagai middleware pada route Express untuk melakukan validasi input.</p>
-<h2 id="konsep-dasar-validasi"><a class="header" href="#konsep-dasar-validasi">Konsep Dasar Validasi</a></h2>
-<p>Validasi pada Express umumnya terdiri dari dua bagian:</p>
-<ol>
-<li>Aturan validasi (validation rules)</li>
-<li>Handler hasil validasi (menangani error validasi)</li>
-</ol>
-<p>express-validator menyediakan fungsi <code>body</code>, <code>param</code>, dan <code>query</code> untuk mendefinisikan aturan validasi.</p>
-<h2 id="membuat-aturan-validasi"><a class="header" href="#membuat-aturan-validasi">Membuat Aturan Validasi</a></h2>
-<p>Buat file <code>validators/task.validator.js</code>:</p>
-<pre><code class="language-js">const { body } = require("express-validator");
-
-exports.createTaskValidation = [
-  body("title").notEmpty().withMessage("Title tidak boleh kosong"),
-
-  body("description")
-    .optional()
-    .isString()
-    .withMessage("Description harus berupa string"),
-];
-</code></pre>
-<p>Penjelasan:</p>
+<h2 id="database"><a class="header" href="#database">Database</a></h2>
+<p>Database digunakan untuk menyimpan data utama aplikasi, yaitu: User dan Task. Konfigurasi database dapat dilihat pada file <code>src/configs/db.js</code> dimana nilainya diambil dari variable environment yang telah ditetapkan pada file <code>.env</code>.</p>
+<h2 id="controllers"><a class="header" href="#controllers">Controllers</a></h2>
+<p>Controller bertugas sebagai interface layer yang berhubungan langsung dengan HTTP request dan response. Pada aplikasi ini, Controller bertugas untuk:</p>
 <ul>
-<li><code>body("title")</code>: mengambil data dari req.body.title</li>
-<li><code>notEmpty()</code>: field tidak boleh kosong</li>
-<li><code>withMessage()</code>: pesan error kustom</li>
-<li><code>optional()</code>: field boleh tidak dikirim</li>
+<li>Menerima input dari client</li>
+<li>Memanggil <code>Services</code> yang sesuai</li>
+<li>Mengembalikan response ke client</li>
 </ul>
-<p>Rule lainnya dapat dilihat pada <a href="https://express-validator.github.io/docs/api/validation-chain/">laman ini</a></p>
-<h2 id="menangani-hasil-validasi"><a class="header" href="#menangani-hasil-validasi">Menangani Hasil Validasi</a></h2>
-<p>Aturan validasi yang dibuat menggunakan express-validator tidak otomatis menghentikan request ketika terjadi kesalahan. Express hanya akan mencatat hasil validasi tersebut. Oleh karena itu, kita membutuhkan satu middleware tambahan untuk:</p>
+<h2 id="middlewares"><a class="header" href="#middlewares">Middlewares</a></h2>
+<p>Middleware digunakan untuk memproses request sebelum sampai ke controller. Pada aplikasi ini, middleware digunakan untuk:</p>
 <ul>
-<li>Mengumpulkan hasil validasi</li>
-<li>Mengecek apakah terdapat error</li>
-<li>Menghentikan request jika validasi gagal</li>
-<li>Meneruskan request jika validasi berhasil</li>
+<li>Autentikasi JWT (file <code>auth.js</code>) yang memastikan bahwa endpoint tertentu hanya dapat diakses oleh user yang sudah login.</li>
+<li>Validasi input (file <code>validation.js</code>) yang menangani validasi dan mengirim response error ke client.</li>
+<li>Penanganan error (file <code>error_handler.js</code>).</li>
 </ul>
-<p>Middleware inilah yang akan melakukan tugas di atas.</p>
-<p><strong>src/middleware/validate.js</strong></p>
-<pre><code class="language-js">const { validationResult } = require("express-validator");
-
-const validate = (req, res, next) =&gt; {
-  const errors = validationResult(req);
-
-  if (!errors.isEmpty()) {
-    return res.status(400).json({
-      success: false,
-      message: "Validasi gagal",
-      errors: errors.array(),
-    });
-  }
-  next();
-};
-
-module.exports = validate;
-</code></pre>
-<p>Cara Kerja Middleware validate</p>
-<ol>
-<li><code>validationResult(req)</code> mengambil seluruh hasil validasi yang sebelumnya dijalankan</li>
-<li>Jika terdapat error:
+<h2 id="repositories"><a class="header" href="#repositories">Repositories</a></h2>
+<p>Repository bertanggung jawab pada akses data dengan tugas utama yaitu menjalankan query SQL.</p>
+<h2 id="routes"><a class="header" href="#routes">Routes</a></h2>
+<p>Routes mendefinisikan:</p>
 <ul>
-<li>Request dihentikan</li>
-<li>Server mengirim response status <code>400</code></li>
-<li>Daftar error dikirim ke client</li>
+<li>Endpoint yang tersedia</li>
+<li>HTTP method</li>
+<li>Middleware yang digunakan</li>
+<li>Controller yang menangani request</li>
 </ul>
-</li>
-<li>Jika tidak ada error:
+<p>Melalui routes, kita dapat melihat dengan jelas:</p>
 <ul>
-<li><code>next()</code> dipanggil</li>
-<li>Request diteruskan ke request handler</li>
+<li>Endpoint mana yang protected</li>
+<li>Endpoint mana yang membutuhkan autentikasi</li>
 </ul>
-</li>
-</ol>
-<h2 id="validasi-body-request"><a class="header" href="#validasi-body-request">Validasi body request</a></h2>
-<p>Misalnya kita memiliki endpoint untuk task baru dan ingin memastikan:</p>
+<h2 id="services"><a class="header" href="#services">Services</a></h2>
+<p>Service berisi business logic utama aplikasi dan juga menjadi penghubung antara controller dan repository. Layer ini bertugas untuk:</p>
 <ul>
-<li><code>username</code> wajib diisi.</li>
-<li><code>email </code> harus berupa email yang valid.</li>
+<li>Proses login user</li>
+<li>Transformasi data</li>
+<li>Validasi kepemilikan todo</li>
+<li>Mengatur alur autentikasi</li>
 </ul>
-<p><strong>src/validators/user.validation.js</strong></p>
-<pre><code class="language-js">const { body } = require("express-validator");
-
-exports.createUserValidator = [
-  body("username").notEmpty().withMessage("Username wajib diisi"),
-  body("email").isEmail().withMessage("Format email tidak valid"),
-];
-</code></pre>
-<p>Penjelasan:</p>
+<h2 id="validators"><a class="header" href="#validators">Validators</a></h2>
+<p>Validator digunakan untuk:</p>
 <ul>
-<li><code>body("username")</code> mengambail nilai dari <code>req.body.username</code>.</li>
-<li><code>body("email")</code> mengambil nilai dari <code>req.body.email</code>.</li>
-<li><code>.notEmpty()</code> memastikan nilainya tidak kosong.</li>
-<li><code>.isEmail()</code> memastikan format email valid.</li>
-<li><code>withMessage()</code> menentukan pesan error jika validasi gagal.</li>
+<li>Memastikan data request sesuai aturan</li>
+<li>Menghindari data tidak valid masuk ke sistem</li>
+<li>Menjaga konsistensi input</li>
 </ul>
-<p>Selanjutnya, tambahkan validator beserta middleware ke dalam route</p>
-<p><strong>src/routes/user.routes.js</strong></p>
-<pre><code class="language-js">const { createUserValidator } = require("../validators/user.validation");
-const validateMiddleware = require("../middlewares/validate");
-
-router.post("/users", createUserValidator, validateMiddleware, (req, res) =&gt; {
-  res.json({ message: "User berhasil dibuat" });
-});
+<p>Validasi dilakukan sebelum request diproses lebih lanjut.</p>
+<p>Untuk menggunakan aplikasi ini, cukup ekstrak dan import database MySQL. Setelah itu, pada folder project, jalankan perintah berikut untuk meng-<em>install</em> seluruh dependency.</p>
+<pre><code class="language-bash">npm install
 </code></pre>
-<p>Selain melakukan validasi terhadap objek <code>req.body</code>, <code>express-validator</code> juga memungkinkan untuk memvalidasi parameter URL dan Query parameter.</p>
-<h2 id="validasi-parameter-url"><a class="header" href="#validasi-parameter-url">Validasi Parameter URL</a></h2>
-<p>Untuk endpoint seperti:</p>
-<pre><code class="language-yaml">GET /users/:id
+<p>Jalankan program express melalui perintah</p>
+<pre><code class="language-bash">npm run dev
 </code></pre>
-<p>Kita dapat memvalidasi parameter <code>id</code> sebagai berikut:</p>
-<pre><code class="language-js">const { param } = require("express-validator");
-
-exports.userIdValidator = [
-  param("id").isInt().withMessage("ID harus berupa angka"),
-];
-</code></pre>
-<p>Penjelasan:</p>
-<ul>
-<li><code>param("id")</code> mengambail nilai dari <code>req.params.id</code>.</li>
-<li><code>isInt()</code> memastikan parameter berupa angka.</li>
-<li><code>withMessage()</code> menentukan pesan error jika validasi gagal.</li>
-</ul>
-<h2 id="validasi-query-parameter"><a class="header" href="#validasi-query-parameter">Validasi Query Parameter</a></h2>
-<p>Query parameter biasanya digunakan untuk kebutuhan seperti filtering, sorting, atau pagination.</p>
-<p>Contoh endpoint:</p>
-<pre><code class="language-yaml">GET /users?search=John&amp;status=true
-</code></pre>
-<p>Kita dapat memvalidasi query sebagai berikut:</p>
-<pre><code class="language-js">const { query } = require("express-validator");
-
-exports.userQueryValidator = [
-  query("search")
-    .optional()
-    .trim()
-    .notEmpty()
-    .withMessage("Search tidak boleh kosong"),
-
-  query("status").optional().isBoolean().withMessage("Status harus boolean"),
-];
-</code></pre>
-<p>Penjelasan:</p>
-<ul>
-<li><code>query("search")</code> mengambil nilai dari req.query.search</li>
-<li><code>optional()</code> menandakan bahwa parameter tidak wajib</li>
-<li><code>trim()</code> menghapus spasi di awal dan akhir</li>
-<li><code>isBoolean()</code> memastikan nilai berupa boolean</li>
-</ul>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="rest-api-express-js.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="protected-routes-express-js.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next prefetch" href="authentication-express-js.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
-                                <i class="fa fa-angle-right"></i>
-                            </a>
 
                         <div style="clear: both"></div>
                     </nav>
@@ -362,13 +293,10 @@ exports.userQueryValidator = [
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="rest-api-express-js.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="protected-routes-express-js.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next prefetch" href="authentication-express-js.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
-                        <i class="fa fa-angle-right"></i>
-                    </a>
             </nav>
 
         </div>
