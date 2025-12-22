@@ -76,4 +76,8 @@
   - [Database](./database-express-js.md)
   - [REST API](./rest-api-express-js.md)
   - [Validasi Input](./validasi-input-express-js.md)
-  <!-- - [Authentication](./authentication-express-js.md) -->
+  - [Authentication](./authentication-express-js.md)
+    - [Password Hashing](./password-hashing-express-js.md)
+    - [JWT Authentication](./jwt-authentication-express-js.md)
+    - [Protected Routes](./protected-routes-express-js.md)
+  - [Contoh Kasus Sederhana (todo list)](./contoh-kasus-sederhana-todo-list.md)

@@ -77,7 +77,7 @@ Aturan validasi yang dibuat menggunakan express-validator tidak otomatis menghen
 - Menghentikan request jika validasi gagal
 - Meneruskan request jika validasi berhasil
 
-Middleware inilah yang biasanya disebut sebagai `validate`.
+Middleware inilah yang akan melakukan tugas di atas.
 
 **src/middleware/validate.js**
 
@@ -111,12 +111,12 @@ Cara Kerja Middleware validate
    - `next()` dipanggil
    - Request diteruskan ke request handler
 
-## Contoh Validasi `req.body`
+## Validasi body request
 
-Misalnya kita memiliki endpoint untuk membuat user dan ingin memastikan:
+Misalnya kita memiliki endpoint untuk task baru dan ingin memastikan:
 
 - `username` wajib diisi.
-- `email` harus berupa email yang valid.
+- `email ` harus berupa email yang valid.
 
 **src/validators/user.validation.js**
 
@@ -143,9 +143,9 @@ Selanjutnya, tambahkan validator beserta middleware ke dalam route
 
 ```js
 const { createUserValidator } = require("../validators/user.validation");
-const validate = require("../middlewares/validate");
+const validateMiddleware = require("../middlewares/validate");
 
-router.post("/users", createUserValidator, validate, (req, res) => {
+router.post("/users", createUserValidator, validateMiddleware, (req, res) => {
   res.json({ message: "User berhasil dibuat" });
 });
 ```
