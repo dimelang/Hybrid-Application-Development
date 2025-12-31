@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Pedometer - Hybrid Application Development</title>
+        <title>API Service Layer - Hybrid Application Development</title>
 
 
         <!-- Custom HTML head -->
@@ -175,154 +175,267 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="pedometer"><a class="header" href="#pedometer">Pedometer</a></h1>
-<p>Sensor pedometer memungkinkan aplikasi untuk memantau jumlah langkah pengguna menggunakan sensor bawaan perangkat (Android) atau layanan Core Motion (iOS).</p>
-<h2 id="instalasi"><a class="header" href="#instalasi">Instalasi</a></h2>
-<p>Expo:</p>
-<pre><code class="language-bash">npx expo install expo-sensors
+                        <h1 id="api-service-layer"><a class="header" href="#api-service-layer">API Service Layer</a></h1>
+<p>API Service Layer adalah lapisan khusus yang bertanggung jawab untuk seluruh komunikasi dengan backend API. Komponen React Native tidak langsung memanggil Axios, melainkan melalui service ini. Tanpa service layer, kode API tersebar di banyak screen, sulit diubah jika endpoint berubah, dan sulit menambahkan auth, logging, atau error handling global. Dengan adanya service layer, kode lebih bersih dan terstruktur, mudah dikembangkan, mudah diuji, dan sangat cocok untuk aplikasi dengan skala menengah-besar.</p>
+<h2 id="struktur-folder-rekomendasi"><a class="header" href="#struktur-folder-rekomendasi">Struktur Folder (Rekomendasi)</a></h2>
+<pre><code class="language-yaml">src/
+├── services/
+│   └── product.service.ts
+│
+├── types/
+│   ├── product.ts
+│   └── api.ts
+│
+└── screens/
 </code></pre>
-<p>React Native CLI:</p>
-<pre><code class="language-bash">npm install expo-sensors
-cd ios &amp;&amp; pod install &amp;&amp; cd ..
+<h3 id="membuat-axios-instance"><a class="header" href="#membuat-axios-instance">Membuat Axios Instance</a></h3>
+<p><strong>src/services/api.ts</strong></p>
+<pre><code class="language-ts">import axios from "axios";
+
+const api = axios.create({
+  baseURL: "https://api.restful-api.dev",
+  timeout: 5000,
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+
+export default api;
 </code></pre>
-<h2 id="api-dasar-pedometer"><a class="header" href="#api-dasar-pedometer">API Dasar Pedometer</a></h2>
-<div class="table-wrapper"><table><thead><tr><th>Method / Fungsi</th><th>Deskripsi</th></tr></thead><tbody>
-<tr><td><code>Pedometer.isAvailableAsync()</code></td><td>Mengecek apakah pedometer tersedia di perangkat. Mengembalikan <code>Promise&lt;boolean&gt;</code>.</td></tr>
-<tr><td><code>Pedometer.getPermissionsAsync()</code> / <code>Pedometer.requestPermissionsAsync()</code></td><td>Memeriksa atau meminta izin akses pedometer (jika diperlukan).</td></tr>
-<tr><td><code>Pedometer.getStepCountAsync(start: Date, end: Date)</code></td><td>(iOS) Mengambil jumlah langkah antara dua tanggal. Mengembalikan <code>Promise&lt;PedometerResult&gt;</code> yang berisi <code>{ steps: number }</code>.</td></tr>
-<tr><td><code>Pedometer.watchStepCount(callback)</code></td><td>Berlangganan update langkah secara real-time. Callback menerima <code>PedometerResult</code>. Mengembalikan <code>Subscription</code> dengan <code>.remove()</code> untuk berhenti.</td></tr>
-</tbody></table>
-</div>
-<p>Catatan: getStepCountAsync hanya tersedia di iOS. Pada Android cukup gunakan <code>watchStepCount</code>.</p>
-<h2 id="contoh-penggunaan-pedometer"><a class="header" href="#contoh-penggunaan-pedometer">Contoh Penggunaan Pedometer</a></h2>
+<h3 id="membuat-tipe-global-api-response"><a class="header" href="#membuat-tipe-global-api-response">Membuat Tipe Global API Response</a></h3>
+<p><strong>src/types/api.ts</strong></p>
+<pre><code class="language-ts">export type ApiResponse&lt;T&gt; = {
+  success: boolean;
+  data: T;
+  message?: string;
+};
+</code></pre>
+<h3 id="membuat-tipe-product-data-dinamis"><a class="header" href="#membuat-tipe-product-data-dinamis">Membuat Tipe Product (Data Dinamis)</a></h3>
+<p><strong>src/type/product.ts</strong></p>
+<pre><code class="language-ts">export type DetailProduct = Record&lt;string, unknown&gt; | null;
+
+export type Product = {
+  id: string;
+  name: string;
+  data: DetailProduct | null;
+};
+
+export type CreateProduct = {
+  name: string;
+  data: DetailProduct | null;
+};
+
+export type UpdateProduct = {
+  name?: string;
+  data?: DetailProduct | null;
+};
+</code></pre>
+<p>Record&lt;string, unknown&gt; digunakan karena struktur data tidak konsisten.</p>
+<h3 id="membuat-product-service"><a class="header" href="#membuat-product-service">Membuat Product Service</a></h3>
+<p><strong>src/services/product.service.ts</strong></p>
+<pre><code class="language-ts">import api from "../api/axiosIntances";
+import { ApiResponse } from "../types/api";
+import { CreateProduct, Product, UpdateProduct } from "../types/product";
+
+export const productService = {
+  getAll: async (): Promise&lt;ApiResponse&lt;Product[]&gt;&gt; =&gt; {
+    try {
+      const response = await api.get&lt;Product[]&gt;("/objects");
+      return {
+        success: true,
+        data: response.data,
+        message: "Berhasil mendapatkan data",
+      };
+    } catch (error) {
+      return {
+        success: false,
+        data: [],
+        message: "Gagal mendapatkan data",
+      };
+    }
+  },
+
+  getById: async (id: string): Promise&lt;ApiResponse&lt;Product&gt;&gt; =&gt; {
+    try {
+      const response = await api.get&lt;Product&gt;(`/objects/${id}`);
+      return {
+        success: true,
+        data: response.data,
+        message: "Berhasil mendapatkan data",
+      };
+    } catch (error) {
+      return {
+        success: false,
+        data: null as any,
+        message: "Gagal mendapatkan data",
+      };
+    }
+  },
+
+  create: async (payload: CreateProduct): Promise&lt;ApiResponse&lt;Product&gt;&gt; =&gt; {
+    try {
+      const response = await api.post("/objects", {
+        data: payload,
+      });
+      return {
+        success: true,
+        data: response.data,
+        message: "Berhasil menambahkan data",
+      };
+    } catch (error) {
+      return {
+        success: false,
+        data: null as any,
+        message: "Gagal menambahkan data",
+      };
+    }
+  },
+
+  update: async (
+    id: string,
+    payload: UpdateProduct
+  ): Promise&lt;ApiResponse&lt;Product&gt;&gt; =&gt; {
+    try {
+      const response = await api.put(`/objects/${id}`, {
+        data: payload,
+      });
+      return {
+        success: true,
+        data: response.data,
+        message: "Berhasil memperbarui data",
+      };
+    } catch (error) {
+      return {
+        success: false,
+        data: null as any,
+        message: "Gagal memperbarui data",
+      };
+    }
+  },
+
+  delete: async (id: string) =&gt; {
+    try {
+      const response = await api.delete(`/objects/${id}`);
+      return {
+        success: true,
+        message: "Berhasil menghapus data",
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: "Gagal menghapus data",
+      };
+    }
+  },
+};
+</code></pre>
+<h3 id="gabungkan-semuanya"><a class="header" href="#gabungkan-semuanya">Gabungkan Semuanya</a></h3>
 <pre><code class="language-tsx">import { useEffect, useState } from "react";
-import { View, Text, Button, Alert, Platform } from "react-native";
-import { Pedometer } from "expo-sensors";
+import { FlatList, StyleSheet, Text, View } from "react-native";
+import { productService } from "./src/services/product.service";
+import { Product } from "./src/types/product";
+import { ApiResponse } from "./src/types/api";
 
-export default function PedometerContainer() {
-    const [isAvailable, setIsAvailable] = useState&lt;boolean | null&gt;(null);
-    const [currentSteps, setCurrentSteps] = useState(0);
-    const [pastSteps, setPastSteps] = useState&lt;number | null&gt;(null);
-    const [subscription, setSubscription] = useState&lt;any&gt;(null);
+export default function App() {
+  const [data, setData] = useState&lt;ApiResponse&lt;Product[]&gt;&gt;([] as any);
+  const getData = async () =&gt; {
+    try {
+      const result = await productService.getAll();
+      if (result.success) setData(result);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
-    useEffect(() =&gt; {
-        async function init() {
-            const perm = await Pedometer.getPermissionsAsync();
-            console.log("Permission status:", perm);
+  const postData = async () =&gt; {
+    try {
+      const response = await productService.create({
+        name: "Apple MacBook Pro 16",
+        data: {
+          year: 2019,
+          price: 1849.99,
+          CPU: "Intel Core i9",
+          HDD: "1 TB",
+        },
+      });
+      console.log(response);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
+  const putData = async () =&gt; {
+    try {
+      const response = await productService.update("1", {
+        name: "Apple MacBook Pro 16",
+        data: {
+          year: 2019,
+          price: 2049.99,
+          "CPU model": "Intel Core i9",
+          "Hard disk size": "1 TB",
+          color: "silver",
+        },
+      });
+      console.log(response);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
-            // cek ketersediaan sensor
-            const available = await Pedometer.isAvailableAsync();
-            setIsAvailable(available);
+  const deleteData = async () =&gt; {
+    try {
+      const response = await productService.delete("1");
+      console.log(response);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
-            if (!available) {
-                Alert.alert("Pedometer tidak tersedia di perangkat ini");
-                return;
-            }
+  useEffect(() =&gt; {
+    // postData();
+    // putData();
+    // deleteData();
+    getData();
+  }, []);
 
-            // cek permission
-            const { status } = await Pedometer.requestPermissionsAsync();
-
-            if (status !== "granted") {
-                Alert.alert("Izin pedometer ditolak");
-                return;
-            }
-
-            // Ambil histori langkah hanya jika iOS
-            if (Platform.OS === "ios") {
-                const end = new Date();
-                const start = new Date();
-                start.setDate(end.getDate() - 1); // 24 jam lalu
-
-                try {
-                    const result = await Pedometer.getStepCountAsync(start, end);
-                    setPastSteps(result.steps);
-                } catch (e) {
-                    console.warn("Error getStepCountAsync:", e);
-                    setPastSteps(null);
-                }
-            } else {
-                setPastSteps(null); // Android tidak mendukung
-            }
-
-            // subscribe real-time
-            const sub = Pedometer.watchStepCount((result) =&gt; {
-                setCurrentSteps(result.steps);
-            });
-
-            setSubscription(sub);
-        }
-
-        init();
-
-        return () =&gt; {
-            subscription?.remove();
-        };
-    }, []);
-
-    return (
-        &lt;View style={{ flex: 1, justifyContent: "center", alignItems: "center", padding: 20 }}&gt;
-            &lt;Text style={{ fontSize: 18, fontWeight: "bold", marginBottom: 10 }}&gt;
-                Pedometer Example
-            &lt;/Text&gt;
-
-            &lt;Text&gt;Pedometer tersedia: {isAvailable ? "Ya" : "Tidak"}&lt;/Text&gt;
-
-            &lt;Text style={{ marginTop: 20, fontSize: 16 }}&gt;
-                Langkah (real-time): {currentSteps}
-            &lt;/Text&gt;
-
-            &lt;Text style={{ marginTop: 10, fontSize: 16 }}&gt;
-                Langkah 24 jam terakhir:
-                {Platform.OS === "ios"
-                    ? pastSteps ?? "Memuat..."
-                    : "Tidak didukung di Android"}
-            &lt;/Text&gt;
-
-            &lt;Button
-                title="Reset Real-Time Counter"
-                onPress={() =&gt; setCurrentSteps(0)}
-            /&gt;
-        &lt;/View&gt;
-    );
+  return (
+    &lt;View style={styles.container}&gt;
+      &lt;FlatList
+        data={data?.data}
+        keyExtractor={(item) =&gt; item.id}
+        renderItem={({ item }) =&gt; (
+          &lt;View style={styles.list}&gt;
+            &lt;Text&gt;{item["name"]}&lt;/Text&gt;
+          &lt;/View&gt;
+        )}
+      /&gt;
+    &lt;/View&gt;
+  );
 }
-</code></pre>
-<p>Saat mengembangkan aplikasi React Native menggunakan Expo, sensor pedometer tidak berfungsi ketika dijalankan melalui Expo Go di Android. Sedangkan pada iOS, sensor pedometer dapat berfungsi melalui Expo Go.</p>
-<p>Agar sensor pedometer berjalan di Android, aplikasi harus memiliki permission Activity Recognition dan di-build menggunakan Dev Client atau APK, bukan Expo Go.
-Tambahkan ke <code>app.json</code>:</p>
-<pre><code class="language-bash">{
-  "expo": {
-    "android": {
-      "permissions": ["android.permission.ACTIVITY_RECOGNITION"]
-    },
-    "plugins": [
-      [
-        "expo-sensors",
-        {
-          "motionPermission": "Aplikasi membutuhkan akses untuk menghitung langkah."
-        }
-      ]
-    ]
-  }
-}
-</code></pre>
-<p>Hubungkan perangkat fisik Android lalu lakukan rebuild:</p>
-<pre><code class="language-bash">npx expo run:android
-</code></pre>
-<p>Atau build menggunakan Dev Client</p>
-<pre><code class="language-bash">npx expo prebuild
-npx expo run:android
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  list: {
+    padding: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: "#ccc",
+  },
+});
 </code></pre>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="barometer.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="axios-instance-interceptor.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next prefetch" href="http-request-react-native.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="pendahuluan-express-js.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -332,11 +445,11 @@ npx expo run:android
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="barometer.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="axios-instance-interceptor.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next prefetch" href="http-request-react-native.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="pendahuluan-express-js.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>

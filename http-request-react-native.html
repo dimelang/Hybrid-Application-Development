@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Pedometer - Hybrid Application Development</title>
+        <title>HTTP Request - Hybrid Application Development</title>
 
 
         <!-- Custom HTML head -->
@@ -175,154 +175,90 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="pedometer"><a class="header" href="#pedometer">Pedometer</a></h1>
-<p>Sensor pedometer memungkinkan aplikasi untuk memantau jumlah langkah pengguna menggunakan sensor bawaan perangkat (Android) atau layanan Core Motion (iOS).</p>
-<h2 id="instalasi"><a class="header" href="#instalasi">Instalasi</a></h2>
-<p>Expo:</p>
-<pre><code class="language-bash">npx expo install expo-sensors
-</code></pre>
-<p>React Native CLI:</p>
-<pre><code class="language-bash">npm install expo-sensors
-cd ios &amp;&amp; pod install &amp;&amp; cd ..
-</code></pre>
-<h2 id="api-dasar-pedometer"><a class="header" href="#api-dasar-pedometer">API Dasar Pedometer</a></h2>
-<div class="table-wrapper"><table><thead><tr><th>Method / Fungsi</th><th>Deskripsi</th></tr></thead><tbody>
-<tr><td><code>Pedometer.isAvailableAsync()</code></td><td>Mengecek apakah pedometer tersedia di perangkat. Mengembalikan <code>Promise&lt;boolean&gt;</code>.</td></tr>
-<tr><td><code>Pedometer.getPermissionsAsync()</code> / <code>Pedometer.requestPermissionsAsync()</code></td><td>Memeriksa atau meminta izin akses pedometer (jika diperlukan).</td></tr>
-<tr><td><code>Pedometer.getStepCountAsync(start: Date, end: Date)</code></td><td>(iOS) Mengambil jumlah langkah antara dua tanggal. Mengembalikan <code>Promise&lt;PedometerResult&gt;</code> yang berisi <code>{ steps: number }</code>.</td></tr>
-<tr><td><code>Pedometer.watchStepCount(callback)</code></td><td>Berlangganan update langkah secara real-time. Callback menerima <code>PedometerResult</code>. Mengembalikan <code>Subscription</code> dengan <code>.remove()</code> untuk berhenti.</td></tr>
+                        <h1 id="http-request"><a class="header" href="#http-request">HTTP Request</a></h1>
+<p>Pada aplikasi mobile modern, hampir semua data berasal dari server. Aplikasi React Native tidak hanya menampilkan tampilan (UI), tetapi juga bertugas untuk mengambil, mengirim, memperbarui, dan menghapus data melalui jaringan menggunakan HTTP request.</p>
+<p>HTTP (<em>Hypertext Transfer Protocol</em>) adalah protokol komunikasi yang digunakan untuk bertukar data antara client dan server.</p>
+<ul>
+<li>Client: aplikasi React Native</li>
+<li>Server: backend (ExpressJs)</li>
+<li>Media komunikasi: HTTP request &amp; response</li>
+</ul>
+<p>React Native tidak langsung mengakses database. Sebagai gantinya, alur komunikasi data biasanya sebagai berikut:</p>
+<ol>
+<li>React Native mengirim request ke backend API</li>
+<li>Backend memproses request</li>
+<li>Backend mengakses database atau layanan lain</li>
+<li>Backend mengirimkan response ke client</li>
+<li>React Native menampilkan data ke UI</li>
+</ol>
+<p>Sebagian besar backend menggunakan konsep <a href="./rest-api-express-js.html">REST API (Representational State Transfer)</a> dan mengirimkan data kembali kepada client dalam format JSON.</p>
+<h2 id="http-method"><a class="header" href="#http-method">HTTP Method</a></h2>
+<p>HTTP Method menunjukkan aksi yang ingin dilakukan client terhadap data di server.</p>
+<div class="table-wrapper"><table><thead><tr><th>Method</th><th>Fungsi</th></tr></thead><tbody>
+<tr><td>GET</td><td>Mengambil data</td></tr>
+<tr><td>POST</td><td>Mengirim / menambahkan data</td></tr>
+<tr><td>PUT</td><td>Memperbarui seluruh data</td></tr>
+<tr><td>PATCH</td><td>Memperbarui sebagian data</td></tr>
+<tr><td>DELETE</td><td>Menghapus data</td></tr>
+<tr><td>Contoh:</td><td></td></tr>
 </tbody></table>
 </div>
-<p>Catatan: getStepCountAsync hanya tersedia di iOS. Pada Android cukup gunakan <code>watchStepCount</code>.</p>
-<h2 id="contoh-penggunaan-pedometer"><a class="header" href="#contoh-penggunaan-pedometer">Contoh Penggunaan Pedometer</a></h2>
-<pre><code class="language-tsx">import { useEffect, useState } from "react";
-import { View, Text, Button, Alert, Platform } from "react-native";
-import { Pedometer } from "expo-sensors";
-
-export default function PedometerContainer() {
-    const [isAvailable, setIsAvailable] = useState&lt;boolean | null&gt;(null);
-    const [currentSteps, setCurrentSteps] = useState(0);
-    const [pastSteps, setPastSteps] = useState&lt;number | null&gt;(null);
-    const [subscription, setSubscription] = useState&lt;any&gt;(null);
-
-    useEffect(() =&gt; {
-        async function init() {
-            const perm = await Pedometer.getPermissionsAsync();
-            console.log("Permission status:", perm);
-
-
-            // cek ketersediaan sensor
-            const available = await Pedometer.isAvailableAsync();
-            setIsAvailable(available);
-
-            if (!available) {
-                Alert.alert("Pedometer tidak tersedia di perangkat ini");
-                return;
-            }
-
-            // cek permission
-            const { status } = await Pedometer.requestPermissionsAsync();
-
-            if (status !== "granted") {
-                Alert.alert("Izin pedometer ditolak");
-                return;
-            }
-
-            // Ambil histori langkah hanya jika iOS
-            if (Platform.OS === "ios") {
-                const end = new Date();
-                const start = new Date();
-                start.setDate(end.getDate() - 1); // 24 jam lalu
-
-                try {
-                    const result = await Pedometer.getStepCountAsync(start, end);
-                    setPastSteps(result.steps);
-                } catch (e) {
-                    console.warn("Error getStepCountAsync:", e);
-                    setPastSteps(null);
-                }
-            } else {
-                setPastSteps(null); // Android tidak mendukung
-            }
-
-            // subscribe real-time
-            const sub = Pedometer.watchStepCount((result) =&gt; {
-                setCurrentSteps(result.steps);
-            });
-
-            setSubscription(sub);
-        }
-
-        init();
-
-        return () =&gt; {
-            subscription?.remove();
-        };
-    }, []);
-
-    return (
-        &lt;View style={{ flex: 1, justifyContent: "center", alignItems: "center", padding: 20 }}&gt;
-            &lt;Text style={{ fontSize: 18, fontWeight: "bold", marginBottom: 10 }}&gt;
-                Pedometer Example
-            &lt;/Text&gt;
-
-            &lt;Text&gt;Pedometer tersedia: {isAvailable ? "Ya" : "Tidak"}&lt;/Text&gt;
-
-            &lt;Text style={{ marginTop: 20, fontSize: 16 }}&gt;
-                Langkah (real-time): {currentSteps}
-            &lt;/Text&gt;
-
-            &lt;Text style={{ marginTop: 10, fontSize: 16 }}&gt;
-                Langkah 24 jam terakhir:
-                {Platform.OS === "ios"
-                    ? pastSteps ?? "Memuat..."
-                    : "Tidak didukung di Android"}
-            &lt;/Text&gt;
-
-            &lt;Button
-                title="Reset Real-Time Counter"
-                onPress={() =&gt; setCurrentSteps(0)}
-            /&gt;
-        &lt;/View&gt;
-    );
-}
-</code></pre>
-<p>Saat mengembangkan aplikasi React Native menggunakan Expo, sensor pedometer tidak berfungsi ketika dijalankan melalui Expo Go di Android. Sedangkan pada iOS, sensor pedometer dapat berfungsi melalui Expo Go.</p>
-<p>Agar sensor pedometer berjalan di Android, aplikasi harus memiliki permission Activity Recognition dan di-build menggunakan Dev Client atau APK, bukan Expo Go.
-Tambahkan ke <code>app.json</code>:</p>
-<pre><code class="language-bash">{
-  "expo": {
-    "android": {
-      "permissions": ["android.permission.ACTIVITY_RECOGNITION"]
-    },
-    "plugins": [
-      [
-        "expo-sensors",
-        {
-          "motionPermission": "Aplikasi membutuhkan akses untuk menghitung langkah."
-        }
-      ]
-    ]
-  }
-}
-</code></pre>
-<p>Hubungkan perangkat fisik Android lalu lakukan rebuild:</p>
-<pre><code class="language-bash">npx expo run:android
-</code></pre>
-<p>Atau build menggunakan Dev Client</p>
-<pre><code class="language-bash">npx expo prebuild
-npx expo run:android
-</code></pre>
+<ul>
+<li>Mengambil daftar user: <code>GET /users</code></li>
+<li>Menambah user baru: <code>POST /users</code></li>
+<li>Menghapus user: <code>DELETE /users/1</code></li>
+</ul>
+<h2 id="http-status-code"><a class="header" href="#http-status-code">HTTP Status Code</a></h2>
+<p>Setiap response dari server memiliki status code yang menunjukkan hasil request.</p>
+<div class="table-wrapper"><table><thead><tr><th>Kategori</th><th>Contoh</th><th>Arti</th></tr></thead><tbody>
+<tr><td>2xx</td><td>200, 201</td><td>Request berhasil</td></tr>
+<tr><td>4xx</td><td>400, 401, 404</td><td>Kesalahan dari client</td></tr>
+<tr><td>5xx</td><td>500</td><td>Kesalahan dari server</td></tr>
+<tr><td>Contoh:</td><td></td><td></td></tr>
+</tbody></table>
+</div>
+<ul>
+<li>200: OK atau data berhasil didapatkan</li>
+<li>401: Unauthorized atau token tidak valid</li>
+<li>404: Not Found atau data tidak ditemukan</li>
+</ul>
+<h2 id="struktur-http-request"><a class="header" href="#struktur-http-request">Struktur HTTP Request</a></h2>
+<p>Secara umum, HTTP request terdiri dari:</p>
+<ul>
+<li>URL (endpoint API)</li>
+<li>Method (GET, POST, dll)</li>
+<li>Header (Content-Type, Authorization, dll)</li>
+<li>Body (opsional, biasanya JSON)</li>
+</ul>
+<p>Contoh:</p>
+<ul>
+<li>URL: <code>/api/users</code></li>
+<li>Method: <code>POST</code></li>
+<li>Header: Content-Type: <code>application/json</code></li>
+<li>Body: <code>{ "name": "Danny" }</code></li>
+</ul>
+<h2 id="struktur-http-response"><a class="header" href="#struktur-http-response">Struktur HTTP Response</a></h2>
+<p>HTTP response dari server biasanya berisi:</p>
+<ul>
+<li>Status code</li>
+<li>Header</li>
+<li>Body (data)</li>
+</ul>
+<p>React Native menyediakan beberapa cara untuk melakukan HTTP request, di antaranya</p>
+<ul>
+<li><a href="./fetch-api-react-native.html">Fetch API</a></li>
+<li><a href="./axios-react-native.html">Axios</a></li>
+</ul>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="barometer.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="pedometer.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next prefetch" href="http-request-react-native.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="fetch-api-react-native.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -332,11 +268,11 @@ npx expo run:android
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="barometer.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="pedometer.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next prefetch" href="http-request-react-native.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="fetch-api-react-native.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>

@@ -6180,6 +6180,1118 @@ Tambahkan ke <code>app.json</code>:</p>
 <pre><code class="language-bash">npx expo prebuild
 npx expo run:android
 </code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="http-request"><a class="header" href="#http-request">HTTP Request</a></h1>
+<p>Pada aplikasi mobile modern, hampir semua data berasal dari server. Aplikasi React Native tidak hanya menampilkan tampilan (UI), tetapi juga bertugas untuk mengambil, mengirim, memperbarui, dan menghapus data melalui jaringan menggunakan HTTP request.</p>
+<p>HTTP (<em>Hypertext Transfer Protocol</em>) adalah protokol komunikasi yang digunakan untuk bertukar data antara client dan server.</p>
+<ul>
+<li>Client: aplikasi React Native</li>
+<li>Server: backend (ExpressJs)</li>
+<li>Media komunikasi: HTTP request &amp; response</li>
+</ul>
+<p>React Native tidak langsung mengakses database. Sebagai gantinya, alur komunikasi data biasanya sebagai berikut:</p>
+<ol>
+<li>React Native mengirim request ke backend API</li>
+<li>Backend memproses request</li>
+<li>Backend mengakses database atau layanan lain</li>
+<li>Backend mengirimkan response ke client</li>
+<li>React Native menampilkan data ke UI</li>
+</ol>
+<p>Sebagian besar backend menggunakan konsep <a href="./rest-api-express-js.html">REST API (Representational State Transfer)</a> dan mengirimkan data kembali kepada client dalam format JSON.</p>
+<h2 id="http-method"><a class="header" href="#http-method">HTTP Method</a></h2>
+<p>HTTP Method menunjukkan aksi yang ingin dilakukan client terhadap data di server.</p>
+<div class="table-wrapper"><table><thead><tr><th>Method</th><th>Fungsi</th></tr></thead><tbody>
+<tr><td>GET</td><td>Mengambil data</td></tr>
+<tr><td>POST</td><td>Mengirim / menambahkan data</td></tr>
+<tr><td>PUT</td><td>Memperbarui seluruh data</td></tr>
+<tr><td>PATCH</td><td>Memperbarui sebagian data</td></tr>
+<tr><td>DELETE</td><td>Menghapus data</td></tr>
+<tr><td>Contoh:</td><td></td></tr>
+</tbody></table>
+</div>
+<ul>
+<li>Mengambil daftar user: <code>GET /users</code></li>
+<li>Menambah user baru: <code>POST /users</code></li>
+<li>Menghapus user: <code>DELETE /users/1</code></li>
+</ul>
+<h2 id="http-status-code"><a class="header" href="#http-status-code">HTTP Status Code</a></h2>
+<p>Setiap response dari server memiliki status code yang menunjukkan hasil request.</p>
+<div class="table-wrapper"><table><thead><tr><th>Kategori</th><th>Contoh</th><th>Arti</th></tr></thead><tbody>
+<tr><td>2xx</td><td>200, 201</td><td>Request berhasil</td></tr>
+<tr><td>4xx</td><td>400, 401, 404</td><td>Kesalahan dari client</td></tr>
+<tr><td>5xx</td><td>500</td><td>Kesalahan dari server</td></tr>
+<tr><td>Contoh:</td><td></td><td></td></tr>
+</tbody></table>
+</div>
+<ul>
+<li>200: OK atau data berhasil didapatkan</li>
+<li>401: Unauthorized atau token tidak valid</li>
+<li>404: Not Found atau data tidak ditemukan</li>
+</ul>
+<h2 id="struktur-http-request"><a class="header" href="#struktur-http-request">Struktur HTTP Request</a></h2>
+<p>Secara umum, HTTP request terdiri dari:</p>
+<ul>
+<li>URL (endpoint API)</li>
+<li>Method (GET, POST, dll)</li>
+<li>Header (Content-Type, Authorization, dll)</li>
+<li>Body (opsional, biasanya JSON)</li>
+</ul>
+<p>Contoh:</p>
+<ul>
+<li>URL: <code>/api/users</code></li>
+<li>Method: <code>POST</code></li>
+<li>Header: Content-Type: <code>application/json</code></li>
+<li>Body: <code>{ "name": "Danny" }</code></li>
+</ul>
+<h2 id="struktur-http-response"><a class="header" href="#struktur-http-response">Struktur HTTP Response</a></h2>
+<p>HTTP response dari server biasanya berisi:</p>
+<ul>
+<li>Status code</li>
+<li>Header</li>
+<li>Body (data)</li>
+</ul>
+<p>React Native menyediakan beberapa cara untuk melakukan HTTP request, di antaranya</p>
+<ul>
+<li><a href="./fetch-api-react-native.html">Fetch API</a></li>
+<li><a href="./axios-react-native.html">Axios</a></li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="fetch-api"><a class="header" href="#fetch-api">Fetch API</a></h1>
+<p>React Native menyediakan Fetch API secara bawaan (built-in) untuk melakukan HTTP request ke server. Fetch API merupakan standar web API yang juga tersedia di React Native tanpa perlu instalasi library tambahan.</p>
+<p>Fetch API sangat cocok digunakan untuk:</p>
+<ul>
+<li>Aplikasi sederhana</li>
+<li>Pembelajaran dasar networking</li>
+<li>Memahami alur HTTP request–response</li>
+</ul>
+<h2 id="struktur-dasar-fetch-api"><a class="header" href="#struktur-dasar-fetch-api">Struktur Dasar Fetch API</a></h2>
+<p>Fetch API menggunakan fungsi fetch() yang mengembalikan Promise. Struktur dasarnya:</p>
+<pre><code class="language-ts">fetch(url, options);
+</code></pre>
+<p>Penjelasan:</p>
+<ul>
+<li><code>url</code>: endpoint API</li>
+<li><code>options</code>: konfigurasi request (method, headers, body, dll)
+Sebagai catatan, parameter <code>options</code> bersifat opsional. Jika tidak diberikan, <code>Fetch API</code> akan menggunakan method <code>GET</code> secara default.</li>
+</ul>
+<h2 id="properti-umum-pada-options"><a class="header" href="#properti-umum-pada-options">Properti Umum pada <code>options</code></a></h2>
+<p>Berikut adalah properti options yang paling sering digunakan pada <code>Fetch API</code>:</p>
+<h3 id="method"><a class="header" href="#method"><code>method</code></a></h3>
+<p>Menentukan HTTP method yang digunakan.</p>
+<pre><code class="language-tsx">method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
+</code></pre>
+<p>Contoh:</p>
+<pre><code class="language-tsx">fetch("https://example.com/api/users", {
+  method: "POST",
+});
+</code></pre>
+<p>Jika tidak ditentukan, nilai default adalah GET.</p>
+<h3 id="headers"><a class="header" href="#headers"><code>headers</code></a></h3>
+<p>Digunakan untuk mengirim informasi tambahan ke server. Contoh header yang sering digunakan adalah <code>Content-Type</code> dan <code>Authorization</code>.</p>
+<pre><code class="language-ts">headers: {
+  "Content-Type": "application/json",
+  Authorization: "Bearer jwt-secret-token",
+}
+</code></pre>
+<p>Contoh:</p>
+<pre><code class="language-tsx">fetch("https://example.com/api/products", {
+  method: "GET",
+  headers: {
+    Authorization: "Bearer jwt-secret-token",
+  },
+});
+</code></pre>
+<h3 id="body"><a class="header" href="#body"><code>body</code></a></h3>
+<p>Digunakan untuk mengirim data ke server (biasanya pada POST, PUT, PATCH). Sebagai catatan, <code>body</code> harus berupa string, bukan object JavaScript dan jika menggunakan <code>method</code> <code>GET</code>, option <code>body</code> tidak perlu disematkan.</p>
+<pre><code class="language-tsx">body: JSON.stringify({
+  name: "John",
+  email: "john_doe@mail.com",
+});
+</code></pre>
+<p>Contoh:</p>
+<pre><code class="language-tsx">fetch("https://example.com/api/products", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+    Authorization: "Bearer jwt-secret-token",
+  },
+  body: JSON.stringify({
+    name: "Laptop",
+    price: 10000000,
+  }),
+});
+</code></pre>
+<h2 id="implementasi-fetch-api"><a class="header" href="#implementasi-fetch-api">Implementasi Fetch API</a></h2>
+<p>Contoh-contoh berikut memanfaatkan API publik <code>Coding Resources</code> dari <a href="https://restful-api.dev/">REST-API</a>.</p>
+<h3 id="get"><a class="header" href="#get"><code>GET</code></a></h3>
+<p><strong>App.tsx</strong></p>
+<pre><code class="language-tsx">import { useEffect, useState } from "react";
+import { FlatList, StyleSheet, Text, View } from "react-native";
+
+export default function App() {
+  const [data, setData] = useState([]);
+
+  const fetchData = async () =&gt; {
+    try {
+      const response = await fetch(
+        "https://api.restful-api.dev/objects?id=3&amp;id=5&amp;id=10"
+      );
+      if (response.status != 200) {
+        throw new Error("Gagal mengambil data dari server");
+      }
+
+      const json = await response.json();
+      setData(json);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() =&gt; {
+    fetchData();
+  }, []);
+
+  return (
+    &lt;View style={styles.container}&gt;
+      &lt;FlatList
+        data={data}
+        keyExtractor={(item) =&gt; item["id"]}
+        renderItem={({ item }) =&gt; (
+          &lt;View style={styles.list}&gt;
+            &lt;Text&gt;{item["name"]}&lt;/Text&gt;
+          &lt;/View&gt;
+        )}
+      /&gt;
+    &lt;/View&gt;
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  list: {
+    padding: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: "#ccc",
+  },
+});
+</code></pre>
+<h3 id="post"><a class="header" href="#post"><code>POST</code></a></h3>
+<p><strong>App.tsx</strong></p>
+<pre><code class="language-tsx">import { useEffect, useState } from "react";
+import { FlatList, StyleSheet, Text, View } from "react-native";
+
+export default function App() {
+  const [data, setData] = useState([]);
+
+  const postData = async () =&gt; {
+    try {
+      const response = await fetch("https://api.restful-api.dev/objects", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: "Apple MacBook Pro 16",
+          data: {
+            year: 2019,
+            price: 1849.99,
+            "CPU model": "Intel Core i9",
+            "Hard disk size": "1 TB",
+          },
+        }),
+      });
+
+      if (response.status != 200) {
+        throw new Error("Gagal menambahkan data baru");
+      }
+      const json = await response.json();
+      console.log(json);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() =&gt; {
+    postData();
+  }, []);
+
+  return &lt;View style={styles.container}&gt;&lt;/View&gt;;
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+});
+</code></pre>
+<h3 id="put"><a class="header" href="#put"><code>PUT</code></a></h3>
+<p><strong>App.tsx</strong></p>
+<pre><code class="language-tsx">import { useEffect, useState } from "react";
+import { FlatList, StyleSheet, Text, View } from "react-native";
+
+export default function App() {
+  const [data, setData] = useState([]);
+
+  const putData = async () =&gt; {
+    try {
+      const response = await fetch(
+        "https://api.restful-api.dev/objects/ff8081819782e69e019b6f989ce11c58",
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name: "Apple MacBook Pro 18",
+            data: {
+              year: 2021,
+              price: 2500,
+              "CPU model": "Intel Core i9",
+              "Hard disk size": "1 TB",
+              color: "silver",
+            },
+          }),
+        }
+      );
+
+      if (response.status != 200) {
+        throw new Error("Gagal mengubah data");
+      }
+      const json = await response.json();
+      console.log(json);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() =&gt; {
+    putData();
+  }, []);
+
+  return &lt;View style={styles.container}&gt;&lt;/View&gt;;
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+});
+</code></pre>
+<h3 id="patch"><a class="header" href="#patch"><code>PATCH</code></a></h3>
+<p><strong>App.tsx</strong></p>
+<pre><code class="language-tsx">import { useEffect, useState } from "react";
+import { FlatList, StyleSheet, Text, View } from "react-native";
+
+export default function App() {
+  const [data, setData] = useState([]);
+
+  const pacthData = async () =&gt; {
+    try {
+      const response = await fetch(
+        "https://api.restful-api.dev/objects/ff8081819782e69e019b6f989ce11c58",
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            data: {
+              year: 2023,
+              price: 2666,
+              color: "pink",
+            },
+          }),
+        }
+      );
+
+      if (response.status != 200) {
+        throw new Error("Gagal mengubah data");
+      }
+      const json = await response.json();
+      console.log(json);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() =&gt; {
+    pacthData();
+  }, []);
+
+  return &lt;View style={styles.container}&gt;&lt;/View&gt;;
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+});
+</code></pre>
+<h3 id="delete"><a class="header" href="#delete"><code>DELETE</code></a></h3>
+<p><strong>App.tsx</strong></p>
+<pre><code class="language-tsx">import { useEffect, useState } from "react";
+import { FlatList, StyleSheet, Text, View } from "react-native";
+
+export default function App() {
+  const [data, setData] = useState([]);
+
+  const deleteData = async () =&gt; {
+    try {
+      const response = await fetch(
+        "https://api.restful-api.dev/objects/ff8081819782e69e019b6f989ce11c58",
+        {
+          method: "DELETE",
+        }
+      );
+
+      if (response.status != 200) {
+        throw new Error("Gagal menghapus data");
+      }
+      const json = await response.json();
+      console.log(json);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() =&gt; {
+    deleteData();
+  }, []);
+
+  return &lt;View style={styles.container}&gt;&lt;/View&gt;;
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+});
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="axios"><a class="header" href="#axios">Axios</a></h1>
+<p>Axios adalah library HTTP client berbasis Promise yang sering digunakan pada aplikasi React Native untuk melakukan HTTP request ke server. Dibandingkan Fetch API, Axios menyediakan fitur yang lebih lengkap dan konfigurasi yang lebih fleksibel.</p>
+<p>Axios cocok digunakan untuk:</p>
+<ul>
+<li>Aplikasi skala menengah hingga besar</li>
+<li>Aplikasi dengan autentikasi (JWT)</li>
+<li>Aplikasi yang membutuhkan konfigurasi global request</li>
+<li>Penanganan error yang lebih terstruktur</li>
+</ul>
+<h2 id="instalasi-15"><a class="header" href="#instalasi-15">Instalasi</a></h2>
+<pre><code class="language-bash">npm install axios
+</code></pre>
+<h2 id="struktur-dasar-axios"><a class="header" href="#struktur-dasar-axios">Struktur Dasar Axios</a></h2>
+<p>Axios menyediakan fungsi utama seperti <code>axios.get()</code>, <code>axios.post()</code>, dan lainnya.</p>
+<p>Contoh struktur dasar:</p>
+<pre><code class="language-ts">axios(config);
+</code></pre>
+<p>atau menggunakan shortcut method:</p>
+<pre><code class="language-ts">axios.get(url, config);
+axios.post(url, data, config);
+</code></pre>
+<h2 id="konfigurasi-request-config"><a class="header" href="#konfigurasi-request-config">Konfigurasi Request (<code>config</code>)</a></h2>
+<p>Axios menggunakan objek config yang mirip dengan <code>options</code> pada Fetch API.
+Properti yang sering digunakan:</p>
+<div class="table-wrapper"><table><thead><tr><th>Properti</th><th>Keterangan</th></tr></thead><tbody>
+<tr><td><code>method</code></td><td>HTTP method</td></tr>
+<tr><td><code>url</code></td><td>Endpoint API</td></tr>
+<tr><td><code>headers</code></td><td>Header request</td></tr>
+<tr><td><code>params</code></td><td>Query parameter</td></tr>
+<tr><td><code>data</code></td><td>Body request</td></tr>
+<tr><td><code>timeout</code></td><td>Batas waktu request (ms)</td></tr>
+</tbody></table>
+</div>
+<p>Contoh:
+Kode berikut menunjukkan contoh penggunaan <code>config</code> untuk kasus filter.</p>
+<pre><code class="language-tsx">import axios from "axios";
+
+axios({
+  method: "POST",
+  url: "https://example.com/api/filter/products",
+  headers: {
+    "Content-Type": "application/json",
+    Authorization: "Bearer jwt-secret-token",
+  },
+  params: {
+    category: "electronics",
+    limit: 10,
+  },
+  data: {
+    name: "Laptop",
+    price: 10000000,
+  },
+  timeout: 5000,
+});
+</code></pre>
+<p>Penjelasan:</p>
+<ul>
+<li><code>method</code>: menentukan HTTP method yang digunakan.</li>
+<li><code>url</code>: menentukan endpoint API tujuan.</li>
+<li><code>headers</code>: mengirim informasi tambahan ke server, seperti format data dan autentikasi.</li>
+<li><code>params</code>: mengirim query parameter yang akan otomatis ditambahkan ke URL. Sehingga url di atas akan menjadi <code>https://example.com/api/filter/products?category=electronics&amp;limit=10</code></li>
+<li><code>data</code>: digunakan sebagai body request, biasanya pada POST, PUT, atau PATCH.</li>
+<li><code>timeout</code>: menentukan batas waktu request dalam satuan milidetik dan jika melebihi waktu yang ditentukan, axios akan melempar error.</li>
+</ul>
+<p>Axios tidak memerlukan <code>JSON.stringify()</code> karena otomatis mengubah object ke <code>JSON</code>.</p>
+<h2 id="error-handling"><a class="header" href="#error-handling">Error Handling</a></h2>
+<p>Berbeda dengan <a href="./fetch-api-react-native.html">Fetch API</a>, Axios secara otomatis melempar error jika status response berada di luar rentang 2xx.</p>
+<pre><code class="language-tsx">try {
+  const response = await axios.get("https://example.com/api/products");
+  return response.data;
+} catch (error) {
+  if (axios.isAxiosError(error)) {
+    console.error(error.response?.data);
+  } else {
+    console.error(error);
+  }
+}
+</code></pre>
+<h2 id="implementasi-axios"><a class="header" href="#implementasi-axios">Implementasi Axios</a></h2>
+<p>Contoh-contoh berikut memanfaatkan API publik <code>Coding Resources</code> dari <a href="https://restful-api.dev/">REST-API</a>.</p>
+<h3 id="get-1"><a class="header" href="#get-1">GET</a></h3>
+<p><strong>App.tsx</strong></p>
+<pre><code class="language-tsx">import { useEffect, useState } from "react";
+import { FlatList, StyleSheet, Text, View } from "react-native";
+
+export default function App() {
+  const [data, setData] = useState([]);
+
+  const getData = async () =&gt; {
+    try {
+      // Menggunakan method alias
+      const response = await axios.get("https://api.restful-api.dev/objects", {
+        params: {
+          id: [3, 5, 10],
+        },
+        paramsSerializer: {
+          indexes: null,
+        },
+      });
+
+      // const response = await axios({
+      //     method: 'GET',
+      //     url: 'https://api.restful-api.dev/objects',
+      //     params: {
+      //         id: ['3', '5', '10']
+      //     },
+      //     paramsSerializer:{
+      //         indexes: null
+      //     }
+      // })
+      console.log(response.data);
+
+      setData(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() =&gt; {
+    getData();
+  }, []);
+
+  return (
+    &lt;View style={styles.container}&gt;
+      &lt;FlatList
+        data={data}
+        keyExtractor={(item) =&gt; item["id"]}
+        renderItem={({ item }) =&gt; (
+          &lt;View style={styles.list}&gt;
+            &lt;Text&gt;{item["name"]}&lt;/Text&gt;
+          &lt;/View&gt;
+        )}
+      /&gt;
+    &lt;/View&gt;
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  list: {
+    padding: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: "#ccc",
+  },
+});
+</code></pre>
+<p>Pada kode program di atas, terdapat dua cara untuk melakukan request <code>GET</code>.</p>
+<h3 id="post-1"><a class="header" href="#post-1">POST</a></h3>
+<p><strong>App.tsx</strong></p>
+<pre><code class="language-tsx">import { useEffect, useState } from "react";
+import { FlatList, StyleSheet, Text, View } from "react-native";
+
+export default function App() {
+  const postData = async () =&gt; {
+    try {
+      // Menggunakan method alias
+      const response = await axios.post("https://api.restful-api.dev/objects", {
+        data: {
+          name: "Apple MacBook Pro 16",
+          data: {
+            year: 2019,
+            price: 1849.99,
+            "CPU model": "Intel Core i9",
+            "Hard disk size": "1 TB",
+          },
+        },
+      });
+
+      // const response = await axios({
+      //   method: "POST",
+      //   url: "https://api.restful-api.dev/objects",
+      //   data: {
+      //     year: 2019,
+      //     price: 1849.99,
+      //     "CPU model": "Intel Core i9",
+      //     "Hard disk size": "1 TB",
+      //   },
+      // });
+
+      console.log(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() =&gt; {
+    postData();
+  }, []);
+
+  return &lt;View style={styles.container}&gt;&lt;/View&gt;;
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+});
+</code></pre>
+<p>Pada kode program di atas, terdapat dua cara untuk melakukan request <code>POST</code>.</p>
+<h3 id="put-1"><a class="header" href="#put-1">PUT</a></h3>
+<p><strong>App.tsx</strong></p>
+<pre><code class="language-tsx">import { useEffect, useState } from "react";
+import { FlatList, StyleSheet, Text, View } from "react-native";
+
+export default function App() {
+  const putData = async () =&gt; {
+    try {
+      // Menggunakan method alias
+      const response = await axios.put(
+        "https://api.restful-api.dev/objects/ff8081819782e69e019b7395ade521b5",
+        {
+          data: {
+            name: "Apple MacBook Pro 18",
+            data: {
+              year: 2021,
+              price: 2065,
+              "CPU model": "Intel Core i9",
+              "Hard disk size": "1 TB",
+              color: "pink",
+            },
+          },
+        }
+      );
+
+      // const response = await axios({
+      //   method: "PUT",
+      //   url: "https://api.restful-api.dev/objects/ff8081819782e69e019b7395ade521b5",
+      //   data: {
+      //     name: "Apple MacBook Pro 18",
+      //     data: {
+      //       year: 2021,
+      //       price: 2065,
+      //       "CPU model": "Intel Core i9",
+      //       "Hard disk size": "1 TB",
+      //       color: "pink",
+      //     },
+      //   },
+      // });
+
+      console.log(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() =&gt; {
+    putData();
+  }, []);
+
+  return &lt;View style={styles.container}&gt;&lt;/View&gt;;
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+});
+</code></pre>
+<p>Pada kode program di atas, terdapat dua cara untuk melakukan request <code>PUT</code>.</p>
+<h3 id="patch-1"><a class="header" href="#patch-1">PATCH</a></h3>
+<p><strong>App.tsx</strong></p>
+<pre><code class="language-tsx">import { useEffect, useState } from "react";
+import { FlatList, StyleSheet, Text, View } from "react-native";
+
+export default function App() {
+  const patchData = async () =&gt; {
+    try {
+      // Menggunakan method alias
+      const response = await axios.patch(
+        "https://api.restful-api.dev/objects/ff8081819782e69e019b7395ade521b5",
+        {
+          data: {
+            name: "Apple MacBook Pro 16 (Updated Name)",
+          },
+        }
+      );
+
+      // const response = await axios({
+      //   method: "PATCH",
+      //   url: "https://api.restful-api.dev/objects/ff8081819782e69e019b7395ade521b5",
+      //   data: {
+      //     name: "Apple MacBook Pro 16 (Updated Name)",
+      //   },
+      // });
+
+      console.log(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() =&gt; {
+    patchData();
+  }, []);
+
+  return &lt;View style={styles.container}&gt;&lt;/View&gt;;
+}
+</code></pre>
+<p>Pada kode program di atas, terdapat dua cara untuk melakukan request <code>PATCH</code>.</p>
+<h3 id="delete-1"><a class="header" href="#delete-1">DELETE</a></h3>
+<p><strong>App.tsx</strong></p>
+<pre><code class="language-tsx">import { useEffect, useState } from "react";
+import { FlatList, StyleSheet, Text, View } from "react-native";
+
+export default function App() {
+  const deleteData = async () =&gt; {
+    try {
+      // Menggunakan method alias
+      const response = await axios.delete(
+        "https://api.restful-api.dev/objects/ff8081819782e69e019b7395ade521b5"
+      );
+
+      // const response = await axios({
+      //   method: "DELETE",
+      //   url: "https://api.restful-api.dev/objects/ff8081819782e69e019b7395ade521b5",
+      // });
+
+      console.log(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() =&gt; {
+    deleteData();
+  }, []);
+  return &lt;View style={styles.container}&gt;&lt;/View&gt;;
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+});
+</code></pre>
+<p>Pada kode program di atas, terdapat dua cara untuk melakukan request <code>DELETE</code>.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="axios-instance--interceptor"><a class="header" href="#axios-instance--interceptor">Axios Instance &amp; Interceptor</a></h1>
+<p>Pada aplikasi React Native yang menggunakan banyak HTTP request, menuliskan konfigurasi Axios (base URL, header, timeout) secara berulang akan membuat kode sulit dipelihara. Untuk mengatasi hal tersebut, Axios menyediakan fitur Instance dan Interceptor.</p>
+<h2 id="axios-instance"><a class="header" href="#axios-instance">Axios Instance</a></h2>
+<p>Axios Instance adalah objek Axios dengan konfigurasi default yang dapat digunakan kembali di seluruh aplikasi.</p>
+<p>Dengan instance, kita dapat:</p>
+<ul>
+<li>Menentukan baseURL</li>
+<li>Mengatur timeout</li>
+<li>Menambahkan header default</li>
+<li>Menghindari duplikasi kode</li>
+</ul>
+<h2 id="membuat-dan-menggunakan-axios-instance"><a class="header" href="#membuat-dan-menggunakan-axios-instance">Membuat dan Menggunakan Axios Instance</a></h2>
+<pre><code class="language-ts">import axios from "axios";
+
+const api = axios.create({
+  baseURL: "https://api.restful-api.dev",
+  timeout: 5000,
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+</code></pre>
+<p>Penjelasan:</p>
+<ul>
+<li>baseURL: URL utama backend</li>
+<li>timeout: request dibatalkan jika melebihi 5 detik</li>
+<li>Content-Type: default untuk JSON</li>
+</ul>
+<p>Instance di atas umumya disimpan di folder khusus, misalnya services/api.ts.</p>
+<pre><code class="language-tsx">import api from "./services/api";
+export default function App() {
+  const [data, setData] = useState([]);
+
+  const getData = async () =&gt; {
+    try {
+      const response = await api.get("/objects", {
+        params: {
+          id: [3, 5, 10],
+        },
+        paramsSerializer: {
+          indexes: null,
+        },
+      });
+      setData(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+}
+</code></pre>
+<h2 id="axios-interceptor"><a class="header" href="#axios-interceptor">Axios Interceptor</a></h2>
+<p>Axios Interceptor adalah mekanisme pada Axios yang memungkinkan kita memproses request atau response sebelum diteruskan ke server atau ke pemanggil fungsi.</p>
+<p>Interceptor sangat berguna untuk:</p>
+<ul>
+<li>Menambahkan header secara otomatis</li>
+<li>Logging request dan response</li>
+<li>Menangani error secara global</li>
+<li>Autentikasi (JWT)</li>
+<li>Auto logout saat token tidak valid</li>
+</ul>
+<h3 id="jenis-axios-interceptor"><a class="header" href="#jenis-axios-interceptor">Jenis Axios Interceptor</a></h3>
+<p>Axios memiliki dua jenis interceptor:</p>
+<h3 id="1-request-interceptor"><a class="header" href="#1-request-interceptor">1. Request Interceptor</a></h3>
+<p>Merupakan jenis interceptor yang dieksekusi sebelum request dikirim ke server. Request interceptor digunakan untuk:</p>
+<ul>
+<li>Menambahkan header Authorization</li>
+<li>Menyetel konfigurasi request</li>
+<li>Logging request</li>
+</ul>
+<p>Contoh:
+<strong>src/services/api.ts</strong></p>
+<pre><code class="language-ts">import axios from "axios";
+
+const api = axios.create({
+  baseURL: "https://api.restful-api.dev",
+  timeout: 5000,
+});
+
+api.interceptors.request.use(
+  (config) =&gt; {
+    const token = "jwt-secret-token"; // nanti diambil dari storage / context
+
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    console.log("Request dikirim ke:", config.url);
+    return config;
+  },
+  (error) =&gt; {
+    return Promise.reject(error);
+  }
+);
+
+export default api;
+</code></pre>
+<h3 id="2-response-interceptor"><a class="header" href="#2-response-interceptor">2. Response Interceptor</a></h3>
+<p>Merupakan jenis interceptor yang dieksekusi setelah response diterima dari server. Response interceptor digunakan untuk:</p>
+<ul>
+<li>Mengolah data response</li>
+<li>Menangani error secara global</li>
+<li>Menangani status tertentu (401, 403, 500)</li>
+</ul>
+<p>Contoh:</p>
+<pre><code class="language-ts">api.interceptors.response.use(
+  (response) =&gt; {
+    console.log("Response diterima:", response.status);
+    return response;
+  },
+  (error) =&gt; {
+    if (error.response?.status === 401) {
+      console.log("Unauthorized - token tidak valid");
+      // nanti bisa diarahkan ke logout
+    }
+
+    return Promise.reject(error);
+  }
+);
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="api-service-layer"><a class="header" href="#api-service-layer">API Service Layer</a></h1>
+<p>API Service Layer adalah lapisan khusus yang bertanggung jawab untuk seluruh komunikasi dengan backend API. Komponen React Native tidak langsung memanggil Axios, melainkan melalui service ini. Tanpa service layer, kode API tersebar di banyak screen, sulit diubah jika endpoint berubah, dan sulit menambahkan auth, logging, atau error handling global. Dengan adanya service layer, kode lebih bersih dan terstruktur, mudah dikembangkan, mudah diuji, dan sangat cocok untuk aplikasi dengan skala menengah-besar.</p>
+<h2 id="struktur-folder-rekomendasi"><a class="header" href="#struktur-folder-rekomendasi">Struktur Folder (Rekomendasi)</a></h2>
+<pre><code class="language-yaml">src/
+├── services/
+│   └── product.service.ts
+│
+├── types/
+│   ├── product.ts
+│   └── api.ts
+│
+└── screens/
+</code></pre>
+<h3 id="membuat-axios-instance"><a class="header" href="#membuat-axios-instance">Membuat Axios Instance</a></h3>
+<p><strong>src/services/api.ts</strong></p>
+<pre><code class="language-ts">import axios from "axios";
+
+const api = axios.create({
+  baseURL: "https://api.restful-api.dev",
+  timeout: 5000,
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+
+export default api;
+</code></pre>
+<h3 id="membuat-tipe-global-api-response"><a class="header" href="#membuat-tipe-global-api-response">Membuat Tipe Global API Response</a></h3>
+<p><strong>src/types/api.ts</strong></p>
+<pre><code class="language-ts">export type ApiResponse&lt;T&gt; = {
+  success: boolean;
+  data: T;
+  message?: string;
+};
+</code></pre>
+<h3 id="membuat-tipe-product-data-dinamis"><a class="header" href="#membuat-tipe-product-data-dinamis">Membuat Tipe Product (Data Dinamis)</a></h3>
+<p><strong>src/type/product.ts</strong></p>
+<pre><code class="language-ts">export type DetailProduct = Record&lt;string, unknown&gt; | null;
+
+export type Product = {
+  id: string;
+  name: string;
+  data: DetailProduct | null;
+};
+
+export type CreateProduct = {
+  name: string;
+  data: DetailProduct | null;
+};
+
+export type UpdateProduct = {
+  name?: string;
+  data?: DetailProduct | null;
+};
+</code></pre>
+<p>Record&lt;string, unknown&gt; digunakan karena struktur data tidak konsisten.</p>
+<h3 id="membuat-product-service"><a class="header" href="#membuat-product-service">Membuat Product Service</a></h3>
+<p><strong>src/services/product.service.ts</strong></p>
+<pre><code class="language-ts">import api from "../api/axiosIntances";
+import { ApiResponse } from "../types/api";
+import { CreateProduct, Product, UpdateProduct } from "../types/product";
+
+export const productService = {
+  getAll: async (): Promise&lt;ApiResponse&lt;Product[]&gt;&gt; =&gt; {
+    try {
+      const response = await api.get&lt;Product[]&gt;("/objects");
+      return {
+        success: true,
+        data: response.data,
+        message: "Berhasil mendapatkan data",
+      };
+    } catch (error) {
+      return {
+        success: false,
+        data: [],
+        message: "Gagal mendapatkan data",
+      };
+    }
+  },
+
+  getById: async (id: string): Promise&lt;ApiResponse&lt;Product&gt;&gt; =&gt; {
+    try {
+      const response = await api.get&lt;Product&gt;(`/objects/${id}`);
+      return {
+        success: true,
+        data: response.data,
+        message: "Berhasil mendapatkan data",
+      };
+    } catch (error) {
+      return {
+        success: false,
+        data: null as any,
+        message: "Gagal mendapatkan data",
+      };
+    }
+  },
+
+  create: async (payload: CreateProduct): Promise&lt;ApiResponse&lt;Product&gt;&gt; =&gt; {
+    try {
+      const response = await api.post("/objects", {
+        data: payload,
+      });
+      return {
+        success: true,
+        data: response.data,
+        message: "Berhasil menambahkan data",
+      };
+    } catch (error) {
+      return {
+        success: false,
+        data: null as any,
+        message: "Gagal menambahkan data",
+      };
+    }
+  },
+
+  update: async (
+    id: string,
+    payload: UpdateProduct
+  ): Promise&lt;ApiResponse&lt;Product&gt;&gt; =&gt; {
+    try {
+      const response = await api.put(`/objects/${id}`, {
+        data: payload,
+      });
+      return {
+        success: true,
+        data: response.data,
+        message: "Berhasil memperbarui data",
+      };
+    } catch (error) {
+      return {
+        success: false,
+        data: null as any,
+        message: "Gagal memperbarui data",
+      };
+    }
+  },
+
+  delete: async (id: string) =&gt; {
+    try {
+      const response = await api.delete(`/objects/${id}`);
+      return {
+        success: true,
+        message: "Berhasil menghapus data",
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: "Gagal menghapus data",
+      };
+    }
+  },
+};
+</code></pre>
+<h3 id="gabungkan-semuanya"><a class="header" href="#gabungkan-semuanya">Gabungkan Semuanya</a></h3>
+<pre><code class="language-tsx">import { useEffect, useState } from "react";
+import { FlatList, StyleSheet, Text, View } from "react-native";
+import { productService } from "./src/services/product.service";
+import { Product } from "./src/types/product";
+import { ApiResponse } from "./src/types/api";
+
+export default function App() {
+  const [data, setData] = useState&lt;ApiResponse&lt;Product[]&gt;&gt;([] as any);
+  const getData = async () =&gt; {
+    try {
+      const result = await productService.getAll();
+      if (result.success) setData(result);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const postData = async () =&gt; {
+    try {
+      const response = await productService.create({
+        name: "Apple MacBook Pro 16",
+        data: {
+          year: 2019,
+          price: 1849.99,
+          CPU: "Intel Core i9",
+          HDD: "1 TB",
+        },
+      });
+      console.log(response);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const putData = async () =&gt; {
+    try {
+      const response = await productService.update("1", {
+        name: "Apple MacBook Pro 16",
+        data: {
+          year: 2019,
+          price: 2049.99,
+          "CPU model": "Intel Core i9",
+          "Hard disk size": "1 TB",
+          color: "silver",
+        },
+      });
+      console.log(response);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const deleteData = async () =&gt; {
+    try {
+      const response = await productService.delete("1");
+      console.log(response);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() =&gt; {
+    // postData();
+    // putData();
+    // deleteData();
+    getData();
+  }, []);
+
+  return (
+    &lt;View style={styles.container}&gt;
+      &lt;FlatList
+        data={data?.data}
+        keyExtractor={(item) =&gt; item.id}
+        renderItem={({ item }) =&gt; (
+          &lt;View style={styles.list}&gt;
+            &lt;Text&gt;{item["name"]}&lt;/Text&gt;
+          &lt;/View&gt;
+        )}
+      /&gt;
+    &lt;/View&gt;
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  list: {
+    padding: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: "#ccc",
+  },
+});
+</code></pre>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="expressjs"><a class="header" href="#expressjs">ExpressJs</a></h1>
 <p><code>ExpressJs</code> merupakan framework backend berbasis <code>NodeJs</code> yang ringan, cepat, dan sangat populer. Beberapa alasan Express sering dipilih sebagai backend aplikasi React Native:</p>
 <ol>
@@ -6532,7 +7644,7 @@ app.get("/", (req, res) =&gt; {
 <li>Handler (callback) → fungsi yang menangani request dan memberikan response</li>
 </ul>
 <h2 id="membuat-route"><a class="header" href="#membuat-route">Membuat Route</a></h2>
-<h3 id="get"><a class="header" href="#get"><code>GET</code></a></h3>
+<h3 id="get-2"><a class="header" href="#get-2"><code>GET</code></a></h3>
 <p>Route GET digunakan untuk mengambil data atau menampilkan informasi.</p>
 <pre><code class="language-js">app.get("/hello", (req, res) =&gt; {
   res.send("Ini adalah route GET!");
@@ -6546,7 +7658,7 @@ app.get("/", (req, res) =&gt; {
   });
 });
 </code></pre>
-<h3 id="post"><a class="header" href="#post"><code>POST</code></a></h3>
+<h3 id="post-2"><a class="header" href="#post-2"><code>POST</code></a></h3>
 <p>Route POST biasanya digunakan untuk mengirimkan data dari client ke server.</p>
 <pre><code class="language-js">app.post("/submit", (req, res) =&gt; {
   res.send("Data berhasil diterima!");
@@ -6561,13 +7673,13 @@ app.post("/submit", (req, res) =&gt; {
   res.json(req.body);
 });
 </code></pre>
-<h3 id="put"><a class="header" href="#put"><code>PUT</code></a></h3>
+<h3 id="put-2"><a class="header" href="#put-2"><code>PUT</code></a></h3>
 <p>Digunakan untuk memperbarui seluruh data.</p>
 <pre><code class="language-js">app.put("/update", (req, res) =&gt; {
   res.send("Data berhasil diperbarui!");
 });
 </code></pre>
-<h3 id="patch"><a class="header" href="#patch"><code>PATCH</code></a></h3>
+<h3 id="patch-2"><a class="header" href="#patch-2"><code>PATCH</code></a></h3>
 <p>Digunakan untuk memperbarui sebagian data.</p>
 <pre><code class="language-js">app.use(express.json());
 app.patch("/update", (req, res) =&gt; {
@@ -6577,7 +7689,7 @@ app.patch("/update", (req, res) =&gt; {
   res.status(200).send("Data berhasil diperbarui!");
 });
 </code></pre>
-<h3 id="delete"><a class="header" href="#delete"><code>DELETE</code></a></h3>
+<h3 id="delete-2"><a class="header" href="#delete-2"><code>DELETE</code></a></h3>
 <p>Digunakan untuk menghapus data.</p>
 <pre><code class="language-js">app.delete("/delete", (req, res) =&gt; {
   res.send("Data berhasil dihapus!");
@@ -7202,7 +8314,7 @@ app.post("/hello", validateName, (req, res) =&gt; {
 <li>menghapus data,</li>
 </ul>
 <p>Pada aplikasi backend, Express bertindak sebagai web server yang menerima <em>request</em> lalu memprosesnya. Biasanya juga berinteraksi dengan database untuk mengambil atau menyimpan data. Menurut <a href="https://expressjs.com/en/guide/database-integration.html">dokumentasi resmi Express</a>, integrasi database dilakukan dengan menggunakan driver database bawaan Node.js seperti <code>Cassandra</code>, <code>Couchbase</code>, <code>CouchDB</code>, <code>MongoDB</code>, <code>MySQL</code>, dll. Namun, pada modul ini kita akan fokus pada MySQL, salah satu database relasional yang paling populer dan sering digunakan untuk aplikasi web skala kecil hingga besar.</p>
-<h2 id="instalasi-15"><a class="header" href="#instalasi-15">Instalasi</a></h2>
+<h2 id="instalasi-16"><a class="header" href="#instalasi-16">Instalasi</a></h2>
 <p>Untuk menggunakan MySQL pada Express, kita membutuhkan driver Node.js. Library yang direkomendasikan adalah:</p>
 <ul>
 <li><a href="https://sidorares.github.io/node-mysql2/docs">mysql2</a> merupakan versi lebih modern dari <a href="https://github.com/mysqljs/mysql">mysql</a>.</li>
@@ -7334,7 +8446,7 @@ async function getDataById(id) {
   }
 }
 </code></pre>
-<h3 id="delete-1"><a class="header" href="#delete-1"><code>Delete</code></a></h3>
+<h3 id="delete-3"><a class="header" href="#delete-3"><code>Delete</code></a></h3>
 <pre><code class="language-js">async function deleteData(deleted_id) {
   try {
     const [result, fields] = await db.query(
@@ -7671,7 +8783,7 @@ module.exports = pool;
   });
 };
 </code></pre>
-<h3 id="gabungkan-semuanya"><a class="header" href="#gabungkan-semuanya">Gabungkan Semuanya</a></h3>
+<h3 id="gabungkan-semuanya-1"><a class="header" href="#gabungkan-semuanya-1">Gabungkan Semuanya</a></h3>
 <p><code>src/app.js</code></p>
 <pre><code class="language-js">const express = require("express");
 const errorHandler = require("./middlewares/error_handler");
@@ -7713,7 +8825,7 @@ app.listen(PORT, () =&gt; {
 }
 </code></pre>
 <p>Pendekatan ini masih dapat diterima untuk aplikasi yang sangat kecil. Namun, pendekatan ini kurang direkomendasikan untuk aplikasi berskala menengah hingga besar. Oleh karena itu, Express menyediakan kemudahan integrasi dengan library pihak ketiga. Salah satu library yang paling umum dan direkomendasikan adalah <a href="https://express-validator.github.io/docs">express-validator</a>. <code>express-validator</code> merupakan middleware berbasis <code>validator.js</code> yang terintegrasi langsung dengan Express.</p>
-<h2 id="instalasi-16"><a class="header" href="#instalasi-16">Instalasi</a></h2>
+<h2 id="instalasi-17"><a class="header" href="#instalasi-17">Instalasi</a></h2>
 <p>Untuk mulai menggunakan <code>express-validator</code>, instal terlebih dahulu library-nya:</p>
 <pre><code class="language-bash">npm install express-validator
 </code></pre>
@@ -7893,7 +9005,7 @@ exports.userQueryValidator = [
 <li>Sedikit perubahan input menghasilkan hash yang sangat berbeda</li>
 </ul>
 <p><code>bcrypt</code> adalah library hashing yang dirancang khusus untuk password.</p>
-<h2 id="instalasi-17"><a class="header" href="#instalasi-17">Instalasi</a></h2>
+<h2 id="instalasi-18"><a class="header" href="#instalasi-18">Instalasi</a></h2>
 <pre><code class="language-bash">npm install bcrypt
 </code></pre>
 <h2 id="hashing-password-menggunakan-bcrypt"><a class="header" href="#hashing-password-menggunakan-bcrypt">Hashing Password Menggunakan <code>bcrypt</code></a></h2>
@@ -7934,7 +9046,7 @@ const isMatch = await bcrypt.compare(passwordInput, user.password);
 <li>Signature memuat tanda tangan untuk memastikan token tidak dimodifikasi</li>
 </ol>
 <p>JWT bersifat stateless, artinya backend tidak perlu menyimpan session.</p>
-<h2 id="instalasi-18"><a class="header" href="#instalasi-18">Instalasi</a></h2>
+<h2 id="instalasi-19"><a class="header" href="#instalasi-19">Instalasi</a></h2>
 <pre><code class="language-bash">npm install jsonwebtoken
 </code></pre>
 <h2 id="membuat-jwt"><a class="header" href="#membuat-jwt">Membuat JWT</a></h2>

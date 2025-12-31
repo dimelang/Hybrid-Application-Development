@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Pedometer - Hybrid Application Development</title>
+        <title>Axios Instance &amp; Interceptor - Hybrid Application Development</title>
 
 
         <!-- Custom HTML head -->
@@ -175,154 +175,134 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="pedometer"><a class="header" href="#pedometer">Pedometer</a></h1>
-<p>Sensor pedometer memungkinkan aplikasi untuk memantau jumlah langkah pengguna menggunakan sensor bawaan perangkat (Android) atau layanan Core Motion (iOS).</p>
-<h2 id="instalasi"><a class="header" href="#instalasi">Instalasi</a></h2>
-<p>Expo:</p>
-<pre><code class="language-bash">npx expo install expo-sensors
+                        <h1 id="axios-instance--interceptor"><a class="header" href="#axios-instance--interceptor">Axios Instance &amp; Interceptor</a></h1>
+<p>Pada aplikasi React Native yang menggunakan banyak HTTP request, menuliskan konfigurasi Axios (base URL, header, timeout) secara berulang akan membuat kode sulit dipelihara. Untuk mengatasi hal tersebut, Axios menyediakan fitur Instance dan Interceptor.</p>
+<h2 id="axios-instance"><a class="header" href="#axios-instance">Axios Instance</a></h2>
+<p>Axios Instance adalah objek Axios dengan konfigurasi default yang dapat digunakan kembali di seluruh aplikasi.</p>
+<p>Dengan instance, kita dapat:</p>
+<ul>
+<li>Menentukan baseURL</li>
+<li>Mengatur timeout</li>
+<li>Menambahkan header default</li>
+<li>Menghindari duplikasi kode</li>
+</ul>
+<h2 id="membuat-dan-menggunakan-axios-instance"><a class="header" href="#membuat-dan-menggunakan-axios-instance">Membuat dan Menggunakan Axios Instance</a></h2>
+<pre><code class="language-ts">import axios from "axios";
+
+const api = axios.create({
+  baseURL: "https://api.restful-api.dev",
+  timeout: 5000,
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
 </code></pre>
-<p>React Native CLI:</p>
-<pre><code class="language-bash">npm install expo-sensors
-cd ios &amp;&amp; pod install &amp;&amp; cd ..
-</code></pre>
-<h2 id="api-dasar-pedometer"><a class="header" href="#api-dasar-pedometer">API Dasar Pedometer</a></h2>
-<div class="table-wrapper"><table><thead><tr><th>Method / Fungsi</th><th>Deskripsi</th></tr></thead><tbody>
-<tr><td><code>Pedometer.isAvailableAsync()</code></td><td>Mengecek apakah pedometer tersedia di perangkat. Mengembalikan <code>Promise&lt;boolean&gt;</code>.</td></tr>
-<tr><td><code>Pedometer.getPermissionsAsync()</code> / <code>Pedometer.requestPermissionsAsync()</code></td><td>Memeriksa atau meminta izin akses pedometer (jika diperlukan).</td></tr>
-<tr><td><code>Pedometer.getStepCountAsync(start: Date, end: Date)</code></td><td>(iOS) Mengambil jumlah langkah antara dua tanggal. Mengembalikan <code>Promise&lt;PedometerResult&gt;</code> yang berisi <code>{ steps: number }</code>.</td></tr>
-<tr><td><code>Pedometer.watchStepCount(callback)</code></td><td>Berlangganan update langkah secara real-time. Callback menerima <code>PedometerResult</code>. Mengembalikan <code>Subscription</code> dengan <code>.remove()</code> untuk berhenti.</td></tr>
-</tbody></table>
-</div>
-<p>Catatan: getStepCountAsync hanya tersedia di iOS. Pada Android cukup gunakan <code>watchStepCount</code>.</p>
-<h2 id="contoh-penggunaan-pedometer"><a class="header" href="#contoh-penggunaan-pedometer">Contoh Penggunaan Pedometer</a></h2>
-<pre><code class="language-tsx">import { useEffect, useState } from "react";
-import { View, Text, Button, Alert, Platform } from "react-native";
-import { Pedometer } from "expo-sensors";
+<p>Penjelasan:</p>
+<ul>
+<li>baseURL: URL utama backend</li>
+<li>timeout: request dibatalkan jika melebihi 5 detik</li>
+<li>Content-Type: default untuk JSON</li>
+</ul>
+<p>Instance di atas umumya disimpan di folder khusus, misalnya services/api.ts.</p>
+<pre><code class="language-tsx">import api from "./services/api";
+export default function App() {
+  const [data, setData] = useState([]);
 
-export default function PedometerContainer() {
-    const [isAvailable, setIsAvailable] = useState&lt;boolean | null&gt;(null);
-    const [currentSteps, setCurrentSteps] = useState(0);
-    const [pastSteps, setPastSteps] = useState&lt;number | null&gt;(null);
-    const [subscription, setSubscription] = useState&lt;any&gt;(null);
-
-    useEffect(() =&gt; {
-        async function init() {
-            const perm = await Pedometer.getPermissionsAsync();
-            console.log("Permission status:", perm);
-
-
-            // cek ketersediaan sensor
-            const available = await Pedometer.isAvailableAsync();
-            setIsAvailable(available);
-
-            if (!available) {
-                Alert.alert("Pedometer tidak tersedia di perangkat ini");
-                return;
-            }
-
-            // cek permission
-            const { status } = await Pedometer.requestPermissionsAsync();
-
-            if (status !== "granted") {
-                Alert.alert("Izin pedometer ditolak");
-                return;
-            }
-
-            // Ambil histori langkah hanya jika iOS
-            if (Platform.OS === "ios") {
-                const end = new Date();
-                const start = new Date();
-                start.setDate(end.getDate() - 1); // 24 jam lalu
-
-                try {
-                    const result = await Pedometer.getStepCountAsync(start, end);
-                    setPastSteps(result.steps);
-                } catch (e) {
-                    console.warn("Error getStepCountAsync:", e);
-                    setPastSteps(null);
-                }
-            } else {
-                setPastSteps(null); // Android tidak mendukung
-            }
-
-            // subscribe real-time
-            const sub = Pedometer.watchStepCount((result) =&gt; {
-                setCurrentSteps(result.steps);
-            });
-
-            setSubscription(sub);
-        }
-
-        init();
-
-        return () =&gt; {
-            subscription?.remove();
-        };
-    }, []);
-
-    return (
-        &lt;View style={{ flex: 1, justifyContent: "center", alignItems: "center", padding: 20 }}&gt;
-            &lt;Text style={{ fontSize: 18, fontWeight: "bold", marginBottom: 10 }}&gt;
-                Pedometer Example
-            &lt;/Text&gt;
-
-            &lt;Text&gt;Pedometer tersedia: {isAvailable ? "Ya" : "Tidak"}&lt;/Text&gt;
-
-            &lt;Text style={{ marginTop: 20, fontSize: 16 }}&gt;
-                Langkah (real-time): {currentSteps}
-            &lt;/Text&gt;
-
-            &lt;Text style={{ marginTop: 10, fontSize: 16 }}&gt;
-                Langkah 24 jam terakhir:
-                {Platform.OS === "ios"
-                    ? pastSteps ?? "Memuat..."
-                    : "Tidak didukung di Android"}
-            &lt;/Text&gt;
-
-            &lt;Button
-                title="Reset Real-Time Counter"
-                onPress={() =&gt; setCurrentSteps(0)}
-            /&gt;
-        &lt;/View&gt;
-    );
+  const getData = async () =&gt; {
+    try {
+      const response = await api.get("/objects", {
+        params: {
+          id: [3, 5, 10],
+        },
+        paramsSerializer: {
+          indexes: null,
+        },
+      });
+      setData(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 }
 </code></pre>
-<p>Saat mengembangkan aplikasi React Native menggunakan Expo, sensor pedometer tidak berfungsi ketika dijalankan melalui Expo Go di Android. Sedangkan pada iOS, sensor pedometer dapat berfungsi melalui Expo Go.</p>
-<p>Agar sensor pedometer berjalan di Android, aplikasi harus memiliki permission Activity Recognition dan di-build menggunakan Dev Client atau APK, bukan Expo Go.
-Tambahkan ke <code>app.json</code>:</p>
-<pre><code class="language-bash">{
-  "expo": {
-    "android": {
-      "permissions": ["android.permission.ACTIVITY_RECOGNITION"]
-    },
-    "plugins": [
-      [
-        "expo-sensors",
-        {
-          "motionPermission": "Aplikasi membutuhkan akses untuk menghitung langkah."
-        }
-      ]
-    ]
+<h2 id="axios-interceptor"><a class="header" href="#axios-interceptor">Axios Interceptor</a></h2>
+<p>Axios Interceptor adalah mekanisme pada Axios yang memungkinkan kita memproses request atau response sebelum diteruskan ke server atau ke pemanggil fungsi.</p>
+<p>Interceptor sangat berguna untuk:</p>
+<ul>
+<li>Menambahkan header secara otomatis</li>
+<li>Logging request dan response</li>
+<li>Menangani error secara global</li>
+<li>Autentikasi (JWT)</li>
+<li>Auto logout saat token tidak valid</li>
+</ul>
+<h3 id="jenis-axios-interceptor"><a class="header" href="#jenis-axios-interceptor">Jenis Axios Interceptor</a></h3>
+<p>Axios memiliki dua jenis interceptor:</p>
+<h3 id="1-request-interceptor"><a class="header" href="#1-request-interceptor">1. Request Interceptor</a></h3>
+<p>Merupakan jenis interceptor yang dieksekusi sebelum request dikirim ke server. Request interceptor digunakan untuk:</p>
+<ul>
+<li>Menambahkan header Authorization</li>
+<li>Menyetel konfigurasi request</li>
+<li>Logging request</li>
+</ul>
+<p>Contoh:
+<strong>src/services/api.ts</strong></p>
+<pre><code class="language-ts">import axios from "axios";
+
+const api = axios.create({
+  baseURL: "https://api.restful-api.dev",
+  timeout: 5000,
+});
+
+api.interceptors.request.use(
+  (config) =&gt; {
+    const token = "jwt-secret-token"; // nanti diambil dari storage / context
+
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    console.log("Request dikirim ke:", config.url);
+    return config;
+  },
+  (error) =&gt; {
+    return Promise.reject(error);
   }
-}
+);
+
+export default api;
 </code></pre>
-<p>Hubungkan perangkat fisik Android lalu lakukan rebuild:</p>
-<pre><code class="language-bash">npx expo run:android
-</code></pre>
-<p>Atau build menggunakan Dev Client</p>
-<pre><code class="language-bash">npx expo prebuild
-npx expo run:android
+<h3 id="2-response-interceptor"><a class="header" href="#2-response-interceptor">2. Response Interceptor</a></h3>
+<p>Merupakan jenis interceptor yang dieksekusi setelah response diterima dari server. Response interceptor digunakan untuk:</p>
+<ul>
+<li>Mengolah data response</li>
+<li>Menangani error secara global</li>
+<li>Menangani status tertentu (401, 403, 500)</li>
+</ul>
+<p>Contoh:</p>
+<pre><code class="language-ts">api.interceptors.response.use(
+  (response) =&gt; {
+    console.log("Response diterima:", response.status);
+    return response;
+  },
+  (error) =&gt; {
+    if (error.response?.status === 401) {
+      console.log("Unauthorized - token tidak valid");
+      // nanti bisa diarahkan ke logout
+    }
+
+    return Promise.reject(error);
+  }
+);
 </code></pre>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="barometer.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="axios-react-native.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next prefetch" href="http-request-react-native.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="api-service-layer.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -332,11 +312,11 @@ npx expo run:android
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="barometer.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="axios-react-native.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next prefetch" href="http-request-react-native.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="api-service-layer.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>
