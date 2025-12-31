@@ -63,6 +63,11 @@
     - [Pedometer](pedometer.md)
     <!-- - [Camera](camera.md)
     - [Location](location.md) -->
+  - [HTTP Request](http-request-react-native.md)
+    - [Fetch API](./fetch-api-react-native.md)
+    - [Axios](./axios-react-native.md)
+      - [Axios Instance & Interceptor](./axios-instance-interceptor.md)
+      - [API Service Layer](./api-service-layer.md)
 - [ExpressJs](./pendahuluan-express-js.md)
   - [ExpressJs Setup Environment](./express-js-setup-environment.md)
   - [Membuat Project Express Pertama](./project-express-pertama.md)
